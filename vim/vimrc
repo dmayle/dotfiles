@@ -16,6 +16,7 @@ filetype off
 
 " Enable auto-loading of per-directory plugins in ~/.vim/bundle
 call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
 
 " Set the basics and start with the shared config.
 filetype plugin indent on
