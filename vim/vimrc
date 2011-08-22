@@ -1,4 +1,4 @@
-" As long as this is in a user vmirc, it has no effect, but we never want old
+" As long as this is in a user vimrc, it has no effect, but we never want old
 " vi-mode in any case.
 set nocompatible
 
@@ -15,8 +15,8 @@ set nocompatible
 filetype off
 
 " Enable auto-loading of per-directory plugins in ~/.vim/bundle
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
+call pathogen#infect()
+call pathogen#infect('~/.vim_local/bundle')
 
 " Set the basics and start with the shared config.
 filetype plugin indent on
@@ -33,7 +33,8 @@ if filereadable($HOME . "/.vimrc_local")
 " ##############################################################################
 
 " Use a colorscheme that's a bit brighter than the default.
-colorscheme peachpuff
+set background=dark
+colorscheme solarized
 
 " Set find-as-you-type searching
 set incsearch
@@ -41,7 +42,7 @@ set incsearch
 " I prefer vertical splits for my diffs
 set diffopt+=vertical
 
-" Case-insensitive searching
+" Case insensitive searching
 set ignorecase
 
 " Highlight search matches in the window.
@@ -65,12 +66,17 @@ set history=200
 set switchbuf=usetab
 
 " Spellcheck for languages I work in.
-setlocal spelllang=en,fr
+autocmd Filetype mail,text,python set spell
+set spelllang=en_us,fr
 
 " Status Line
 set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
 " Always turn on status line
 set laststatus=2
+
+" Spell coloring
+hi SpellBad term=reverse ctermfg=white ctermbg=darkred guifg=#ffffff guibg=#7f0000 gui=undercurl
+
 
 " ##############################################################################
 " ****** TAG HANDLING ******
