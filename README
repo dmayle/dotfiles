@@ -5,7 +5,9 @@ Installation:
 Create symlinks:
 
     ln -s ~/.dm-dotfiles/vim ~/.vim
-    ln -s ~/.vim/vimrc ~/.vimrc
+    ln -s .dm-dotfiles/bash/bashrc ~/.bashrc
+    ln -s .dm-dotfiles/screen/screenrc ~/.screenrc
+    ln -s .vim/vimrc ~/.vimrc
 
 Switch to the `~/.vim` directory, and fetch submodules:
 
