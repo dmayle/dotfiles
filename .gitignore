@@ -1,0 +1,4 @@
+# Ignore generated *.pyc files
+*.pyc
+# Ignore vim file used for tracking remote file editing
+vim/.netrwhist

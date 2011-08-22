@@ -4,6 +4,7 @@
 [submodule "vim/bundle/conque"]
 	path = vim/bundle/conque
 	url = https://github.com/rson/vim-conque
+	ignore = dirty
 [submodule "vim/bundle/vim-colors-solarized"]
 	path = vim/bundle/vim-colors-solarized
 	url = git://github.com/altercation/vim-colors-solarized.git
