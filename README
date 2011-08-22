@@ -1,0 +1,14 @@
+Installation:
+
+    git clone git://github.com/dmayle/dm-dotfiles.git ~/.dm-dotfiles
+
+Create symlinks:
+
+    ln -s ~/.dm-dotfiles/vim ~/.vim
+    ln -s ~/.vim/vimrc ~/.vimrc
+
+Switch to the `~/.vim` directory, and fetch submodules:
+
+    cd ~/.dm-dotfiles
+    git submodule init
+    git submodule update

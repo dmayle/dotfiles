@@ -1,0 +1,146 @@
+" As long as this is in a user vmirc, it has no effect, but we never want old
+" vi-mode in any case.
+set nocompatible
+
+" ##############################################################################
+" ****** PATHOGEN ******
+" This VIMRC uses Pathogen to manage per-directory plugins.  In order for
+" Pathogen to work properly, it must be loaded before filetype and syntax
+" plugins, so this block will turn that off, enable Pathogen, and re-enable
+" filetype and syntax.
+" ##############################################################################
+
+" Make sure pathogen ftplugins are properly installed by disabling then
+" re-enabling file type plugins.
+filetype off
+
+" Enable auto-loading of per-directory plugins in ~/.vim/bundle
+call pathogen#runtime_append_all_bundles()
+
+" Set the basics and start with the shared config.
+filetype plugin indent on
+syntax on
+
+" Source machine-local vim settings, if there are any
+if filereadable($HOME . "/.vimrc_local")
+  source $HOME/.vimrc_local
+ endif
+
+" ##############################################################################
+" ****** USER PREFS ******
+" Now it's time for our user preferences.
+" ##############################################################################
+
+" Use a colorscheme that's a bit brighter than the default.
+colorscheme peachpuff
+
+" Set find-as-you-type searching
+set incsearch
+
+" I prefer vertical splits for my diffs
+set diffopt+=vertical
+
+" Case-insensitive searching
+set ignorecase
+
+" Highlight search matches in the window.
+set hlsearch
+
+" Enable mouse support in text terminals
+set mouse=a
+set ttymouse=xterm2
+
+" Store 200 lines of command history
+set history=200
+
+" Enable marker base folding
+"set foldmethod=marker
+
+" Close all folds by default
+"set foldlevel=0
+
+" Try to open existing instances of a buffer from other windows or tabs before
+" duplicating
+set switchbuf=usetab
+
+" Spellcheck for languages I work in.
+setlocal spelllang=en,fr
+
+" Status Line
+set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+" Always turn on status line
+set laststatus=2
+
+" ##############################################################################
+" ****** TAG HANDLING ******
+" ##############################################################################
+
+" Update our tags file after writing to a source file.
+au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
+
+" Use the standard tags file, as will as the iPhone tags file if present
+"set tags=~/.vim/iPhone.tags;tags;/
+
+" ##############################################################################
+" ****** SAVING FOLD STATE ******
+" ##############################################################################
+
+" Keep fold state
+"autocmd BufWinLeave * call KeepFoldState("enter")
+"autocmd BufWinEnter * call KeepFoldState("leave")
+
+"function! KeepFoldState(leaveEnter)
+"  if a:leaveEnter == 'enter'
+"    if bufname("%") != ""
+"      mkview
+"    endif
+"  endif
+"  if a:leaveEnter == 'leave'
+"    if bufname("%") != ""
+"      silent loadview
+"    endif
+"  endif
+"endfunction
+
+" ##############################################################################
+" ****** COLUMN LAYOUT INDICATOR ******
+" ##############################################################################
+
+" Enable VIM 7.3+ native column indicator support if possible
+if has("colorcolumn")
+  " Use the textwidth value as the column length indicator
+  set colorcolumn=+1
+else
+  " No native support, so we hack this in.
+  "highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
+  "match OverLength /\%81v.\+/
+endif
+
+" ##############################################################################
+" ****** BACKUP FILES ******
+" We don't want to clutter up our source-control directories with vim swap and
+" backup files, so we collect them into a single directory.  Caveat: we use a
+" single shared home directory across hosts, so we need to use a per-host
+" directory to prevent collisions.
+" ##############################################################################
+
+" Name our backup directory vimbak-hostname
+let $HOST=hostname()
+let $MYBACKUPDIR=$HOME . '/.vimbak-' . $HOST 
+"
+" Make sure the backup directory exists first.
+if !isdirectory(fnameescape($MYBACKUPDIR))
+  silent! execute '!mkdir -p ' . shellescape($MYBACKUPDIR)
+  silent! execute '!chmod 700 ' . shellescape($MYBACKUPDIR)
+endif
+
+" Set directory for swap files
+set directory=$MYBACKUPDIR
+" Set to only keep one (current) backup
+set backup writebackup
+" Set directory for backup files
+set backupdir=$MYBACKUPDIR
+" Sensible list of files we don't want backed up
+set backupskip=/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*
+
+
