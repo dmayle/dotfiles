@@ -16,19 +16,23 @@ filetype off
 
 " Enable auto-loading of per-directory plugins in ~/.vim/bundle
 call pathogen#infect()
-call pathogen#helptags()
 " Do the same for machine local viles in ~/.vim_local/bundle
 call pathogen#infect('~/.vim_local/bundle')
-call pathogen#helptags('~/.vim_local/bundle')
+" Generate helptags for all of the above plugins
+call pathogen#helptags()
 
 " Set the basics and start with the shared config.
 filetype plugin indent on
 syntax on
 
-" Source machine-local vim settings, if there are any
+" ##############################################################################
+" ****** MACHINE SPECIFIC PREFERENCES ******
+" Now it's time for our to run any vim code specific to this machine only
+" ##############################################################################
+
 if filereadable($HOME . "/.vimrc_local")
   source $HOME/.vimrc_local
- endif
+endif
 
 " ##############################################################################
 " ****** USER PREFS ******
@@ -51,7 +55,7 @@ set ignorecase
 " Highlight search matches in the window.
 set hlsearch
 
-" Enable mouse support in text terminals
+" Enable mouse support in text terminals (using smarter mouse protocol, xterm2)
 set mouse=a
 set ttymouse=xterm2
 

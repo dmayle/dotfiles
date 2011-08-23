@@ -17,12 +17,14 @@
 [submodule "vim/bundle/vim-surround"]
 	path = vim/bundle/vim-surround
 	url = http://github.com/tpope/vim-surround.git
+	ignore = dirty
 [submodule "vim/bundle/vim-indent-object"]
 	path = vim/bundle/vim-indent-object
 	url = http://github.com/michaeljsmith/vim-indent-object.git
 [submodule "vim/bundle/vim-indent-guides"]
 	path = vim/bundle/vim-indent-guides
 	url = git://github.com/nathanaelkane/vim-indent-guides.git
+	ignore = dirty
 [submodule "vim/bundle/zencoding-vim"]
 	path = vim/bundle/zencoding-vim
 	url = https://github.com/mattn/zencoding-vim.git
