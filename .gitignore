@@ -2,3 +2,5 @@
 *.pyc
 # Ignore vim file used for tracking remote file editing
 vim/.netrwhist
+# Ignore view-temporary file for vim
+vim/view
