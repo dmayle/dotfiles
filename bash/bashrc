@@ -132,8 +132,8 @@ fi
 
 # Do some PATH smashing
 if ! [[ "$PATH" =~ \(^|:\)/usr/local/bin\($|:\) ]]; then
-  export PATH=/usr/local/bin/$PATH
+  export PATH="/usr/local/bin/:$PATH"
 fi
 if ! [[ "$PATH" =~ \(^|:\)/usr/local/sbin\($|:\) ]]; then
-  export PATH="/usr/local/sbin/$PATH"
+  export PATH="/usr/local/sbin/:$PATH"
 fi
