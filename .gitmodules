@@ -29,3 +29,6 @@
 [submodule "vim/bundle/colorizer"]
 	path = vim/bundle/colorizer
 	url = https://github.com/lilydjwg/colorizer.git
+[submodule "vim/bundle/supertab"]
+	path = vim/bundle/supertab
+	url = http://github.com/ervandew/supertab.git
