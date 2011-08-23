@@ -17,7 +17,9 @@ fi
 case "$platform" in
   osx)
     # Fix for when iterm crashes
-    alias itermfix='defaults delete net.sourceforge.iTerm "NSWindow Frame iTerm Window 0"';;
+    alias itermfix='defaults delete net.sourceforge.iTerm "NSWindow Frame iTerm Window 0"'
+    # Use MacVim embedded vim, because it has python and ruby support
+    alias vim='/Applications/MacVim.app/Contents/MacOS/Vim';;
 esac
 
 # don't put duplicate lines in the history. See bash(1) for more options
