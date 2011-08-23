@@ -18,6 +18,10 @@ case "$platform" in
   osx)
     # Fix for when iterm crashes
     alias itermfix='defaults delete net.sourceforge.iTerm "NSWindow Frame iTerm Window 0"'
+    # Use color output for directory listings
+    alias ls='ls -G'
+    alias dir='dir -G'
+    alias vdir='vdir -G'
     # Use MacVim embedded vim, because it has python and ruby support
     alias vi='/Applications/MacVim.app/Contents/MacOS/Vim'
     alias vim='/Applications/MacVim.app/Contents/MacOS/Vim';;
@@ -87,18 +91,9 @@ esac
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    case "$platform" in
-      osx)
-        # Fix for when iterm crashes
-        alias itermfix='defaults delete net.sourceforge.iTerm "NSWindow Frame iTerm Window 0"'
-        alias ls='ls -G'
-        alias dir='dir -G'
-        alias vdir='vdir -G';;
-      linux)
-        alias ls='ls --color=auto'
-        alias dir='dir --color=auto'
-        alias vdir='vdir --color=auto';;
-    esac
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'

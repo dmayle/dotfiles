@@ -55,6 +55,9 @@ set ttymouse=xterm2
 " Store 200 lines of command history
 set history=200
 
+" Keep unsaved files open with their changes
+set hidden
+
 " Enable marker base folding
 "set foldmethod=marker
 
