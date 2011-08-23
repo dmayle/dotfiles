@@ -11,3 +11,6 @@
 [submodule "vim/bundle/lusty"]
 	path = vim/bundle/lusty
 	url = http://github.com/sjbach/lusty.git
+[submodule "vim/bundle/vimoutliner"]
+	path = vim/bundle/vimoutliner
+	url = https://github.com/vimoutliner/vimoutliner
