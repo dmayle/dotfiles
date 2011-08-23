@@ -14,3 +14,8 @@ Switch to the `~/.vim` directory, and fetch submodules:
     cd ~/.dm-dotfiles
     git submodule init
     git submodule update
+
+Software required:
+    Mac:
+        MacVim (in order to get a vim compiled with python and ruby support)
+        Exuberant Ctags (the BSD ctags that comes with OSX is bad)

@@ -130,3 +130,10 @@ if [ -f ~/.bashrc_local ]; then
     . ~/.bashrc_local
 fi
 
+# Do some PATH smashing
+if ![[ "$PATH" =~ (^|:)/usr/local/bin($|:) ]];
+  export PATH="/usr/local/bin/$PATH"
+fi
+if ![[ "$PATH" =~ (^|:)/usr/local/sbin($|:) ]];
+  export PATH="/usr/local/sbin/$PATH"
+fi
