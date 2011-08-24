@@ -39,6 +39,9 @@ endif
 " Now it's time for our user preferences.
 " ##############################################################################
 
+" Set some wildmenu options
+
+
 " Use a colorscheme that's a bit brighter than the default.
 set background=dark
 colorscheme solarized
