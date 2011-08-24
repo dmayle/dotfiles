@@ -41,6 +41,8 @@ endif
 
 " Set some wildmenu options
 
+" I list these format options :help fo-table
+set formatoptions+=rcoqanl1
 
 " Use a colorscheme that's a bit brighter than the default.
 set background=dark
