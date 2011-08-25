@@ -129,13 +129,11 @@ au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
 " ##############################################################################
 
 " Enable VIM 7.3+ native column indicator support if possible
-if has("colorcolumn")
+if exists("&colorcolumn")
   " Use the textwidth value as the column length indicator
-  set colorcolumn=+1
+  set colorcolumn=+1,+21,+41
 else
-  " No native support, so we hack this in.
-  "highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
-  "match OverLength /\%81v.\+/
+  " No native support, I can't stand using overlength
 endif
 
 " ##############################################################################
