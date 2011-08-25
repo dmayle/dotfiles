@@ -129,7 +129,7 @@ au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
 " ##############################################################################
 
 " Enable VIM 7.3+ native column indicator support if possible
-if exists("&colorcolumn")
+if exists("+colorcolumn")
   " Use the textwidth value as the column length indicator
   set colorcolumn=+1,+21,+41
 else
