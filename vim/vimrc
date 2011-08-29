@@ -26,15 +26,6 @@ filetype plugin indent on
 syntax on
 
 " ##############################################################################
-" ****** MACHINE SPECIFIC PREFERENCES ******
-" Now it's time for our to run any vim code specific to this machine only
-" ##############################################################################
-
-if filereadable($HOME . "/.vimrc_local")
-  source $HOME/.vimrc_local
-endif
-
-" ##############################################################################
 " ****** USER PREFS ******
 " Now it's time for our user preferences.
 " ##############################################################################
@@ -85,17 +76,38 @@ autocmd Filetype mail,text,python set spell
 set spelllang=en_us,fr
 
 " Status Line
-set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+set statusline=%F%m%r%h%w\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
 " Always turn on status line
 set laststatus=2
 
 " Spell coloring
 hi SpellBad term=reverse ctermfg=white ctermbg=darkred guifg=#ffffff guibg=#7f0000 gui=undercurl
 
+" make backspace "more powerful"
+set backspace=indent,eol,start
+
+" makes tabs insert "indents" at the beginning of the line
+set smarttab
+
+" reasonable defaults for indentation
+set autoindent nocindent nosmartindent
+
+" informs sh syntax that /bin/sh is actually bash
+let is_bash=1
+
+" Set up default spacing and tabs (8 for hard tabs, 2 for what we use, insert
+" spaces instead of hard tabs)
+set tabstop=8 shiftwidth=2 expandtab
 
 " ##############################################################################
-" ****** TAG HANDLING ******
+" ****** FILE SPECIFIC HANDLING ******
 " ##############################################################################
+
+"Teach VIM about spitfire templates
+autocmd BufNewFile,BufRead *.spt set filetype=cheetah
+
+" Turn on indent guides in certain filetypes
+autocmd FileType python,html,cheetah IndentGuidesToggle
 
 " Update our tags file after writing to a source file.
 au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
@@ -163,4 +175,12 @@ set backupdir=$MYBACKUPDIR
 " Sensible list of files we don't want backed up
 set backupskip=/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*
 
+" ##############################################################################
+" ****** MACHINE SPECIFIC PREFERENCES ******
+" Now it's time for our to run any vim code specific to this machine only
+" ##############################################################################
+
+if filereadable($HOME . "/.vimrc_local")
+  source $HOME/.vimrc_local
+endif
 
