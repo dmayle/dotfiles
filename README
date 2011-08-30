@@ -6,12 +6,19 @@ Create symlinks:
 
     ln -s .dm-dotfiles/vim ~/.vim
     ln -s .dm-dotfiles/bash/bashrc ~/.bashrc
-    ln -s .dm-dotfiles/screen/screenrc ~/.screenrc
     ln -s .vim/vimrc ~/.vimrc
 
-Switch to the `~/.vim` directory, and fetch submodules:
+Switch to the `~/.dm-dotfiles` directory, and fetch submodules:
 
     cd ~/.dm-dotfiles
+    git submodule init
+    git submodule update
+
+Switch to the '~/.vim/bundles/pyflakes' directory, and fetch submodules (This
+is necessary because the pyflakes.vim submodule uses a submodule of its own for
+the pyflakes python module):
+
+    cd ~/.dm-dotfiles/vim/bundles/pyflakes
     git submodule init
     git submodule update
 
