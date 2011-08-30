@@ -99,6 +99,10 @@ let is_bash=1
 " spaces instead of hard tabs)
 set tabstop=8 shiftwidth=2 expandtab
 
+" Set up wildmenu and wildmode!
+set wildmenu
+set wildmode=list:longest,full
+
 " ##############################################################################
 " ****** FILE SPECIFIC HANDLING ******
 " ##############################################################################
