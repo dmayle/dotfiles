@@ -177,7 +177,7 @@ set backup writebackup
 " Set directory for backup files
 set backupdir=$MYBACKUPDIR
 " Sensible list of files we don't want backed up
-set backupskip=/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*
+set backupskip=/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*
 
 " ##############################################################################
 " ****** MACHINE SPECIFIC PREFERENCES ******
