@@ -72,7 +72,7 @@ set hidden
 set switchbuf=usetab
 
 " Spellcheck for languages I work in.
-autocmd Filetype mail,text,python set spell
+autocmd FileType mail,text,python setlocal spell
 set spelllang=en_us,fr
 
 " Status Line

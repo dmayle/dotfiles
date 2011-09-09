@@ -44,3 +44,6 @@
 [submodule "vim/bundle/pyflakes"]
 	path = vim/bundle/pyflakes
 	url = git://github.com/kevinw/pyflakes-vim.git
+[submodule "vim/bundle/vim-web-indent"]
+	path = vim/bundle/vim-web-indent
+	url = https://github.com/garbas/vim-web-indent
