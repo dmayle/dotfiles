@@ -23,6 +23,7 @@ case "$platform" in
     alias dir='dir -G'
     alias vdir='vdir -G'
     # Use MacVim embedded vim, because it has python and ruby support
+    export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
     alias vi='/Applications/MacVim.app/Contents/MacOS/Vim'
     alias vim='/Applications/MacVim.app/Contents/MacOS/Vim';;
 esac
