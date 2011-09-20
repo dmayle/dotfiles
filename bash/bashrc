@@ -14,20 +14,6 @@ elif [[ "$unamestr" == "Darwin" ]]; then
   platform='osx'
 fi
 
-case "$platform" in
-  osx)
-    # Fix for when iterm crashes
-    alias itermfix='defaults delete net.sourceforge.iTerm "NSWindow Frame iTerm Window 0"'
-    # Use color output for directory listings
-    alias ls='ls -G'
-    alias dir='dir -G'
-    alias vdir='vdir -G'
-    # Use MacVim embedded vim, because it has python and ruby support
-    export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
-    alias vi='/Applications/MacVim.app/Contents/MacOS/Vim'
-    alias vim='/Applications/MacVim.app/Contents/MacOS/Vim';;
-esac
-
 # don't put duplicate lines in the history. See bash(1) for more options
 # ... or force ignoredups and ignorespace
 HISTCONTROL=ignoredups:ignorespace
@@ -126,10 +112,20 @@ fi
 # My favorite editor
 export EDITOR=vim
 
-# Support running a local specific bashrc
-if [ -f ~/.bashrc_local ]; then
-    . ~/.bashrc_local
-fi
+# Allow for platform specific overrides
+case "$platform" in
+  osx)
+    # Fix for when iterm crashes
+    alias itermfix='defaults delete net.sourceforge.iTerm "NSWindow Frame iTerm Window 0"'
+    # Use color output for directory listings
+    alias ls='ls -G'
+    alias dir='dir -G'
+    alias vdir='vdir -G'
+    # Use MacVim embedded vim, because it has python and ruby support
+    export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
+    alias vi='/Applications/MacVim.app/Contents/MacOS/Vim'
+    alias vim='/Applications/MacVim.app/Contents/MacOS/Vim';;
+esac
 
 # Do some PATH smashing
 if ! [[ "$PATH" =~ \(^|:\)/usr/local/bin\($|:\) ]]; then
@@ -138,3 +134,9 @@ fi
 if ! [[ "$PATH" =~ \(^|:\)/usr/local/sbin\($|:\) ]]; then
   export PATH="/usr/local/sbin:$PATH"
 fi
+
+# Support running a local specific bashrc
+if [ -f ~/.bashrc_local ]; then
+    . ~/.bashrc_local
+fi
+
