@@ -47,3 +47,18 @@
 [submodule "vim/bundle/vim-web-indent"]
 	path = vim/bundle/vim-web-indent
 	url = https://github.com/garbas/vim-web-indent
+[submodule "vim/bundle/fugitive"]
+	path = vim/bundle/fugitive
+	url = http://github.com/tpope/vim-fugitive.git
+[submodule "vim/bundle/commentary"]
+	path = vim/bundle/commentary
+	url = http://github.com/tpope/vim-commentary.git
+[submodule "vim/bundle/speeddating"]
+	path = vim/bundle/speeddating
+	url = http://github.com/tpope/vim-speeddating.git
+[submodule "vim/bundle/repeat"]
+	path = vim/bundle/repeat
+	url = http://github.com/tpope/vim-repeat.git
+[submodule "vim/bundle/SearchComplete"]
+	path = vim/bundle/SearchComplete
+	url = http://github.com/vim-scripts/SearchComplete.git
