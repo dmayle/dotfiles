@@ -54,6 +54,10 @@ set smartcase
 " Highlight search matches in the window.
 set hlsearch
 
+" Turn on line numbers and set the gutter to 5 for 10k-1 lines
+set number
+set numberwidth=5
+
 " Enable mouse support in text terminals (using smarter mouse protocol, xterm2)
 set mouse=a
 set ttymouse=xterm2
