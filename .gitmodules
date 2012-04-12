@@ -56,6 +56,7 @@
 [submodule "vim/bundle/speeddating"]
 	path = vim/bundle/speeddating
 	url = http://github.com/tpope/vim-speeddating.git
+	ignore = dirty
 [submodule "vim/bundle/repeat"]
 	path = vim/bundle/repeat
 	url = http://github.com/tpope/vim-repeat.git
