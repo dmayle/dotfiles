@@ -35,8 +35,10 @@ syntax on
 " I list these format options :help fo-table
 set formatoptions+=rcoqnl1
 
-" Use a colorscheme that's a bit brighter than the default.
+" Use a colorscheme that's a bit brighter than the default. Force the 16 color
+" versin of solarized.
 set background=dark
+let g:solarized_termcolors=16
 colorscheme solarized
 
 " Set find-as-you-type searching
@@ -54,6 +56,10 @@ set smartcase
 " Highlight search matches in the window.
 set hlsearch
 
+" Turn on line numbers and set the gutter to 5 for 10k-1 lines
+set number
+set numberwidth=5
+
 " Enable mouse support in text terminals (using smarter mouse protocol, xterm2)
 set mouse=a
 set ttymouse=xterm2
@@ -68,8 +74,8 @@ set hidden
 " a visual selection.
 set showcmd
 
-" Enable marker base folding
-"set foldmethod=marker
+" Enable syntax base folding
+"set foldmethod=syntax
 
 " Close all folds by default
 "set foldlevel=0
@@ -121,7 +127,7 @@ autocmd BufNewFile,BufRead *.spt set filetype=cheetah
 autocmd FileType python,html,cheetah IndentGuidesToggle
 
 " Update our tags file after writing to a source file.
-au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
+"au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
 
 " Use the standard tags file, as will as the iPhone tags file if present
 "set tags=~/.vim/iPhone.tags;tags;/

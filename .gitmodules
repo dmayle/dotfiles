@@ -1,6 +1,7 @@
 [submodule "vim/bundle/NERD_tree"]
 	path = vim/bundle/NERD_tree
 	url = https://github.com/scrooloose/nerdtree
+	ignore = dirty
 [submodule "vim/bundle/conque"]
 	path = vim/bundle/conque
 	url = https://github.com/rson/vim-conque
@@ -8,12 +9,15 @@
 [submodule "vim/bundle/vim-colors-solarized"]
 	path = vim/bundle/vim-colors-solarized
 	url = git://github.com/altercation/vim-colors-solarized.git
+	ignore = dirty
 [submodule "vim/bundle/lusty"]
 	path = vim/bundle/lusty
 	url = http://github.com/sjbach/lusty.git
+	ignore = dirty
 [submodule "vim/bundle/vimoutliner"]
 	path = vim/bundle/vimoutliner
 	url = https://github.com/vimoutliner/vimoutliner
+	ignore = dirty
 [submodule "vim/bundle/vim-surround"]
 	path = vim/bundle/vim-surround
 	url = http://github.com/tpope/vim-surround.git
@@ -21,6 +25,7 @@
 [submodule "vim/bundle/vim-indent-object"]
 	path = vim/bundle/vim-indent-object
 	url = http://github.com/michaeljsmith/vim-indent-object.git
+	ignore = dirty
 [submodule "vim/bundle/vim-indent-guides"]
 	path = vim/bundle/vim-indent-guides
 	url = git://github.com/nathanaelkane/vim-indent-guides.git
@@ -28,15 +33,19 @@
 [submodule "vim/bundle/zencoding-vim"]
 	path = vim/bundle/zencoding-vim
 	url = https://github.com/mattn/zencoding-vim.git
+	ignore = dirty
 [submodule "vim/bundle/colorizer"]
 	path = vim/bundle/colorizer
 	url = https://github.com/lilydjwg/colorizer.git
+	ignore = dirty
 [submodule "vim/bundle/supertab"]
 	path = vim/bundle/supertab
 	url = http://github.com/ervandew/supertab.git
+	ignore = dirty
 [submodule "vim/bundle/tagbar"]
 	path = vim/bundle/tagbar
 	url = git://github.com/majutsushi/tagbar.git
+	ignore = dirty
 [submodule "vim/bundle/vim-unimpaired"]
 	path = vim/bundle/vim-unimpaired
 	url = https://github.com/tpope/vim-unimpaired
@@ -44,15 +53,19 @@
 [submodule "vim/bundle/pyflakes"]
 	path = vim/bundle/pyflakes
 	url = git://github.com/kevinw/pyflakes-vim.git
+	ignore = dirty
 [submodule "vim/bundle/vim-web-indent"]
 	path = vim/bundle/vim-web-indent
 	url = https://github.com/garbas/vim-web-indent
+	ignore = dirty
 [submodule "vim/bundle/fugitive"]
 	path = vim/bundle/fugitive
 	url = http://github.com/tpope/vim-fugitive.git
+	ignore = dirty
 [submodule "vim/bundle/commentary"]
 	path = vim/bundle/commentary
 	url = http://github.com/tpope/vim-commentary.git
+	ignore = dirty
 [submodule "vim/bundle/speeddating"]
 	path = vim/bundle/speeddating
 	url = http://github.com/tpope/vim-speeddating.git
@@ -60,6 +73,8 @@
 [submodule "vim/bundle/repeat"]
 	path = vim/bundle/repeat
 	url = http://github.com/tpope/vim-repeat.git
+	ignore = dirty
 [submodule "vim/bundle/SearchComplete"]
 	path = vim/bundle/SearchComplete
 	url = http://github.com/vim-scripts/SearchComplete.git
+	ignore = dirty
