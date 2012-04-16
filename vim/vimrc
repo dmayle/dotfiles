@@ -38,7 +38,6 @@ set formatoptions+=rcoqnl1
 " Use a colorscheme that's a bit brighter than the default. Force the 16 color
 " versin of solarized.
 set background=dark
-let g:solarized_termcolors=16
 colorscheme solarized
 
 " Set find-as-you-type searching
