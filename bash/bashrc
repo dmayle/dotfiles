@@ -123,7 +123,6 @@ ssh-reagent () {
   eval `ssh-agent`
   ssh-add
 }
-ssh-reagent
 
 # Puppet module scaffold
 mkpupmod() {
@@ -145,7 +144,11 @@ case "$platform" in
     # Use MacVim embedded vim, because it has python and ruby support
     export EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim'
     alias vi='/Applications/MacVim.app/Contents/MacOS/Vim'
-    alias vim='/Applications/MacVim.app/Contents/MacOS/Vim';;
+    alias vim='/Applications/MacVim.app/Contents/MacOS/Vim'
+    ;;
+  linux)
+    ssh-reagent
+    ;;
 esac
 
 # Do some PATH smashing
