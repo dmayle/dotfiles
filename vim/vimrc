@@ -30,14 +30,13 @@ syntax on
 " Now it's time for our user preferences.
 " ##############################################################################
 
-" Set some wildmenu options
-
 " I list these format options :help fo-table
 set formatoptions+=rcoqnl1
 
 " Use a colorscheme that's a bit brighter than the default. Force the 16 color
 " versin of solarized.
 set background=dark
+let g:solarized_termtrans = 1
 colorscheme solarized
 
 " Set find-as-you-type searching
@@ -89,6 +88,14 @@ set spelllang=en_us,fr
 
 " Status Line
 set statusline=%F%m%r%h%w\ [TYPE=%Y]\ %=\ %-(%{fugitive#statusline()}\ [POS=%04l,%04v][%p%%]\ [LEN=%L]%)
+"<PATH><MODIFIED?><READONLY?><HELP?><PREVIEW?> [TYPE=<FILETYPE>]  <- LEFT
+"<GIT> [POS=line,column][XX%] [LEN=X Lines]                       <- RIGHT
+
+" Configuration for powerline, still needs tweaking for color support before
+" I re-enable it.
+let g:Powerline_symbols = 'fancy'
+let g:Powerline_colorscheme='solarized16'
+
 " Always turn on status line
 set laststatus=2
 
