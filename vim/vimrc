@@ -115,7 +115,8 @@ set autoindent nocindent nosmartindent
 let is_bash=1
 
 " Set up default spacing and tabs (8 for hard tabs, 2 for what we use, insert
-" spaces instead of hard tabs)
+" spaces instead of hard tabs) TODO: turn this off as a default, and set up
+" mappings for all of the filetypes I use.
 set tabstop=8 shiftwidth=2 expandtab
 
 " Use IndentGuides coloring that makes sense in Solarized.  Force 16-color for
@@ -137,7 +138,7 @@ set wildmode=list:longest,full
 autocmd BufNewFile,BufRead *.spt set filetype=cheetah
 
 " Turn on indent guides in certain filetypes
-autocmd FileType python,html,cheetah IndentGuidesEnable
+autocmd FileType python,html,cheetah,sh IndentGuidesEnable
 
 " Update our tags file after writing to a source file.
 "au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
