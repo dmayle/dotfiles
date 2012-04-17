@@ -118,6 +118,13 @@ let is_bash=1
 " spaces instead of hard tabs)
 set tabstop=8 shiftwidth=2 expandtab
 
+" Use IndentGuides coloring that makes sense in Solarized.  Force 16-color for
+" now, since that's what I use, but switch to g:base00, e.g. when solarized is
+" updated to export the color names.
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  cterm=NONE
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=Grey40
+
 " Set up wildmenu and wildmode!
 set wildmenu
 set wildmode=list:longest,full
@@ -130,7 +137,7 @@ set wildmode=list:longest,full
 autocmd BufNewFile,BufRead *.spt set filetype=cheetah
 
 " Turn on indent guides in certain filetypes
-autocmd FileType python,html,cheetah IndentGuidesToggle
+autocmd FileType python,html,cheetah IndentGuidesEnable
 
 " Update our tags file after writing to a source file.
 "au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
