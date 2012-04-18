@@ -11,16 +11,15 @@ Create symlinks:
 Switch to the `~/.dm-dotfiles` directory, and fetch submodules:
 
     cd ~/.dm-dotfiles
-    git submodule init
-    git submodule update
+    git submodule update --init
 
 Switch to the '~/.vim/bundles/pyflakes' directory, and fetch submodules (This
 is necessary because the pyflakes.vim submodule uses a submodule of its own for
-the pyflakes python module):
+the pyflakes python module; The sed is necessary because it assumes write access to the repo):
 
     cd ~/.dm-dotfiles/vim/bundles/pyflakes
-    git submodule init
-    git submodule update
+    sed -i 's":"/"; s"git@"https://"; s"\.git""' .gitmodules
+    git submodule update --init
 
 Software required:
     Mac:
