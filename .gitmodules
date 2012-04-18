@@ -54,6 +54,10 @@
 	path = vim/bundle/pyflakes
 	url = git://github.com/kevinw/pyflakes-vim.git
 	ignore = dirty
+[submodule "vim/bundle/vim-web-indent"]
+	path = vim/bundle/vim-web-indent
+	url = https://github.com/lukasz/vim-web-indent
+	ignore = dirty
 [submodule "vim/bundle/fugitive"]
 	path = vim/bundle/fugitive
 	url = http://github.com/tpope/vim-fugitive.git
