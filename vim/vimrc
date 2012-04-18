@@ -33,10 +33,28 @@ syntax on
 " I list these format options :help fo-table
 set formatoptions+=rcoqnl1
 
+" Turn on 16-color display.
+" In 8-color mode, VIM supports 16 foreground colors (8 dark, 8 light with or
+" without 'bold') and 8 dark background colors.  You can even get 16-background
+" colors (8 dark via 'NONE' or 'reverse', 8 light via 'reverse'), but then you
+" are limited to 8 bright foreground colors (with or without 'bold').  There is
+" no way to specify bright background colors with dark foreground colors.
+" (Attempting to do so will either end up with both bright, or one bright with
+" one dark.) Setting 16-color mode allows VIM to use any of the 16 foreground
+" colors with any of the 16 background colors
+if has("terminfo")
+  let &t_Co=16
+  let &t_AB="\<Esc>[%?%p1%{8}%<%t%p1%{40}%+%e%p1%{92}%+%;%dm"
+  let &t_AF="\<Esc>[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm"
+else
+  let &t_Co=16
+  let &t_Sf="\<Esc>[3%dm"
+  let &t_Sb="\<Esc>[4%dm"
+endif
+
 " Use a colorscheme that's a bit brighter than the default. Force the 16 color
 " versin of solarized.
 set background=dark
-let g:solarized_termtrans = 1
 colorscheme solarized
 
 " Set find-as-you-type searching
@@ -137,8 +155,18 @@ set wildmode=list:longest,full
 "Teach VIM about spitfire templates
 autocmd BufNewFile,BufRead *.spt set filetype=cheetah
 
-" Turn on indent guides in certain filetypes
+" This trifecta allows us to create a default IndentGuides setting, and override
+" it per-filetype.  IndentGuides settings apply globally, and not per-buffer, so
+" any changes must be triggered with BufEnter.  In this case, we tell VIM to
+" retrigger FileType commands each time you change the buffer, so that
+" IndentGuides will be updated for each buffer you work on.
+autocmd BufEnter * filetype detect
+autocmd FileType * IndentGuidesDisable
 autocmd FileType python,html,cheetah,sh IndentGuidesEnable
+
+" Ensure that we autowrap git commits to 72 characters, per tpope's guidelines
+" for good git comments.
+autocmd FileType gitcommit setlocal textwidth=72
 
 " Update our tags file after writing to a source file.
 "au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
