@@ -81,3 +81,4 @@
 [submodule "vim/bundle/vim-powerline"]
 	path = vim/bundle/vim-powerline
 	url = https://github.com/dmayle/vim-powerline.git
+	ignore = dirty

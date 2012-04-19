@@ -104,15 +104,21 @@ set switchbuf=usetab
 autocmd FileType mail,text,python setlocal spell
 set spelllang=en_us,fr
 
-" Status Line
+" Status Line - This will be disable by VIM-powerline, but it's my preferred
+" vanilla status line.
 set statusline=%F%m%r%h%w\ [TYPE=%Y]\ %=\ %-(%{fugitive#statusline()}\ [POS=%04l,%04v][%p%%]\ [LEN=%L]%)
 "<PATH><MODIFIED?><READONLY?><HELP?><PREVIEW?> [TYPE=<FILETYPE>]  <- LEFT
 "<GIT> [POS=line,column][XX%] [LEN=X Lines]                       <- RIGHT
 
-" Configuration for powerline, still needs tweaking for color support before
+" Configuration for powerline, using a patched font and the 16-color solarized
+" colorscheme.
 " I re-enable it.
 let g:Powerline_symbols = 'fancy'
 let g:Powerline_colorscheme='solarized16'
+
+" Tell Powerline to display an indicator when there is trailing whitespace in
+" the current buffer
+call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
 
 " Always turn on status line
 set laststatus=2
@@ -217,7 +223,7 @@ endif
 
 " Name our backup directory vimbak-hostname
 let $HOST=hostname()
-let $MYBACKUPDIR=$HOME . '/.vimbak-' . $HOST 
+let $MYBACKUPDIR=$HOME . '/.vimbak-' . $HOST
 "
 " Make sure the backup directory exists first.
 if !isdirectory(fnameescape($MYBACKUPDIR))
