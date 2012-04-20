@@ -158,6 +158,9 @@ set wildmode=list:longest,full
 " ****** FILE SPECIFIC HANDLING ******
 " ##############################################################################
 
+" Turn on all conditional python highlighting
+let python_highlight_all = 1
+
 "Teach VIM about spitfire templates
 autocmd BufNewFile,BufRead *.spt set filetype=cheetah
 

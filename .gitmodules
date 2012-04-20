@@ -82,3 +82,7 @@
 	path = vim/bundle/vim-powerline
 	url = https://github.com/dmayle/vim-powerline.git
 	ignore = dirty
+[submodule "vim/bundle/vim-python-syntax"]
+	path = vim/bundle/vim-python-syntax
+	url = https://github.com/vim-scripts/python.vim--Vasiliev
+	ignore = dirty
