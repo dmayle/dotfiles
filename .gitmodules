@@ -86,3 +86,7 @@
 	path = vim/bundle/vim-python-syntax
 	url = https://github.com/vim-scripts/python.vim--Vasiliev
 	ignore = dirty
+[submodule "vim/bundle/autoclose"]
+	path = vim/bundle/autoclose
+	url = https://github.com/vim-scripts/AutoClose
+	ignore = dirty
