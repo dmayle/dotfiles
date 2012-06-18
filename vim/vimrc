@@ -236,6 +236,74 @@ endfunction
 " onoremap <silent> ]L :call NextIndent(1, 1, 1, 1)<CR>
 
 " ##############################################################################
+" ****** Toggle version of fugitive diff ******
+" ##############################################################################
+function GDiffToggle()
+  if exists("s:gdifftogglebuff")
+    " There is an existing diff buffer, so we are turning off the diff.  If
+    " we're in the diff window, then we delete it and move to the source window.
+    " Otherwise, we delete the diff window, turn off diffmode for the source
+    " window, but make sure that we leave the cursor in the same window.
+    " turn off diff
+    let l:curwin = winnr()
+    exec "bd " . s:gdifftogglebuff
+    unlet s:gdifftogglebuff
+    diffoff
+    return
+  endif
+  exec "Gdiff"
+  " Get the diff buffer by getting the buffer from the last accessed window.
+  let s:gdifftogglebuff = winbufnr(winnr('#'))
+  " Keep track of the source buffer as well.
+  let s:gdifftoggleorig = winbufnr(0)
+endfunction
+
+nmap <silent> <unique> <Leader>gt :call GDiffToggle()<CR>
+
+" Hitting <Enter> in the middle of two curly braces '{}' will go to the next
+" line, and push the closing curly brace one line below that.
+function BraceSpace()
+  if col(".") < 2
+    iunmap <CR>
+    if col(".") == col("$")
+      :execute "normal a\<CR>"
+    else
+      :execute "normal i\<CR>"
+    endif
+    imap <CR> <C-\><C-O>:call BraceSpace()<CR>
+    return
+  endif
+  let l:cursorchar = getline(".")[col(".") - 1]
+  if cursorchar != '}'
+    iunmap <CR>
+    if col(".") == col("$")
+      :execute "normal a\<CR>"
+    else
+      :execute "normal i\<CR>"
+    endif
+    imap <CR> <C-\><C-O>:call BraceSpace()<CR>
+    return
+  endif
+  let l:lastchar = getline(".")[col(".") - 2]
+  if lastchar != '{'
+    iunmap <CR>
+    if col(".") == col("$")
+      :execute "normal a\<CR>"
+    else
+      :execute "normal i\<CR>"
+    endif
+    imap <CR> <C-\><C-O>:call BraceSpace()<CR>
+    return
+  endif
+
+  iunmap <CR>
+  :execute "normal i\<CR>\<C-O>O"
+  imap <CR> <C-\><C-O>:call BraceSpace()<CR>
+endfunction
+
+imap <CR> <C-\><C-O>:call BraceSpace()<CR>
+
+" ##############################################################################
 " ****** SAVING FOLD STATE ******
 " ##############################################################################
 

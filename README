@@ -21,6 +21,9 @@ the pyflakes python module; The sed is necessary because it assumes write access
     sed -i 's":"/"; s"git@"https://"; s"\.git""' .gitmodules
     git submodule update --init
 
+Add this to your crontab to auto-update everyday at 3am.
+    0 3 * * * echo $(cd ~/.dm-dotfiles && git pull) >/dev/null
+
 Software required:
     Mac:
         MacVim (in order to get a vim compiled with python and ruby support)
