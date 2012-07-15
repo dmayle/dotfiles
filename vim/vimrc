@@ -30,8 +30,44 @@ syntax on
 " Now it's time for our user preferences.
 " ##############################################################################
 
+" Prevent file mode lines from changing VIM settings (can cause security
+" exploits anyway).
+set modelines=0
+
+" Default to regex search replace affecting all versions of a string within
+" the same line.
+set gdefault
+
+" Show visual characters for tabs and EOL (if this is enabled, then the line
+" two below this comment looks lite it has the same character twice.)
+set list
+set listchars=tab:▸\ ,eol:¬
+
+" Show line numbers relative to the current cursor line to make repeated
+" commands easier to compose
+set relativenumber
+
+" Make sure there is always at least 3 lines of context on either side of the
+" cursor (above and below).
+set scrolloff=3
+
+" Make my 'j' and 'k' movement commands work inside of the same line if it's
+" been screen-wrapped
+nnoremap j gj
+nnoremap k gk
+
 " I list these format options :help fo-table
 set formatoptions+=rcoqnl1
+
+" Prevent me from ever using my arrow keys again:
+nnoremap <up> <nop>
+inoremap <up> <nop>
+nnoremap <down> <nop>
+inoremap <down> <nop>
+nnoremap <left> <nop>
+inoremap <left> <nop>
+nnoremap <right> <nop>
+inoremap <right> <nop>
 
 " Turn on 16-color display.
 " In 8-color mode, VIM supports 16 foreground colors (8 dark, 8 light with or
@@ -116,7 +152,9 @@ set laststatus=2
 " Spell coloring
 hi SpellBad term=reverse ctermfg=white ctermbg=darkred guifg=#ffffff guibg=#7f0000 gui=undercurl
 
-" make backspace "more powerful"
+" make backspace "more powerful" (Allow backspace to 1# delete the autoindent,
+" 2# delete back up the previous line, and 3# delete characters from before
+" the character where insertion started.)
 set backspace=indent,eol,start
 
 " makes tabs insert "indents" at the beginning of the line
@@ -133,9 +171,16 @@ let is_bash=1
 " mappings for all of the filetypes I use.
 set tabstop=8 shiftwidth=2 expandtab
 
+" I don't like beeping
+set visualbell
+
+" Keep a horizontal line highlighting the position of the cursor (trying this
+" one out, 7/14/2012)
+set cursorline
+
 " Set up wildmenu and wildmode!
 set wildmenu
-set wildmode=list:longest,full
+set wildmode=list:longest
 
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
@@ -161,6 +206,10 @@ let g:indent_guides_auto_colors = 0
 autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  cterm=NONE
 autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=Grey40
 
+" %%%%% GUndo %%%%%
+"
+" Add a handy mapping for bringing up the undo tree.
+nnoremap <F5> :GundoToggle<CR>
 
 " ##############################################################################
 " ****** FILE SPECIFIC HANDLING ******
@@ -358,7 +407,10 @@ endif
 " Name our backup directory vimbak-hostname
 let $HOST=hostname()
 let $MYBACKUPDIR=$HOME . '/.vimbak-' . $HOST
-"
+
+" Save the current undo state between launches
+set undofile
+
 " Make sure the backup directory exists first.
 if !isdirectory(fnameescape($MYBACKUPDIR))
   silent! execute '!mkdir -p ' . shellescape($MYBACKUPDIR)
