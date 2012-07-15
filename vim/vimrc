@@ -110,16 +110,6 @@ set statusline=%F%m%r%h%w\ [TYPE=%Y]\ %=\ %-(%{fugitive#statusline()}\ [POS=%04l
 "<PATH><MODIFIED?><READONLY?><HELP?><PREVIEW?> [TYPE=<FILETYPE>]  <- LEFT
 "<GIT> [POS=line,column][XX%] [LEN=X Lines]                       <- RIGHT
 
-" Configuration for powerline, using a patched font and the 16-color solarized
-" colorscheme.
-" I re-enable it.
-let g:Powerline_symbols = 'fancy'
-let g:Powerline_colorscheme='solarized16'
-
-" Tell Powerline to display an indicator when there is trailing whitespace in
-" the current buffer
-call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
-
 " Always turn on status line
 set laststatus=2
 
@@ -143,6 +133,27 @@ let is_bash=1
 " mappings for all of the filetypes I use.
 set tabstop=8 shiftwidth=2 expandtab
 
+" Set up wildmenu and wildmode!
+set wildmenu
+set wildmode=list:longest,full
+
+" ##############################################################################
+" ****** PLUGIN SPECIFIC HANDLING ******
+" ##############################################################################
+" %%%%% Powerline %%%%%
+"
+" Configuration for powerline, using a patched font and the 16-color solarized
+" colorscheme.
+" I re-enable it.
+let g:Powerline_symbols = 'fancy'
+let g:Powerline_colorscheme='solarized16'
+
+" Tell Powerline to display an indicator when there is trailing whitespace in
+" the current buffer
+call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
+
+" %%%%% IndentGuides %%%%%
+"
 " Use IndentGuides coloring that makes sense in Solarized.  Force 16-color for
 " now, since that's what I use, but switch to g:base00, e.g. when solarized is
 " updated to export the color names.
@@ -150,9 +161,6 @@ let g:indent_guides_auto_colors = 0
 autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  cterm=NONE
 autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=Grey40
 
-" Set up wildmenu and wildmode!
-set wildmenu
-set wildmode=list:longest,full
 
 " ##############################################################################
 " ****** FILE SPECIFIC HANDLING ******
