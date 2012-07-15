@@ -164,6 +164,9 @@ let python_highlight_all = 1
 "Teach VIM about spitfire templates
 autocmd BufNewFile,BufRead *.spt set filetype=cheetah
 
+"Teach VIM about go source
+autocmd BufNewFile,BufRead *.go set filetype=go
+
 " This trifecta allows us to create a default IndentGuides setting, and override
 " it per-filetype.  IndentGuides settings apply globally, and not per-buffer, so
 " any changes must be triggered with BufEnter.  In this case, we tell VIM to
