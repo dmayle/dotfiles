@@ -38,10 +38,6 @@
 	path = vim/bundle/colorizer
 	url = https://github.com/lilydjwg/colorizer.git
 	ignore = dirty
-[submodule "vim/bundle/supertab"]
-	path = vim/bundle/supertab
-	url = http://github.com/ervandew/supertab.git
-	ignore = dirty
 [submodule "vim/bundle/tagbar"]
 	path = vim/bundle/tagbar
 	url = git://github.com/majutsushi/tagbar.git
@@ -82,10 +78,6 @@
 	path = vim/bundle/vim-python-syntax
 	url = https://github.com/vim-scripts/python.vim--Vasiliev
 	ignore = dirty
-[submodule "vim/bundle/autoclose"]
-	path = vim/bundle/autoclose
-	url = https://github.com/vim-scripts/AutoClose
-	ignore = dirty
 [submodule "vim/bundle/syntastic"]
 	path = vim/bundle/syntastic
 	url = https://github.com/scrooloose/syntastic
@@ -101,4 +93,8 @@
 [submodule "vim/bundle/gundo"]
 	path = vim/bundle/gundo
 	url = https://github.com/sjl/gundo.vim
+	ignore = dirty
+[submodule "vim/bundle/delimitMate"]
+	path = vim/bundle/delimitMate
+	url = https://github.com/Raimondi/delimitMate/
 	ignore = dirty

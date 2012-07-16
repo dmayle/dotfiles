@@ -185,6 +185,11 @@ set wildmode=list:longest
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
+" %%%%% DelimitMate %%%%%
+" When hitting enter between an empty delimiter pair, push it down an extra
+" line to leave space for what is being typed.
+let delimitMate_expand_cr = 1
+
 " %%%%% Powerline %%%%%
 "
 " Configuration for powerline, using a patched font and the 16-color solarized
@@ -319,49 +324,6 @@ function GDiffToggle()
 endfunction
 
 nmap <silent> <unique> <Leader>gt :call GDiffToggle()<CR>
-
-" Hitting <Enter> in the middle of two curly braces '{}' will go to the next
-" line, and push the closing curly brace one line below that.
-function BraceSpace()
-  if col(".") < 2
-    iunmap <CR>
-    if col(".") == col("$")
-      :execute "normal a\<CR>"
-    else
-      :execute "normal i\<CR>"
-    endif
-    imap <CR> <C-\><C-O>:call BraceSpace()<CR>
-    return
-  endif
-  let l:cursorchar = getline(".")[col(".") - 1]
-  if cursorchar != '}'
-    iunmap <CR>
-    if col(".") == col("$")
-      :execute "normal a\<CR>"
-    else
-      :execute "normal i\<CR>"
-    endif
-    imap <CR> <C-\><C-O>:call BraceSpace()<CR>
-    return
-  endif
-  let l:lastchar = getline(".")[col(".") - 2]
-  if lastchar != '{'
-    iunmap <CR>
-    if col(".") == col("$")
-      :execute "normal a\<CR>"
-    else
-      :execute "normal i\<CR>"
-    endif
-    imap <CR> <C-\><C-O>:call BraceSpace()<CR>
-    return
-  endif
-
-  iunmap <CR>
-  :execute "normal i\<CR>\<C-O>k\<C-O>o"
-  imap <CR> <C-\><C-O>:call BraceSpace()<CR>
-endfunction
-
-imap <CR> <C-\><C-O>:call BraceSpace()<CR>
 
 " ##############################################################################
 " ****** SAVING FOLD STATE ******
