@@ -43,10 +43,6 @@ set gdefault
 set list
 set listchars=tab:▸\ ,eol:¬
 
-" Show line numbers relative to the current cursor line to make repeated
-" commands easier to compose
-set relativenumber
-
 " Make sure there is always at least 3 lines of context on either side of the
 " cursor (above and below).
 set scrolloff=3
@@ -111,6 +107,10 @@ set hlsearch
 " Turn on line numbers and set the gutter to 5 for 10k-1 lines
 set number
 set numberwidth=5
+
+" Show line numbers relative to the current cursor line to make repeated
+" commands easier to compose
+set relativenumber
 
 " Enable mouse support in text terminals (using smarter mouse protocol, xterm2)
 set mouse=a
@@ -357,7 +357,7 @@ function BraceSpace()
   endif
 
   iunmap <CR>
-  :execute "normal i\<CR>\<C-O>O"
+  :execute "normal i\<CR>\<C-O>k\<C-O>o"
   imap <CR> <C-\><C-O>:call BraceSpace()<CR>
 endfunction
 

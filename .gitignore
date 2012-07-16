@@ -1,6 +1,10 @@
 # Ignore generated *.pyc files
 *.pyc
+# Ignore VIM undo files.
+*.un~
 # Ignore vim file used for tracking remote file editing
 vim/.netrwhist
 # Ignore view-temporary file for vim
 vim/view
+# Ignore VIM session files.
+vim/sessions
