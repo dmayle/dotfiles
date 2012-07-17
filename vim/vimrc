@@ -185,6 +185,10 @@ set wildmode=list:longest
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
+" %%%%% a.vim %%%%%
+" Shortcut for switching between a source file and it's corresponding header
+nmap <leader>a :A<CR>
+
 " %%%%% DelimitMate %%%%%
 " When hitting enter between an empty delimiter pair, push it down an extra
 " line to leave space for what is being typed.
