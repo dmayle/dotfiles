@@ -30,6 +30,9 @@ syntax on
 " Now it's time for our user preferences.
 " ##############################################################################
 
+" Make sure MacVim uses our pretty font with powerline characters
+set guifont=Ubuntu\ Mono\ for\ Powerline:h13
+
 " Prevent file mode lines from changing VIM settings (can cause security
 " exploits anyway).
 set modelines=0
