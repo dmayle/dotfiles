@@ -1,2 +1,2 @@
-#!/bin/bash
-if [ -x /Applications/MacVim.app/Contents/MacOS/Vim ]; then /Applications/MacVim.app/Contents/MacOS/Vim $@; else vim $@; fi
+#!/bin/bash -
+if [ -x /Applications/MacVim.app/Contents/MacOS/Vim ]; then exec /Applications/MacVim.app/Contents/MacOS/Vim $@; else exec vim $@; fi

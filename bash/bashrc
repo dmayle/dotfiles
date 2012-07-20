@@ -159,6 +159,9 @@ fi
 # Allow version controlled binaries to override the system path.
 export PATH="~/.dm-dotfiles/bin:$PATH"
 
+# Dude... I have GOT to turn on vi mode!
+set -o vi
+
 # Support running a local specific bashrc
 if [ -f ~/.bashrc_local ]; then
     . ~/.bashrc_local
