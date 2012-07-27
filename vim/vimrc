@@ -389,12 +389,11 @@ endif
 " directory to prevent collisions.
 " ##############################################################################
 
-" Name our backup directory vimbak-hostname
+" Name our backup directory vimbak-hostname, and our undo directory
+" vimundo-hostname
 let $HOST=hostname()
 let $MYBACKUPDIR=$HOME . '/.vimbak-' . $HOST
-
-" Save the current undo state between launches
-set undofile
+let $MYUNDODIR=$HOME . '/.vimundo-' . $HOST
 
 " Make sure the backup directory exists first.
 if !isdirectory(fnameescape($MYBACKUPDIR))
@@ -402,8 +401,18 @@ if !isdirectory(fnameescape($MYBACKUPDIR))
   silent! execute '!chmod 700 ' . shellescape($MYBACKUPDIR)
 endif
 
+" Do the same for the undo directory
+if !isdirectory(fnameescape($MYUNDODIR))
+  silent! execute '!mkdir -p ' . shellescape($MYUNDODIR)
+  silent! execute '!chmod 700 ' . shellescape($MYUNDODIR)
+endif
+
 " Set directory for swap files
 set directory=$MYBACKUPDIR
+" Set directory for undo files
+set undodir=$MYUNDODIR
+" Save the current undo state between launches
+set undofile
 " Set to only keep one (current) backup
 set backup writebackup
 " Set directory for backup files
