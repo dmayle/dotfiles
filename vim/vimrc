@@ -167,11 +167,6 @@ set autoindent nocindent nosmartindent
 " informs sh syntax that /bin/sh is actually bash
 let is_bash=1
 
-" Set up default spacing and tabs (8 for hard tabs, 2 for what we use, insert
-" spaces instead of hard tabs) TODO: turn this off as a default, and set up
-" mappings for all of the file types I use.
-set tabstop=8 shiftwidth=2 expandtab
-
 " I don't like beeping
 set visualbell
 
@@ -239,6 +234,10 @@ nnoremap <F5> :GundoToggle<CR>
 
 " Turn on all conditional python highlighting
 let python_highlight_all = 1
+
+" Set up default spacing and tabs for a few filetypes.  I've left off GO, since
+" the filetype plugin handles it fore me.
+autocmd FileType mail,text,python,gitcommit,cpp setlocal tabstop=8 shiftwidth=2 expandtab
 
 " Turn on spellchecking in these file types.
 autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
