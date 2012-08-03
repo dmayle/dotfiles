@@ -107,6 +107,11 @@ function sscr() {
   ssh -t $1 byobu;
 }
 
+# Two functions to make it switch between using the local X server and X over
+# SSH.
+function xremote() { export DISPLAY=localhost:10.0; }
+function xlocal() { export DISPLAY=:0.0; }
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
