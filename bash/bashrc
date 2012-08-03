@@ -104,7 +104,7 @@ fi
 
 # Make it easy to directly screen/byobu into remote hosts via SSH.
 function sscr() {
-  ssh -t $1 byobu;
+  ssh -t $1 byobu -DR;
 }
 
 # enable programmable completion features (you don't need to enable
