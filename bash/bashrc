@@ -104,7 +104,7 @@ fi
 
 # Make it easy to directly screen/byobu into remote hosts via SSH.
 function sscr() {
-  ssh -t $1 byobu -DR;
+  ssh -t $1 byobu -dr;
 }
 
 # Two functions to make it switch between using the local X server and X over
