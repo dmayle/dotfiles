@@ -194,6 +194,9 @@ nmap <silent> <leader>sc :if &relativenumber <Bar>
   \set relativenumber list <Bar>
     \endif<CR>
 
+" Jump to the first line (if any) of the file longer than textwidth.
+nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth + 1) . "\\}")<CR>
+
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
