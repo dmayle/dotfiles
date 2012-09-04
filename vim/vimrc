@@ -150,6 +150,10 @@ set statusline=%F%m%r%h%w\ [TYPE=%Y]\ %=\ %-(%{fugitive#statusline()}\ [POS=%04l
 " Always turn on status line
 set laststatus=2
 
+" By default, I don't limit the line length of my files.  I override this for
+" individual file types below.
+set textwidth=0
+
 " Spell coloring
 hi SpellBad term=reverse ctermfg=white ctermbg=darkred guifg=#ffffff guibg=#7f0000 gui=undercurl
 
@@ -237,7 +241,7 @@ let python_highlight_all = 1
 
 " Set up default spacing and tabs for a few filetypes.  I've left off GO, since
 " the filetype plugin handles it fore me.
-autocmd FileType mail,text,python,gitcommit,cpp setlocal tabstop=8 shiftwidth=2 expandtab
+autocmd FileType mail,text,python,gitcommit,cpp,java setlocal tabstop=8 shiftwidth=2 expandtab
 
 " Turn on spellchecking in these file types.
 autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
@@ -261,8 +265,11 @@ autocmd FileType python,html,cheetah,sh,vim,cpp IndentGuidesEnable
 " for good git comments.
 autocmd FileType gitcommit setlocal textwidth=72
 
-" I use 80-column lines in C++ files, and my vimrc.
-autocmd FileType vim,cpp setlocal textwidth=80
+" I use 80-column lines in mail, plain text, C++ files, and my vimrc.
+autocmd FileType mail,text,vim,cpp setlocal textwidth=80
+
+" I use 100-column lines in Java files
+autocmd FileType java setlocal textwidth=100
 
 " Update our tags file after writing to a source file.
 "au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &
