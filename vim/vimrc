@@ -197,6 +197,9 @@ nmap <silent> <leader>sc :if &relativenumber <Bar>
 " Jump to the first line (if any) of the file longer than textwidth.
 nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth ? &textwidth + 1 : 9999) . "\\}")<CR>
 
+" Toggle the tagbar plugin
+nmap <silent> <leader>t :TagbarToggle<CR>
+
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
@@ -262,7 +265,7 @@ autocmd BufNewFile,BufRead *.go set filetype=go
 " IndentGuides will be updated for each buffer you work on.
 autocmd BufEnter * filetype detect
 autocmd FileType * IndentGuidesDisable
-autocmd FileType python,html,cheetah,sh,vim,cpp IndentGuidesEnable
+autocmd FileType python,html,cheetah,java,sh,vim,cpp IndentGuidesEnable
 
 " Ensure that we autowrap git commits to 72 characters, per tpope's guidelines
 " for good git comments.
