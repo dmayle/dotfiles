@@ -107,6 +107,9 @@ function sscr() {
   ssh -t $1 byobu -dr;
 }
 
+# Special command to highlight text
+function hl() { local R=$1; shift; egrep --color=always "|$R" $@; }
+
 # Two functions to make it switch between using the local X server and X over
 # SSH.
 function xremote() { export DISPLAY=localhost:10.0; }
