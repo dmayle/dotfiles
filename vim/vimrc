@@ -200,6 +200,9 @@ nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth ? &textwidth + 
 " Toggle the tagbar plugin
 nmap <silent> <leader>t :TagbarToggle<CR>
 
+" Delete the current buffer, and replace it with the BufExplorer Window
+nnoremap <silent> <leader>bd :BufExplorer<CR>:normal d<CR>
+
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
