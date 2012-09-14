@@ -50,11 +50,6 @@ set listchars=tab:▸\ ,eol:¬
 " cursor (above and below).
 set scrolloff=3
 
-" Make my 'j' and 'k' movement commands work inside of the same line if it's
-" been screen-wrapped
-nnoremap j gj
-nnoremap k gk
-
 " I list these format options :help fo-table
 set formatoptions+=rcoqnl1
 
