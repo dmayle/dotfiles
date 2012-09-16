@@ -50,11 +50,6 @@ set listchars=tab:▸\ ,eol:¬
 " cursor (above and below).
 set scrolloff=3
 
-" Make my 'j' and 'k' movement commands work inside of the same line if it's
-" been screen-wrapped
-nnoremap j gj
-nnoremap k gk
-
 " I list these format options :help fo-table
 set formatoptions+=rcoqnl1
 
@@ -111,8 +106,9 @@ set hlsearch
 " commands easier to compose
 set relativenumber
 
-" Set the gutter for line numbers to 5 for 10k-1 lines
-set numberwidth=5
+" With relative numbers, I never have more than 3 digits of line history on the
+" screen at once
+set numberwidth=3
 
 " Enable mouse support in text terminals (using smarter mouse protocol, xterm2)
 set mouse=a
@@ -174,8 +170,7 @@ let is_bash=1
 " I don't like beeping
 set visualbell
 
-" Keep a horizontal line highlighting the position of the cursor (trying this
-" one out, 7/14/2012)
+" Keep a horizontal line highlighting the position of the cursor
 set cursorline
 
 " Set up wildmenu and wildmode!
@@ -197,17 +192,21 @@ nmap <silent> <leader>sc :if &relativenumber <Bar>
 " Jump to the first line (if any) of the file longer than textwidth.
 nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth ? &textwidth + 1 : 9999) . "\\}")<CR>
 
-" Toggle the tagbar plugin
-nmap <silent> <leader>t :TagbarToggle<CR>
-
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
+" %%%%% Tagbar %%%%%
+"
+" Toggle the tagbar plugin
+nmap <silent> <leader>t :TagbarToggle<CR>
+
 " %%%%% a.vim %%%%%
+"
 " Shortcut for switching between a source file and it's corresponding header
 nmap <leader>a :A<CR>
 
 " %%%%% DelimitMate %%%%%
+"
 " When hitting enter between an empty delimiter pair, push it down an extra
 " line to leave space for what is being typed.
 let delimitMate_expand_cr = 1
@@ -245,7 +244,7 @@ nnoremap <F5> :GundoToggle<CR>
 " Turn on all conditional python highlighting
 let python_highlight_all = 1
 
-" Set up default spacing and tabs for a few filetypes.  I've left off GO, since
+" Set up default spacing and tabs for a few filetypes.  I've left off Go, since
 " the filetype plugin handles it fore me.
 autocmd FileType mail,text,python,gitcommit,cpp,java setlocal tabstop=8 shiftwidth=2 expandtab
 
