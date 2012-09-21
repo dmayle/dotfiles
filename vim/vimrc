@@ -237,6 +237,11 @@ autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=G
 " Add a handy mapping for bringing up the undo tree.
 nnoremap <F5> :GundoToggle<CR>
 
+" %%%%% Fugitive %%%%%
+"
+" Fixup diff handling for Fugitive buffers.
+autocmd BufNewFile,BufRead fugitive://* set bufhidden=delete
+
 " ##############################################################################
 " ****** FILE SPECIFIC HANDLING ******
 " ##############################################################################
