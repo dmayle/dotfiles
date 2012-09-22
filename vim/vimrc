@@ -251,7 +251,7 @@ let python_highlight_all = 1
 
 " Set up default spacing and tabs for a few filetypes.  I've left off Go, since
 " the filetype plugin handles it fore me.
-autocmd FileType mail,text,python,gitcommit,cpp,java setlocal tabstop=8 shiftwidth=2 expandtab
+autocmd FileType mail,text,python,gitcommit,cpp,java,sh setlocal tabstop=8 shiftwidth=2 expandtab
 
 " Turn on spellchecking in these file types.
 autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
