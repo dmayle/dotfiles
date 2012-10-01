@@ -103,8 +103,10 @@ set smartcase
 set hlsearch
 
 " Show line numbers relative to the current cursor line to make repeated
-" commands easier to compose
-set relativenumber
+" commands easier to compose. We only do this while in the buffer.  When focused
+" in another buffer, we use standard numbering.
+autocmd BufEnter * setlocal relativenumber
+autocmd BufLeave * setlocal number
 
 " With relative numbers, I never have more than 3 digits of line history on the
 " screen at once
@@ -191,6 +193,9 @@ nmap <silent> <leader>sc :if &relativenumber <Bar>
 
 " Jump to the first line (if any) of the file longer than textwidth.
 nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth ? &textwidth + 1 : 9999) . "\\}")<CR>
+
+" Delete the current buffer, and jump to a list of buffers
+nmap <silent> <leader>bd :BufExplorer<cr>d
 
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
