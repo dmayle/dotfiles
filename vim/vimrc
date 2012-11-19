@@ -44,7 +44,7 @@ set gdefault
 " Show visual characters for tabs and EOL (if this is enabled, then the line
 " two below this comment looks lite it has the same character twice.)
 set list
-set listchars=tab:▸\ ,eol:¬
+set listchars=tab:▸\ ,eol:¬,trail:☐
 
 " Make sure there is always at least 3 lines of context on either side of the
 " cursor (above and below).
@@ -110,7 +110,7 @@ autocmd BufLeave * setlocal number
 
 " With relative numbers, I never have more than 3 digits of line history on the
 " screen at once
-set numberwidth=3
+set numberwidth=4
 
 " Enable mouse support in text terminals (using smarter mouse protocol, xterm2)
 set mouse=a
