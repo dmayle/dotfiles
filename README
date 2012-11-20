@@ -7,6 +7,7 @@ Create symlinks:
     ln -s .dm-dotfiles/vim ~/.vim
     ln -s .dm-dotfiles/bash/bashrc ~/.bashrc
     ln -s .dm-dotfiles/bash/bash_profile ~/.bashrc
+    ln -s .dm-dotfiles/inputrc ~/.inputrc
     ln -s .vim/vimrc ~/.vimrc
 
 Switch to the `~/.dm-dotfiles` directory, and fetch submodules:
