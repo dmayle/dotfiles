@@ -104,7 +104,7 @@ fi
 
 # Make it easy to directly screen/byobu into remote hosts via SSH.
 function sscr() {
-  ssh -t $1 byobu -dr;
+  ssh -t $1 byobu -dR;
 }
 
 # Special command to highlight text
