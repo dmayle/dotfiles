@@ -45,6 +45,7 @@ set gdefault
 " two below this comment looks lite it has the same character twice.)
 set list
 set listchars=tab:▸\ ,eol:¬,trail:☐
+autocmd FileType go setlocal listchars=tab:\ \ ,eol:¬,trail:☐
 
 " Make sure there is always at least 3 lines of context on either side of the
 " cursor (above and below).
@@ -52,6 +53,21 @@ set scrolloff=3
 
 " I list these format options :help fo-table
 set formatoptions+=rcoqnl1
+
+" Autofill to the longest shared substring, and always show the menu, even if
+" there is only one match.
+set completeopt=longest,menuone
+
+" In console mode, <C-SPACE> is not sent by the term program, for some reason it
+" sends <C-@> instead. I use <C-SPACE> for omni-completion.
+if has("gui_running")
+  inoremap <C-SPACE> <C-X><C-O><C-P>
+else
+  inoremap <C-@> <C-X><C-O><C-P>
+endif
+
+" If w! doesn't work (because you don't have permessions), use w!! to save
+cnoremap <silent> w!! :exec ":echo ':w!!'"<CR>:%!sudo tee > /dev/null %
 
 " Prevent me from ever using my arrow keys again:
 nnoremap <up> <nop>
