@@ -274,6 +274,9 @@ let python_highlight_all = 1
 " the filetype plugin handles it fore me.
 autocmd FileType mail,text,python,gitcommit,cpp,java,sh setlocal tabstop=8 shiftwidth=2 expandtab
 
+" Standard GO tab settings (tabs, not spaces
+autocmd FileType go setlocal tabstop=2 shiftwidth=2 noexpandtab
+
 " Turn on spellchecking in these file types.
 autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
 
