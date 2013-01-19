@@ -232,6 +232,14 @@ nmap <leader>a :A<CR>
 " line to leave space for what is being typed.
 let delimitMate_expand_cr = 1
 
+" VIM has a setline() bug that breaks undo when hitting <CR> from insert mode.
+" delimitMate defaults to disabling CR expansion in comment regions, which
+" triggers this bug. Since I don't use the feature, I explicitly disable it here
+" to ensure undo fidelity.  Bug detailed at:
+" https://groups.google.com/forum/?fromgroups=#!topic/vim_use/yRcEE2eO8TQ
+" https://github.com/Raimondi/delimitMate/issues/114
+let delimitMate_excluded_regions_enabled = 0
+
 " %%%%% Powerline %%%%%
 "
 " Configuration for Powerline, using a patched font and the 16-color Solarized
