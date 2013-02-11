@@ -80,7 +80,7 @@
 	ignore = dirty
 [submodule "vim/bundle/syntastic"]
 	path = vim/bundle/syntastic
-	url = https://github.com/scrooloose/syntastic
+	url = https://github.com/Valloric/syntastic
 	ignore = dirty
 [submodule "vim/bundle/sessionman"]
 	path = vim/bundle/sessionman
@@ -109,4 +109,8 @@
 [submodule "vim/bundle/ctrlp"]
 	path = vim/bundle/ctrlp
 	url = https://github.com/kien/ctrlp.vim
+	ignore = dirty
+[submodule "vim/bundle/YouCompleteMe"]
+	path = vim/bundle/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe
 	ignore = dirty

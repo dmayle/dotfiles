@@ -288,6 +288,10 @@ autocmd FileType go setlocal tabstop=2 shiftwidth=2 noexpandtab
 " Turn on spellchecking in these file types.
 autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
 
+" Help files trigger the 'text' filetype autocommand, but we don't want
+" spellchecking in the help buffer, so we manually disable it.
+autocmd FileType help setlocal nospell
+
 "Teach VIM about spitfire templates
 autocmd BufNewFile,BufRead *.spt set filetype=cheetah
 
