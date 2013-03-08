@@ -45,7 +45,10 @@ set gdefault
 " two below this comment looks lite it has the same character twice.)
 set list
 set listchars=tab:▸\ ,eol:¬,trail:☐
-autocmd FileType go setlocal listchars=tab:\ \ ,eol:¬,trail:☐
+augroup VisualChars
+  augroup! VisualChars
+  autocmd FileType go setlocal listchars=tab:\ \ ,eol:¬,trail:☐
+augroup END
 
 " Make sure there is always at least 3 lines of context on either side of the
 " cursor (above and below).
@@ -121,8 +124,11 @@ set hlsearch
 " Show line numbers relative to the current cursor line to make repeated
 " commands easier to compose. We only do this while in the buffer.  When focused
 " in another buffer, we use standard numbering.
-autocmd BufEnter * setlocal relativenumber
-autocmd BufLeave * setlocal number
+augroup LineNumbers
+  augroup! LineNumbers
+  autocmd BufEnter * setlocal relativenumber
+  autocmd BufLeave * setlocal number
+augroup END
 
 " With relative numbers, I never have more than 3 digits of line history on the
 " screen at once
@@ -258,8 +264,11 @@ call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
 " now, since that's what I use, but switch to g:base00, e.g. when Solarized is
 " updated to export the color names.
 let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  cterm=NONE
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=Grey40
+augroup FixIndentGuides
+  augroup! FixIndentGuides
+  autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  cterm=NONE
+  autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=Grey40
+augroup END
 
 " %%%%% GUndo %%%%%
 "
@@ -269,7 +278,10 @@ nnoremap <F5> :GundoToggle<CR>
 " %%%%% Fugitive %%%%%
 "
 " Fixup diff handling for Fugitive buffers.
-autocmd BufNewFile,BufRead fugitive://* set bufhidden=delete
+augroup FixFugitive
+  augroup! FixFugitive
+  autocmd BufNewFile,BufRead fugitive://* set bufhidden=delete
+augroup END
 
 " ##############################################################################
 " ****** FILE SPECIFIC HANDLING ******
@@ -278,44 +290,51 @@ autocmd BufNewFile,BufRead fugitive://* set bufhidden=delete
 " Turn on all conditional python highlighting
 let python_highlight_all = 1
 
-" Set up default spacing and tabs for a few filetypes.  I've left off Go, since
-" the filetype plugin handles it fore me.
-autocmd FileType mail,text,python,gitcommit,cpp,java,sh setlocal tabstop=8 shiftwidth=2 expandtab
+augroup PersonalFileTypeSettings
+  augroup! PersonalFileTypeSettings
+  " Set up default spacing and tabs for a few filetypes.  I've left off Go,
+  " since the filetype plugin handles it fore me.
+  autocmd FileType mail,text,python,gitcommit,cpp,java,sh setlocal tabstop=8 shiftwidth=2 expandtab
 
-" Standard GO tab settings (tabs, not spaces
-autocmd FileType go setlocal tabstop=2 shiftwidth=2 noexpandtab
+  " Standard GO tab settings (tabs, not spaces
+  autocmd FileType go setlocal tabstop=2 shiftwidth=2 noexpandtab
 
-" Turn on spellchecking in these file types.
-autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
+  " Turn on spellchecking in these file types.
+  autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
 
-" Help files trigger the 'text' filetype autocommand, but we don't want
-" spellchecking in the help buffer, so we manually disable it.
-autocmd FileType help setlocal nospell
+  " Help files trigger the 'text' filetype autocommand, but we don't want
+  " spellchecking in the help buffer, so we manually disable it.
+  autocmd FileType help setlocal nospell
 
-"Teach VIM about spitfire templates
-autocmd BufNewFile,BufRead *.spt set filetype=cheetah
+  "Teach VIM about spitfire templates
+  autocmd BufNewFile,BufRead *.spt set filetype=cheetah
 
-"Teach VIM about go source
-autocmd BufNewFile,BufRead *.go set filetype=go
+  "Teach VIM about go source
+  autocmd BufNewFile,BufRead *.go set filetype=go
 
-" This trifecta allows us to create a default IndentGuides setting, and override
-" it per-filetype.  IndentGuides settings apply globally, and not per-buffer, so
-" any changes must be triggered with BufEnter.  In this case, we tell VIM to
-" retrigger FileType commands each time you change the buffer, so that
-" IndentGuides will be updated for each buffer you work on.
-autocmd BufEnter * if &ft !=# 'help' | filetype detect | endif
-autocmd FileType * IndentGuidesDisable
-autocmd FileType python,html,cheetah,java,sh,vim,cpp,go IndentGuidesEnable
+  " This trifecta allows us to create a default IndentGuides setting, and
+  " override it per-filetype.  IndentGuides settings apply globally, and not
+  " per-buffer, so any changes must be triggered with BufEnter.  In this case,
+  " we tell VIM to retrigger FileType commands each time you change the buffer,
+  " so that IndentGuides will be updated for each buffer you work on.
+  autocmd BufEnter * if &ft !=# 'help' | filetype detect | endif
+  autocmd FileType * IndentGuidesDisable
+  autocmd FileType python,html,cheetah,java,sh,vim,cpp,go IndentGuidesEnable
 
-" Ensure that we autowrap git commits to 72 characters, per tpope's guidelines
-" for good git comments.
-autocmd FileType gitcommit setlocal textwidth=72
+  " Ensure that we autowrap git commits to 72 characters, per tpope's guidelines
+  " for good git comments.
+  autocmd FileType gitcommit setlocal textwidth=72
 
-" I use 80-column lines in mail, plain text, C++ files, and my vimrc.
-autocmd FileType mail,text,vim,cpp setlocal textwidth=80
+  " I use 80-column lines in mail, plain text, C++ files, and my vimrc.
+  autocmd FileType mail,text,vim,cpp setlocal textwidth=80
 
-" I use 100-column lines in Java files
-autocmd FileType java setlocal textwidth=100
+  " I use 100-column lines in Java files
+  autocmd FileType java setlocal textwidth=100
+
+  " Change line continuation rules for Java. j1 is for Java anonymous classes,
+  " +2s says indent 2xshiftwidth on line continuations.
+  autocmd FileType java setlocal cinoptions=j1,+2s
+augroup END
 
 " Update our tags file after writing to a source file.
 "au BufWritePost .m,.py,.c,.cpp,*.h,.js silent! !ctags -R &

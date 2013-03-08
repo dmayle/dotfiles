@@ -80,7 +80,7 @@
 	ignore = dirty
 [submodule "vim/bundle/syntastic"]
 	path = vim/bundle/syntastic
-	url = https://github.com/Valloric/syntastic
+	url = https://github.com/scrooloose/syntastic
 	ignore = dirty
 [submodule "vim/bundle/sessionman"]
 	path = vim/bundle/sessionman
