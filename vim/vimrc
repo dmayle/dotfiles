@@ -46,8 +46,9 @@ set gdefault
 set list
 set listchars=tab:▸\ ,eol:¬,trail:☐
 augroup VisualChars
-  augroup! VisualChars
-  autocmd FileType go setlocal listchars=tab:\ \ ,eol:¬,trail:☐
+  au!
+  autocmd FileType * set listchars=tab:▸\ ,eol:¬,trail:☐
+  autocmd FileType go set listchars=tab:\ \ ,eol:¬,trail:☐
 augroup END
 
 " Make sure there is always at least 3 lines of context on either side of the
@@ -124,10 +125,19 @@ set hlsearch
 " Show line numbers relative to the current cursor line to make repeated
 " commands easier to compose. We only do this while in the buffer.  When focused
 " in another buffer, we use standard numbering.
-augroup LineNumbers
-  augroup! LineNumbers
-  autocmd BufEnter * setlocal relativenumber
-  autocmd BufLeave * setlocal number
+function! s:InitLineNumbering()
+  let l:my_window = winnr()
+  windo setlocal number
+  exec l:my_window . 'wincmd w'
+  setlocal relativenumber
+endfunction
+
+augroup MyLineNumbers
+  au!
+  autocmd VimEnter * call <SID>InitLineNumbering()
+  autocmd BufEnter,WinEnter * setlocal relativenumber
+  autocmd FileType help setlocal relativenumber
+  autocmd WinLeave * setlocal number
 augroup END
 
 " With relative numbers, I never have more than 3 digits of line history on the
@@ -265,7 +275,7 @@ call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
 " updated to export the color names.
 let g:indent_guides_auto_colors = 0
 augroup FixIndentGuides
-  augroup! FixIndentGuides
+  au!
   autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  cterm=NONE
   autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=Grey40
 augroup END
@@ -279,7 +289,7 @@ nnoremap <F5> :GundoToggle<CR>
 "
 " Fixup diff handling for Fugitive buffers.
 augroup FixFugitive
-  augroup! FixFugitive
+  au!
   autocmd BufNewFile,BufRead fugitive://* set bufhidden=delete
 augroup END
 
@@ -291,7 +301,7 @@ augroup END
 let python_highlight_all = 1
 
 augroup PersonalFileTypeSettings
-  augroup! PersonalFileTypeSettings
+  au!
   " Set up default spacing and tabs for a few filetypes.  I've left off Go,
   " since the filetype plugin handles it fore me.
   autocmd FileType mail,text,python,gitcommit,cpp,java,sh setlocal tabstop=8 shiftwidth=2 expandtab
