@@ -66,10 +66,6 @@
 	path = vim/bundle/repeat
 	url = http://github.com/tpope/vim-repeat.git
 	ignore = dirty
-[submodule "vim/bundle/SearchComplete"]
-	path = vim/bundle/SearchComplete
-	url = http://github.com/vim-scripts/SearchComplete.git
-	ignore = dirty
 [submodule "vim/bundle/vim-powerline"]
 	path = vim/bundle/vim-powerline
 	url = https://github.com/dmayle/vim-powerline.git
