@@ -1,6 +1,7 @@
 " As long as this is in a user vimrc, it has no effect, but we never want old
 " vi-mode in any case.
 set nocompatible
+source ~/.vim/bundles.vim
 
 " ##############################################################################
 " ****** PATHOGEN ******
@@ -12,17 +13,15 @@ set nocompatible
 
 " Make sure pathogen ftplugins are properly installed by disabling then
 " re-enabling file type plugins.
-filetype off
 
 " Enable auto-loading of per-directory plugins in ~/.vim/bundle
-call pathogen#infect()
+"call pathogen#infect()
 " Do the same for machine local viles in ~/.vim_local/bundle
-call pathogen#infect('~/.vim_local/bundle')
+"call pathogen#infect('~/.vim_local/bundle')
 " Generate helptags for all of the above plugins
-call pathogen#helptags()
+"call pathogen#helptags()
 
-" Set the basics and start with the shared config.
-filetype plugin indent on
+
 syntax on
 
 " ##############################################################################

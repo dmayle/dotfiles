@@ -8,3 +8,37 @@ vim/.netrwhist
 vim/view
 # Ignore VIM session files.
 vim/sessions
+# Transition plan for Vundle. Uncomment these one at a time as I switch them to
+# Vundle. Once done, uncomment out the last wildcard line.
+# vim/bundle/a.vim
+# vim/bundle/conque
+# vim/bundle/gundo
+# vim/bundle/sessionman
+# vim/bundle/vim-colors-solarized
+# vim/bundle/vimoutliner
+# vim/bundle/vim-unimpaired
+# vim/bundle/zencoding-vim
+# vim/bundle/bufexplorer
+# vim/bundle/ctrlp
+# vim/bundle/lusty
+# vim/bundle/speeddating
+# vim/bundle/vim-easymotion
+# vim/bundle/vim-powerline
+# vim/bundle/vim-visual-increment
+# vim/bundle/colorizer
+# vim/bundle/delimitMate
+# vim/bundle/NERD_tree
+# vim/bundle/syntastic
+# vim/bundle/vim-indent-guides
+# vim/bundle/vim-python-syntax
+# vim/bundle/vundle
+# vim/bundle/commentary
+# vim/bundle/fugitive
+# vim/bundle/repeat
+# vim/bundle/tagbar
+# vim/bundle/vim-indent-object
+# vim/bundle/vim-surround
+# vim/bundle/YouCompleteMe
+# #######################
+vim/bundle/*
+
