@@ -226,7 +226,10 @@ nmap <silent> <leader>sc :if &relativenumber <Bar>
 nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth ? &textwidth + 1 : 9999) . "\\}")<CR>
 
 " Delete the current buffer, and jump to a list of buffers
-nmap <silent> <leader>bd :BufExplorer<cr>d
+function! s:BufDelete()
+  exe "BufExplorer"
+endfunction
+nmap <silent> <leader>bd :call <SID>BufDelete()<cr>d
 
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
@@ -303,7 +306,7 @@ augroup PersonalFileTypeSettings
   au!
   " Set up default spacing and tabs for a few filetypes.  I've left off Go,
   " since the filetype plugin handles it fore me.
-  autocmd FileType mail,text,python,gitcommit,cpp,java,sh setlocal tabstop=8 shiftwidth=2 expandtab
+  autocmd FileType mail,text,python,gitcommit,cpp,java,sh,vim setlocal tabstop=8 shiftwidth=2 expandtab
 
   " Standard GO tab settings (tabs, not spaces
   autocmd FileType go setlocal tabstop=2 shiftwidth=2 noexpandtab
