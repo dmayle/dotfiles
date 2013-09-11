@@ -143,9 +143,12 @@ augroup END
 " screen at once
 set numberwidth=4
 
-" Enable mouse support in text terminals (using smarter mouse protocol, xterm2)
+" Enable mouse support in text terminals
 set mouse=a
-set ttymouse=xterm2
+
+" Use the advanced sgr protocol, which supports update-on-drag (like xterm2), as
+" well as large window sizes
+set ttymouse=sgr
 
 " Store 200 lines of command history
 set history=200
@@ -293,6 +296,7 @@ nnoremap <F5> :GundoToggle<CR>
 augroup FixFugitive
   au!
   autocmd BufNewFile,BufRead fugitive://* set bufhidden=delete
+  au BufNewFile,BufRead,BufEnter */.git/index set ft=gitcommit
 augroup END
 
 " ##############################################################################

@@ -12,7 +12,6 @@ Bundle 'gmarik/vundle'
 
 Bundle 'Lokaltog/vim-easymotion'
 Bundle 'Raimondi/delimitMate'
-Bundle 'Valloric/YouCompleteMe'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'bufexplorer.zip'
 Bundle 'dmayle/vim-powerline'
@@ -40,6 +39,8 @@ Bundle 'vim-scripts/a.vim'
 Bundle 'vim-scripts/python.vim--Vasiliev'
 Bundle 'vim-scripts/sessionman.vim'
 Bundle 'vimoutliner/vimoutliner'
+Bundle 'kana/vim-textobj-user'
+Bundle 'Julian/vim-textobj-variable-segment'
 
 " Set the basics and start with the shared config.
 filetype plugin indent on
