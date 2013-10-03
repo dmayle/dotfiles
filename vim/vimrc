@@ -55,7 +55,7 @@ augroup END
 set scrolloff=3
 
 " I list these format options :help fo-table
-set formatoptions+=rcoqnl1
+set formatoptions+=rcoqnl1j
 
 " Autofill to the longest shared substring, and always show the menu, even if
 " there is only one match.
