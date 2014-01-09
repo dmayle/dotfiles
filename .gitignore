@@ -6,6 +6,8 @@
 vim/.netrwhist
 # Ignore view-temporary file for vim
 vim/view
+# Ignore VIM log file.
+vim/data
 # Ignore VIM session files.
 vim/sessions
 # Transition plan for Vundle. Uncomment these one at a time as I switch them to
