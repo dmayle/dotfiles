@@ -66,7 +66,7 @@ set completeopt=longest,menuone
 if has("gui_running")
   inoremap <C-SPACE> <C-X><C-O><C-P>
 else
-  inoremap <C-@> <C-X><C-O><C-P>
+  inoremap <Nul> <C-X><C-O><C-P>
 endif
 
 " If w! doesn't work (because you don't have permessions), use w!! to save
@@ -341,7 +341,7 @@ augroup PersonalFileTypeSettings
   " per-buffer, so any changes must be triggered with BufEnter.  In this case,
   " we tell VIM to retrigger FileType commands each time you change the buffer,
   " so that IndentGuides will be updated for each buffer you work on.
-  autocmd BufEnter * if &ft !=# 'help' | filetype detect | endif
+  autocmd BufEnter * if &ft !=# 'help' && &ft !=# 'nerdtree' | filetype detect | endif
   autocmd FileType * IndentGuidesDisable
   autocmd FileType python,html,cheetah,java,sh,vim,cpp,go IndentGuidesEnable
 
