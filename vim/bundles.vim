@@ -1,7 +1,7 @@
 " ##############################################################################
 " ****** VUNDLE ******
-" I'm in the process of migrating to Vundle.  Below is my Vundle config (to some
-" extent, it replaces pathogen)
+" Chicken and Egg problem:
+" vim -u bundles.vim +BundleInstall +q
 " ##############################################################################
 set nocompatible
 filetype off
