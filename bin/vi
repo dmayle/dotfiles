@@ -20,5 +20,5 @@ else
   # the correct executable from the leftover PATH. We have to strip the
   # directory name from the executable (with basename) because bash adds it
   # when you execute the file via the PATH.
-  PATH=`echo $PATH | sed -e 's/\(^\|:\)[^:]*dm-dotfiles[^:]*\(:\|$\)/:/g'` exec `basename $0` "$@";
+  PATH=`echo $PATH | sed -E 's/(^|:)[^:]*dm-dotfiles[^:]*(:|$)/:/g'` exec `basename $0` "$@";
 fi
