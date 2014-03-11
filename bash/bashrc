@@ -154,6 +154,8 @@ case "$platform" in
     alias ls='ls -G'
     alias dir='dir -G'
     alias vdir='vdir -G'
+    # Setup boxen
+    [ -f /opt/boxen/env.sh ] && source /opt/boxen/env.sh
     ;;
   linux)
     ssh-reagent
