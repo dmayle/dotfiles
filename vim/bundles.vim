@@ -44,6 +44,7 @@ Bundle 'vim-scripts/a.vim'
 Bundle 'vim-scripts/python.vim--Vasiliev'
 Bundle 'vim-scripts/sessionman.vim'
 Bundle 'vimoutliner/vimoutliner'
+Bundle 'puppetlabs/puppet-syntax-vim'
 
 " Set the basics and start with the shared config.
 filetype plugin indent on
