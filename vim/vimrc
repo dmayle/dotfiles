@@ -55,7 +55,11 @@ augroup END
 set scrolloff=3
 
 " I list these format options :help fo-table
-set formatoptions+=rcoqnl1j
+try
+  set formatoptions+=rcoqnl1j
+catch E539
+  set formatoptions+=rcoqnl1
+endtry
 
 " Autofill to the longest shared substring, and always show the menu, even if
 " there is only one match.
@@ -156,7 +160,11 @@ set mouse=a
 
 " Use the advanced sgr protocol, which supports update-on-drag (like xterm2), as
 " well as large window sizes
-set ttymouse=sgr
+try
+  set ttymouse=sgr
+catch E474
+  set ttymouse=xterm2
+endtry
 
 " Store 200 lines of command history
 set history=200
