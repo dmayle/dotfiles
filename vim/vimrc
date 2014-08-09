@@ -86,6 +86,9 @@ inoremap <left> <nop>
 nnoremap <right> <nop>
 inoremap <right> <nop>
 
+" Add an insert mode mapping to reflow the current line.
+inoremap <C-G>q <C-O>gqq<C-O>A
+
 " Turn on 16-color display.
 " In 8-color mode, VIM supports 16 foreground colors (8 dark, 8 light with or
 " without 'bold') and 8 dark background colors.  You can even get 16-background
