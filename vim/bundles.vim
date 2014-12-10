@@ -14,6 +14,7 @@ Bundle 'bufexplorer.zip'
 Bundle 'Conque-Shell'
 
 "Bundle 'rson/vim-conque'
+Bundle 'Rename'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'dmayle/vim-powerline'
 Bundle 'gmarik/vundle'
@@ -41,10 +42,12 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-unimpaired'
 Bundle 'triglav/vim-visual-increment'
 Bundle 'vim-scripts/a.vim'
+Bundle 'vim-scripts/Buffer-grep'
 Bundle 'vim-scripts/python.vim--Vasiliev'
 Bundle 'vim-scripts/sessionman.vim'
 Bundle 'vimoutliner/vimoutliner'
 Bundle 'puppetlabs/puppet-syntax-vim'
+Bundle 'google/vim-syncopate'
 
 " Set the basics and start with the shared config.
 filetype plugin indent on
