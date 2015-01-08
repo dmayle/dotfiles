@@ -37,6 +37,11 @@ if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
+# Choose a 16 color variation of xterm sequence so TMUX knows we have 16 color support
+case "$TERM" in
+  xterm) export TERM=xterm-16color
+esac
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
@@ -184,7 +189,6 @@ function byobu() {
     # through to the end.
   done
   if [[ -n "$FREE_GROUP_SESSION" ]]; then
-    $BYOBU attach -t "$FREE_GROUP_SESSION"
     $BYOBU attach -t "$FREE_GROUP_SESSION"
   elif [[ -n "$GROUP_NAME" ]]; then
     # We are guaranteed to have a max session by the time we get here

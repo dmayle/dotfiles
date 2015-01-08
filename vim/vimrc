@@ -1,26 +1,14 @@
 " As long as this is in a user vimrc, it has no effect, but we never want old
 " vi-mode in any case.
 set nocompatible
+
+" ##############################################################################
+" ****** VUNDLE ******
+" This VIMRC uses Vundle to manage per-directory plugins.  In order for
+" Vundle to work properly, it must be loaded before filetype and syntax
+" plugins.
+" ##############################################################################
 source ~/.vim/bundles.vim
-
-" ##############################################################################
-" ****** PATHOGEN ******
-" This VIMRC uses Pathogen to manage per-directory plugins.  In order for
-" Pathogen to work properly, it must be loaded before filetype and syntax
-" plugins, so this block will turn that off, enable Pathogen, and re-enable
-" filetype and syntax.
-" ##############################################################################
-
-" Make sure pathogen ftplugins are properly installed by disabling then
-" re-enabling file type plugins.
-
-" Enable auto-loading of per-directory plugins in ~/.vim/bundle
-"call pathogen#infect()
-" Do the same for machine local viles in ~/.vim_local/bundle
-"call pathogen#infect('~/.vim_local/bundle')
-" Generate helptags for all of the above plugins
-"call pathogen#helptags()
-
 
 syntax on
 
@@ -98,15 +86,7 @@ inoremap <C-G>q <C-O>gqq<C-O>A
 " (Attempting to do so will either end up with both bright, or one bright with
 " one dark.) Setting 16-color mode allows VIM to use any of the 16 foreground
 " colors with any of the 16 background colors
-if has("terminfo")
-  let &t_Co=16
-  let &t_AB="\<Esc>[%?%p1%{8}%<%t%p1%{40}%+%e%p1%{92}%+%;%dm"
-  let &t_AF="\<Esc>[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm"
-else
-  let &t_Co=16
-  let &t_Sf="\<Esc>[3%dm"
-  let &t_Sb="\<Esc>[4%dm"
-endif
+set t_Co=16
 
 " Use a colorscheme that's a bit brighter than the default. Force the 16 color
 " version of Solarized.
