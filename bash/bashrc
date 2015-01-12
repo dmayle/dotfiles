@@ -260,6 +260,31 @@ case "$platform" in
     ;;
 esac
 
+sshagentwrap() {
+  if [[ -n "$SSH_AUTH_SOCK" && -L "$SSH_AUTH_SOCK" && ! -e "$SSH_AUTH_SOCK" ]]; then
+    # Auth sock is a broken symbolic link. Since the destination no longer
+    # exists, assume that it was taken over by ssh at some point, but we're now
+    # logged in to the local terminal, so local auth socks should be used.
+    OLD_LINK="$SSH_AUTH_SOCK"
+    FOUND=0
+    for agent in /tmp/ssh-*/agent.*; do
+      export SSH_AUTH_SOCK=$agent
+      if ssh-add -l 2>&1 > /dev/null; then
+        ssh-add -l 2>&1 > /dev/null
+        FOUND=1
+        break
+      fi
+    done
+    # Not found, so start a new one
+    [[ $FOUND -eq 0 ]] && eval $(ssh-agent) && ssh-add
+    # Update the symbolic link
+    ln -sf "$SSH_AUTH_SOCK" "$OLD_LINK"
+    export SSH_AUTH_SOCK="$OLD_LINK"
+  fi
+  [[ $# -eq 0 ]] && return
+  "$1" "${@:2}"
+}
+
 # Do some PATH smashing (Ensures /usr/local/bin,sbin end up in the PATH, even
 # if they aren't already there).
 if ! [[ "$PATH" =~ \(^|:\)/usr/local/bin\($|:\) ]]; then
