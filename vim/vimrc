@@ -309,7 +309,10 @@ augroup PersonalFileTypeSettings
   au!
   " Set up default spacing and tabs for a few filetypes.  I've left off Go,
   " since the filetype plugin handles it fore me.
-  autocmd FileType mail,text,python,gitcommit,cpp,java,sh,vim setlocal tabstop=8 shiftwidth=2 expandtab
+  autocmd FileType mail,text,python,gitcommit,cpp,java,sh,vim,puppet setlocal tabstop=8 shiftwidth=2 expandtab
+
+  " Fix the comment handling, which is set to c-style by default
+  autocmd FileType puppet setlocal commentstring=#\ %s
 
   " Standard GO tab settings (tabs, not spaces
   autocmd FileType go setlocal tabstop=2 shiftwidth=2 noexpandtab
@@ -326,6 +329,9 @@ augroup PersonalFileTypeSettings
 
   "Teach VIM about go source
   autocmd BufNewFile,BufRead *.go set filetype=go
+
+  " Teach vim-commentary about nasm comments
+  autocmd FileType asm set commentstring=;\ %s
 
   " This trifecta allows us to create a default IndentGuides setting, and
   " override it per-filetype.  IndentGuides settings apply globally, and not
