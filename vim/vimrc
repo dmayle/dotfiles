@@ -61,6 +61,9 @@ else
   inoremap <Nul> <C-X><C-O><C-P>
 endif
 
+" Make Y yank to end of line, similar to D and C
+nnoremap Y y$
+
 " If w! doesn't work (because you don't have permessions), use w!! to save
 cnoremap <silent> w!! :exec ":echo ':w!!'"<CR>:%!sudo tee > /dev/null %
 

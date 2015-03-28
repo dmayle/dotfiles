@@ -6,8 +6,9 @@
 set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+call vundle#begin()
 
+" Letting Vundle manage itself
 Bundle 'gmarik/vundle'
 
 Bundle 'bufexplorer.zip'
@@ -50,4 +51,5 @@ Bundle 'google/vim-maktaba'
 Bundle 'google/vim-syncopate'
 
 " Set the basics and start with the shared config.
+call vundle#end()
 filetype plugin indent on
