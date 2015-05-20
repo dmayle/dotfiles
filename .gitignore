@@ -44,3 +44,4 @@ vim/sessions
 # #######################
 vim/bundle/*
 !vim/bundle/vundle
+!vim/bundle/neobundle.vim

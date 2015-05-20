@@ -301,6 +301,12 @@ augroup FixFugitive
   au BufNewFile,BufRead,BufEnter */.git/index set ft=gitcommit
 augroup END
 
+" %%%%% Syntastic %%%%%
+"
+" Always use the location list so that I can jump between errors
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_java_javac_classpath = "./build/generated/source/r/debug:./java:/opt/android_sdk/platforms/android-22/*.jar:./java:/opt/android_sdk/extras/android/support/v7/appcompat/libs/*.jar"
+
 " ##############################################################################
 " ****** FILE SPECIFIC HANDLING ******
 " ##############################################################################
@@ -312,7 +318,7 @@ augroup PersonalFileTypeSettings
   au!
   " Set up default spacing and tabs for a few filetypes.  I've left off Go,
   " since the filetype plugin handles it fore me.
-  autocmd FileType mail,text,python,gitcommit,cpp,java,sh,vim,puppet setlocal tabstop=8 shiftwidth=2 expandtab
+  autocmd FileType mail,text,python,gitcommit,cpp,java,sh,vim,puppet,xml setlocal tabstop=8 shiftwidth=2 expandtab
 
   " Fix the comment handling, which is set to c-style by default
   autocmd FileType puppet setlocal commentstring=#\ %s

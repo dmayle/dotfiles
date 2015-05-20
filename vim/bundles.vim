@@ -5,51 +5,61 @@
 " ##############################################################################
 set nocompatible
 filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#begin()
+" set rtp+=~/.vim/bundle/vundle/
+" call vundle#begin()
+set rtp+=~/.vim/bundle/neobundle.vim/
+call neobundle#begin(expand('~/.vim/bundle/'))
 
 " Letting Vundle manage itself
-Bundle 'gmarik/vundle'
+" Bundle 'gmarik/vundle'
+" Letting NeoBundle manage itself
+NeoBundleFetch 'Shougo/neobundle.vim'
 
-Bundle 'bufexplorer.zip'
-Bundle 'Conque-Shell'
+
+NeoBundle 'bufexplorer.zip'
+NeoBundle 'Conque-Shell'
 
 "Bundle 'rson/vim-conque'
-Bundle 'Rename'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'dmayle/vim-powerline'
-Bundle 'Julian/vim-textobj-variable-segment'
-Bundle 'kana/vim-textobj-user'
-Bundle 'kien/ctrlp.vim'
-Bundle 'lilydjwg/colorizer'
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'majutsushi/tagbar'
-Bundle 'mattn/emmet-vim'
-Bundle 'michaeljsmith/vim-indent-object'
-Bundle 'nathanaelkane/vim-indent-guides'
-Bundle 'Raimondi/delimitMate'
-Bundle 'scrooloose/nerdtree'
-Bundle 'scrooloose/syntastic'
-Bundle 'sjbach/lusty'
-Bundle 'sjl/gundo.vim'
-Bundle 'tpope/vim-abolish'
-Bundle 'tpope/vim-commentary'
-Bundle 'tpope/vim-dispatch'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-speeddating'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'triglav/vim-visual-increment'
-Bundle 'vim-scripts/a.vim'
-Bundle 'vim-scripts/Buffer-grep'
-Bundle 'vim-scripts/python.vim--Vasiliev'
-Bundle 'vim-scripts/sessionman.vim'
-Bundle 'vimoutliner/vimoutliner'
-Bundle 'puppetlabs/puppet-syntax-vim'
-Bundle 'google/vim-maktaba'
-Bundle 'google/vim-syncopate'
+NeoBundle 'bitbucket:ludovicchabant/vim-lawrencium'
+NeoBundle 'Julian/vim-textobj-variable-segment'
+NeoBundle 'Lokaltog/vim-easymotion'
+NeoBundle 'Raimondi/delimitMate'
+NeoBundle 'Rename'
+NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'dmayle/vim-powerline'
+NeoBundle 'google/vim-maktaba'
+NeoBundle 'google/vim-syncopate'
+NeoBundle 'hsanson/vim-android'
+NeoBundle 'kana/vim-textobj-user'
+NeoBundle 'kien/ctrlp.vim'
+NeoBundle 'lilydjwg/colorizer'
+NeoBundle 'majutsushi/tagbar'
+NeoBundle 'mattn/emmet-vim'
+NeoBundle 'michaeljsmith/vim-indent-object'
+NeoBundle 'nathanaelkane/vim-indent-guides'
+NeoBundle 'puppetlabs/puppet-syntax-vim'
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'sjbach/lusty'
+NeoBundle 'sjl/gundo.vim'
+NeoBundle 'tpope/vim-abolish'
+NeoBundle 'tpope/vim-commentary'
+NeoBundle 'tpope/vim-dispatch'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-repeat'
+NeoBundle 'tpope/vim-speeddating'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-unimpaired'
+NeoBundle 'triglav/vim-visual-increment'
+NeoBundle 'vim-scripts/Buffer-grep'
+NeoBundle 'vim-scripts/a.vim'
+NeoBundle 'vim-scripts/javacomplete'
+NeoBundle 'vim-scripts/python.vim--Vasiliev'
+NeoBundle 'vim-scripts/sessionman.vim'
+NeoBundle 'vimoutliner/vimoutliner'
 
 " Set the basics and start with the shared config.
-call vundle#end()
+" call vundle#end()
+call neobundle#end()
 filetype plugin indent on
+NeoBundleCheck

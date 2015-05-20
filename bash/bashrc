@@ -39,7 +39,8 @@ fi
 
 # Choose a 16 color variation of xterm sequence so TMUX knows we have 16 color support
 case "$TERM" in
-  xterm) export TERM=xterm-16color
+  xterm) export TERM=xterm-16color;;
+  xterm-256color) export TERM=xterm-16color;;
 esac
 
 # set a fancy prompt (non-color, unless we know we "want" color)
@@ -106,11 +107,6 @@ alias lc='ls --color=auto'
 if [[ -f ~/.bash_aliases ]]; then
     . ~/.bash_aliases
 fi
-
-# Make it easy to directly screen/byobu into remote hosts via SSH.
-function sscr() {
-  ssh -t $1 byobu -dR;
-}
 
 # Wrap a tmux byobu so that it uses grouped sessions to behave like screen
 function byobu() {
@@ -287,21 +283,14 @@ sshagentwrap() {
 
 # Do some PATH smashing (Ensures /usr/local/bin,sbin end up in the PATH, even
 # if they aren't already there).
-if ! [[ "$PATH" =~ \(^|:\)/usr/local/bin\($|:\) ]]; then
+if ! [[ "$PATH" =~ (^|:)/usr/local/bin(:|$) ]]; then
   export PATH="/usr/local/bin:$PATH"
 fi
-if ! [[ "$PATH" =~ \(^|:\)/usr/local/sbin\($|:\) ]]; then
+if ! [[ "$PATH" =~ (^|:)/usr/local/sbin(:|$) ]]; then
   export PATH="/usr/local/sbin:$PATH"
 fi
-
-# Allow version controlled binaries to override the system path.
-export PATH="~/.dm-dotfiles/bin:$PATH"
-
-# Dude... I have GOT to turn on vi mode!
-set -o vi
 
 # Support running a local specific bashrc
 if [[ -f ~/.bashrc_local ]]; then
     . ~/.bashrc_local
 fi
-
