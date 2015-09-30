@@ -94,6 +94,9 @@ set t_Co=16
 " Use a colorscheme that's a bit brighter than the default. Force the 16 color
 " version of Solarized.
 set background=dark
+
+" Tell the solarized colorscheme to support terminal transparancy
+let g:solarized_termtrans=1
 colorscheme solarized
 
 " If you need to set up chrome's hterm with solarized (e.g. ssh in a tab), then
@@ -215,6 +218,9 @@ set cursorline
 set wildmenu
 set wildmode=list:longest
 
+" Which files shouldn't vim care about
+set wildignore+=*/tmp/*,*.so,*.swp,*/buck-out/*,*/buck-cache/*
+
 " ##############################################################################
 " ****** PERSONAL LEADER SHORTCUTS ******
 " ##############################################################################
@@ -305,7 +311,14 @@ augroup END
 "
 " Always use the location list so that I can jump between errors
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_java_javac_classpath = "./build/generated/source/r/debug:./java:/opt/android_sdk/platforms/android-22/*.jar:./java:/opt/android_sdk/extras/android/support/v7/appcompat/libs/*.jar"
+" let g:syntastic_java_javac_classpath = "./build/generated/source/r/debug:./java:/opt/android_sdk/platforms/android-22/*.jar:./java:/opt/android_sdk/extras/android/support/v7/appcompat/libs/*.jar"
+
+" %%%%% CtrlP %%%%%
+" Let CtrlP examine all of fbandroid
+let g:ctrlp_max_files=200000
+" Use the current directory, not the mercurial root as top since I keep both
+" fbandroid and fbobc in the same mercurial root
+let g:ctrlp_working_path_mode = ''
 
 " ##############################################################################
 " ****** FILE SPECIFIC HANDLING ******
@@ -427,7 +440,7 @@ endfunction
 " ##############################################################################
 " ****** Toggle version of fugitive diff ******
 " ##############################################################################
-function GDiffToggle()
+function GDiffToggle(vcs)
   if exists("s:gdifftogglebuff")
     " There is an existing diff buffer, so we are turning off the diff.  If
     " we're in the diff window, then we delete it and move to the source window.
@@ -440,14 +453,21 @@ function GDiffToggle()
     diffoff
     return
   endif
-  exec "Gdiff"
+  if a:vcs == "git"
+    exec "Gdiff"
+  elseif a:vcs == "hg"
+    exec "Hgvdiff"
+  else
+    return
+  endif
   " Get the diff buffer by getting the buffer from the last accessed window.
   let s:gdifftogglebuff = winbufnr(winnr('#'))
   " Keep track of the source buffer as well.
   let s:gdifftoggleorig = winbufnr(0)
 endfunction
 
-nmap <silent> <unique> <Leader>gt :call GDiffToggle()<CR>
+nmap <silent> <unique> <Leader>gg :call GDiffToggle("git")<CR>
+nmap <silent> <unique> <Leader>gt :call GDiffToggle("hg")<CR>
 
 " ##############################################################################
 " ****** SAVING FOLD STATE ******
