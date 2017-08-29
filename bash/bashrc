@@ -294,3 +294,5 @@ fi
 if [[ -f ~/.bashrc_local ]]; then
     . ~/.bashrc_local
 fi
+
+#CHEF.NO.SOURCE
