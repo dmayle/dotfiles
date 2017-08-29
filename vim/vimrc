@@ -335,10 +335,14 @@ let g:syntastic_always_populate_loc_list = 1
 
 " %%%%% CtrlP %%%%%
 " Let CtrlP examine all of fbandroid
-let g:ctrlp_max_files=200000
+let g:ctrlp_max_files=700000
 " Use the current directory, not the mercurial root as top since I keep both
 " fbandroid and fbobc in the same mercurial root
 let g:ctrlp_working_path_mode = ''
+" Keep a stable ctrlp cache
+let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
+" Keep that cache across sessions
+let g:ctrlp_clear_cache_on_exit = 1
 
 " ##############################################################################
 " ****** FILE SPECIFIC HANDLING ******
