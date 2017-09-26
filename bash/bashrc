@@ -199,7 +199,6 @@ function byobu() {
   fi
 }
 
-
 # Special command to highlight text
 function hl() { local R=$1; shift; egrep --color=always "|$R" $@; }
 
@@ -281,6 +280,75 @@ sshagentwrap() {
   "$1" "${@:2}"
 }
 
+logcat_program() {
+  local progname="$1"
+  if [ -z "$progname" ]; then
+    echo "logcat_prgram must be called with a program name to search for"
+  fi
+
+  # Remove progname from args so we can pass rest to adb logcat if specified
+  shift
+
+  # Spinner Array
+  local sp="/-\|"
+
+  # We use time to provide a fixed framerate.  bash's options for fractional
+  # time resolution are limited, so we use python if it's available, and
+  # fallback to 'date' otherwise
+  local fps=1
+  local index_command='echo $(( $(date +%s) % 4 ))'
+  local wait_command='sleep 1'
+
+  local python_bin=$(which python)
+  [ -n "$python_bin" ] && [ -x "$python_bin" ]
+  local use_subsecond=$?
+  if [ $use_subsecond == 0 ]; then
+    fps=6
+    index_command="python -c '"'import time; print("%d" % (time.time()*'"$fps""))'"
+    wait_command="read -t $(python -c "print(0.1/$fps)")"
+  fi
+
+  local index=$(eval $index_command)
+
+  # Use last updated index to avoid unnecessary screen updates
+  local last_index=$index
+
+  local pid_command='adb shell ps 2>/dev/null | grep "$progname" | awk '"'"'{print $2}'"'"
+
+  while true; do
+    local pid=$(eval $pid_command)
+
+    # The waiting message to print to the screen once
+    local waiting_prefix="Waiting for process to start... "
+
+    while [ -z "${pid}" ]; do
+
+      eval $wait_command
+      index=$(eval $index_command)
+      if [ $index != $last_index ]; then
+        last_index=$index
+        printf "${waiting_prefix}\b${sp:index%${#sp}:1}"
+
+        # Only show the waiting prefix once
+        waiting_prefix=""
+      fi
+
+      pid=$(eval $pid_command)
+
+    done
+
+    adb logcat --pid=$pid "$@" &
+    local logcat_pid=$!
+
+    while  [ -n "$(eval $pid_command)" ]; do
+      sleep 1;
+    done
+
+    kill $logcat_pid
+  done
+}
+
+
 # Do some PATH smashing (Ensures /usr/local/bin,sbin end up in the PATH, even
 # if they aren't already there).
 if ! [[ "$PATH" =~ (^|:)/usr/local/bin(:|$) ]]; then
@@ -289,10 +357,8 @@ fi
 if ! [[ "$PATH" =~ (^|:)/usr/local/sbin(:|$) ]]; then
   export PATH="/usr/local/sbin:$PATH"
 fi
-
 # Support running a local specific bashrc
 if [[ -f ~/.bashrc_local ]]; then
     . ~/.bashrc_local
 fi
-
 #CHEF.NO.SOURCE
