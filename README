@@ -7,6 +7,7 @@ Create symlinks:
     ln -s .dm-dotfiles/vim ~/.vim
     ln -s .dm-dotfiles/bash/bashrc ~/.bashrc
     ln -s .dm-dotfiles/bash/bashrc ~/.bash_profile
+    ln -s .dm-dotfiles/bash/aliases ~/.bash_aliases
     ln -s .dm-dotfiles/inputrc ~/.inputrc
     ln -s .dm-dotfiles/editrc ~/.editrc
     ln -s .vim/vimrc ~/.vimrc
