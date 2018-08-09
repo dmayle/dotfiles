@@ -124,12 +124,10 @@ function byobu() {
   ATTACHED_REGEX='\(attached\)$'
   # Look for words of the form 'word0' and extract the word and the number
   TRAILING_NUMBER_REGEX='^(.*[^0-9])?([0-9]+)$'
-  # If I read the command directly into the array, I get the xterm control code
-  # to change the window terminal.  This is a byobu bug, as calling tmux
-  # directly does not have the same problem.  We will work around it by calling
-  # tmux directly.  The fix is being tracked at:
-  # https://github.com/dustinkirkland/byobu/pull/6
-  readarray -t SESSIONS <<< "$(tmux list-sessions 2>/dev/null)"
+  # Reading the value directly into the array requires newer bash.  OSX ships
+  # with an old enough bash that I'm using a manual loop to read the sessions
+  # into the array.
+  while IFS= read -r line; do SESSIONS+=("$line"); done <<< "$(tmux list-sessions 2>/dev/null)"
   if [[ ${#SESSIONS[@]} -eq 1 ]]; then
     if [[ -z "${SESSIONS[0]}" ]]; then
       # No existing session, so start byobu with a specially named session
