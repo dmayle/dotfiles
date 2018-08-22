@@ -127,6 +127,7 @@ function byobu() {
   # Reading the value directly into the array requires newer bash.  OSX ships
   # with an old enough bash that I'm using a manual loop to read the sessions
   # into the array.
+  unset SESSIONS
   while IFS= read -r line; do SESSIONS+=("$line"); done <<< "$(tmux list-sessions 2>/dev/null)"
   if [[ ${#SESSIONS[@]} -eq 1 ]]; then
     if [[ -z "${SESSIONS[0]}" ]]; then
@@ -156,7 +157,7 @@ function byobu() {
     [[ ${SESSION} =~ $SESSION_REGEX ]] || return -1
     if [[ -n "$GROUP_NAME" && -n "${BASH_REMATCH[2]}" && "$GROUP_NAME" != "${BASH_REMATCH[2]}" ]]; then
       echo "ERROR: More than one group found"
-      $BYOBU list-sessions
+      tmux list-sessions
       return
     fi
     # Get the name of the group
