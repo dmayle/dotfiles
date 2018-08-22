@@ -216,7 +216,7 @@ fi
 # Use ssh-reagent to share agents between sessions (screen, etc.)
 ssh-reagent () {
   [[ -n "$SSH_AUTH_SOCK" ]] && return
-  for agent in /tmp/ssh-*/agent.*; do
+  for agent in $(ls {/tmp,/var/run/ssh-agent}/ssh-*/agent.* 2>/dev/null); do
     export SSH_AUTH_SOCK=$agent
     if ssh-add -l 2>&1 > /dev/null; then
       echo Found working SSH Agent:
