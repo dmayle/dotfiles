@@ -1,24 +1,24 @@
 Installation:
 
-    git clone git://github.com/dmayle/dm-dotfiles.git ~/.dm-dotfiles
+    git clone git://github.com/dmayle/dotfiles.git ~/.dotfiles
 
 Create symlinks:
 
-    ln -s .dm-dotfiles/vim ~/.vim
-    ln -s .dm-dotfiles/bash/bashrc ~/.bashrc
-    ln -s .dm-dotfiles/bash/bashrc ~/.bash_profile
-    ln -s .dm-dotfiles/bash/aliases ~/.bash_aliases
-    ln -s .dm-dotfiles/inputrc ~/.inputrc
-    ln -s .dm-dotfiles/editrc ~/.editrc
+    ln -s .dotfiles/vim ~/.vim
+    ln -s .dotfiles/bash/bashrc ~/.bashrc
+    ln -s .dotfiles/bash/bashrc ~/.bash_profile
+    ln -s .dotfiles/bash/aliases ~/.bash_aliases
+    ln -s .dotfiles/inputrc ~/.inputrc
+    ln -s .dotfiles/editrc ~/.editrc
     ln -s .vim/vimrc ~/.vimrc
 
-Switch to the `~/.dm-dotfiles` directory, and fetch submodules:
+Switch to the `~/.dotfiles` directory, and fetch submodules:
 
-    cd ~/.dm-dotfiles
+    cd ~/.dotfiles
     git submodule update --init
 
 Add this to your crontab to auto-update everyday at 3am.
-    0 3 * * * (cd ~/.dm-dotfiles && (git pull https://github.com/dmayle/dm-dotfiles; git submodule update --init)) &>/dev/null
+    0 3 * * * (cd ~/.dotfiles && (git pull https://github.com/dmayle/dotfiles; git submodule update --init)) &>/dev/null
 
 Software required:
     Mac:
