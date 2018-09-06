@@ -1,2 +1,27 @@
-@daily crontab <(cat ~/.crontab ~/.crontab_local 2>/dev/null)
-@daily (cd ~/.dotfiles && (git pull; git submodule update --init)) &>/dev/null
+#===============================================================================#
+#  Shortcut                                                                     #
+#==========                                                                     #
+#  @reboot         Run once, at startup.                                        #
+#  @yearly         Run once a year, "0 0 1 1 *".                                #
+#  @annually       (same as @yearly)                                            #
+#  @monthly        Run once a month, "0 0 1 * *".                               #
+#  @weekly         Run once a week, "0 0 * * 0".                                #
+#  @daily          Run once a day, "0 0 * * *".                                 #
+#  @midnight       (same as @daily)                                             #
+#  @hourly         Run once an hour, "0 * * * *".                               #
+#            ===================================================================#
+#               0-23   0-59               0-30  0-6   1-12                      #
+#               |_    _|                 _|    _|    _|                         #
+#                 |  |                  |     |     |            * any          #
+#              At HH:MM on day-of-month MD on WD in M            - range        #
+#                 |  |                  |     |     |            , array        #
+#               __|__|            ______|     |   __|            / step         #
+#              |  |            __|         ___|__|                              #
+#             _|  |__         |         __|   |__                               #
+#            |       |        |        |         |                              #
+#            |       |        |        |         |                              #
+#===============================================================================#
+#  Shortcut  |  Min  |  Hour  |  Mday  |  Month  |  Wday  |  Command            #
+#===============================================================================#
+   @daily                                                    crontab <(cat ~/.crontab ~/.crontab_local 2>/dev/null)
+   @daily                                                    (cd ~/.dotfiles && (git pull; git submodule update --init)) &>/dev/null
