@@ -10,6 +10,7 @@ Create symlinks:
     ln -s .dotfiles/bash/aliases ~/.bash_aliases
     ln -s .dotfiles/inputrc ~/.inputrc
     ln -s .dotfiles/editrc ~/.editrc
+    ln -s .dotfiles/crontab ~/.crontab
     ln -s .vim/vimrc ~/.vimrc
 
 Switch to the `~/.dotfiles` directory, and fetch submodules:
@@ -17,7 +18,8 @@ Switch to the `~/.dotfiles` directory, and fetch submodules:
     cd ~/.dotfiles
     git submodule update --init
 
-Add this to your crontab to auto-update everyday at 3am.
+Tell crontab to import our self-updating, version-controlled crontab
+    crontab ~/.crontab
     0 3 * * * (cd ~/.dotfiles && (git pull https://github.com/dmayle/dotfiles; git submodule update --init)) &>/dev/null
 
 Software required:
