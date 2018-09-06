@@ -1,1 +1,2 @@
 @daily crontab ~/.crontab
+@daily (cd ~/.dotfiles && (git pull; git submodule update --init)) &>/dev/null

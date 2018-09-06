@@ -1,5 +1,6 @@
 Installation:
 
+    # In process of moving towards a Git Strap version that autoinstalls
     git clone git://github.com/dmayle/dotfiles.git ~/.dotfiles
 
 Create symlinks:
@@ -20,9 +21,3 @@ Switch to the `~/.dotfiles` directory, and fetch submodules:
 
 Tell crontab to import our self-updating, version-controlled crontab
     crontab ~/.crontab
-    0 3 * * * (cd ~/.dotfiles && (git pull https://github.com/dmayle/dotfiles; git submodule update --init)) &>/dev/null
-
-Software required:
-    Mac:
-        MacVim (in order to get a vim compiled with python and ruby support)
-        Exuberant Ctags (the BSD ctags that comes with OSX is bad)
