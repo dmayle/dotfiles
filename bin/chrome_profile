@@ -1,0 +1,8 @@
+#!/bin/sh
+
+for PREF in ~/Library/Application\ Support/Google/Chrome/*/Preferences; do
+  if [[ "$1" == "$(/opt/homebrew/bin/python3 -c "import json; f=open('$PREF', 'r'); print(json.load(f)['profile']['name']); f.close()")" ]]; then
+    shift
+    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --profile-directory="$(basename "$(dirname "$PREF")")" "$@"
+  fi;
+done
