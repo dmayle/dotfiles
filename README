@@ -9,7 +9,6 @@ Create symlinks:
     ln -s .dotfiles/bash/bashrc ~/.bashrc
     ln -s .dotfiles/bash/bashrc ~/.bash_profile
     ln -s .dotfiles/bash/aliases ~/.bash_aliases
-    ln -s ~/.dotfiles/kitty.conf ~/.config/kitty/kitty.conf
     ln -s .dotfiles/inputrc ~/.inputrc
     ln -s .dotfiles/editrc ~/.editrc
     ln -s .dotfiles/crontab ~/.crontab
