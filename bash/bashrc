@@ -113,13 +113,21 @@ fi
 # tmux -L inner -f .tmux-inner.conf new -s inner
 # tmux -L inner -f .tmux-inner.conf attach
 # Wrap tmux so that we can support nested sessions and grouped sessions
-function tmux_test() {
+function tmux() {
   TMUX_CMD=$(which tmux)
   if [[ $# != 0 ]]; then
     # Don't break existing commands
     $TMUX_CMD "$@"
     return
   fi
+
+  if [[ -z "$TMUX" ]]; then
+    $TMUX_CMD -L outer -f ~/.tmux-outer.conf new -A -s outer
+  elif [[ "$(tmux display-message -p '#S')" == "outer" ]]; then
+    $TMUX_CMD -L inner -f ~/.tmux-inner.conf new -A -s inner
+  fi
+}
+function other() {
   # Extract the session name, group number, and attached state from a session
   # line that looks like:
   # name: session_details [width x height] (optional group) (optional attached)
