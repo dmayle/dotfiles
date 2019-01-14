@@ -58,6 +58,7 @@ NeoBundle 'vim-scripts/a.vim'
 NeoBundle 'vim-scripts/python.vim--Vasiliev'
 NeoBundle 'vim-scripts/sessionman.vim'
 NeoBundle 'vimoutliner/vimoutliner'
+NeoBundle 'peterhoeg/vim-qml'
 
 " Set the basics and start with the shared config.
 " call vundle#end()
