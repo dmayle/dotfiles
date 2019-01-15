@@ -315,6 +315,11 @@ augroup END
 
 " %%%%% GUndo %%%%%
 "
+" Allow GUndo to work with modern vim builds
+if has('python3')
+    let g:gundo_prefer_python3 = 1          " anything else breaks on Ubuntu 16.04+
+endif
+
 " Add a handy mapping for bringing up the undo tree.
 nnoremap <F5> :GundoToggle<CR>
 
