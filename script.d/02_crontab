@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Tell crontab to import our self-updating, version-controlled crontab
+
+crontab ~/.crontab

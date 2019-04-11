@@ -1,24 +1,18 @@
 #!/bin/sh
 
-# Create symlinks:
+SCRIPT=$(which $0)
+DOTFILES="${SCRIPT%/script/setup}"
+SCRIPTS="${DOTFILES}/script.d"
 
-ln -s .dotfiles/vim ~/.vim
-ln -s .dotfiles/bash/bashrc ~/.bashrc
-ln -s .dotfiles/bash/bashrc ~/.bash_profile
-ln -s .dotfiles/bash/aliases ~/.bash_aliases
-ln -s .dotfiles/inputrc ~/.inputrc
-ln -s .dotfiles/editrc ~/.editrc
-ln -s .dotfiles/crontab ~/.crontab
-ln -s .dotfiles/tmux/outer.conf ~/.tmux-outer.conf
-ln -s .dotfiles/tmux/shared.conf ~/.tmux-shared.conf
-ln -s .dotfiles/tmux/inner.conf ~/.tmux-inner.conf
-ln -s .vim/vimrc ~/.vimrc
+[ -d "${SCRIPTS}" ] || exit
 
-# Switch to the `~/.dotfiles` directory, and fetch submodules:
 
-cd ~/.dotfiles
-git submodule update --init
+echo "Checking ${SCRIPTS}: $(ls "${SCRIPTS}")"
+for S_FILE in $(ls "${SCRIPTS}"); do
+  echo "Script: <${S_FILE}>"
+  if [ -f "${SCRIPTS}/${S_FILE}" ] && [ -x "${SCRIPTS}/${S_FILE}" ]; then
+    echo "Running Script: <${S_FILE}>"
+    "${SCRIPTS}/${S_FILE}"
+  fi
+done
 
-# Tell crontab to import our self-updating, version-controlled crontab
-
-crontab ~/.crontab

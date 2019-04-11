@@ -1,0 +1,19 @@
+#!/bin/sh
+
+SCRIPT=$(which $0)
+DOTFILES="${SCRIPT%/script.d/*}"
+SCRIPTS="${DOTFILES}/script.d"
+
+[ -d "${DOTFILES}" ] || exit
+
+cd "${DOTFILES}"
+unset SUBMODULES
+while IFS= read -r line; do SUBMODULES+=("$line"); done <<< "$(git submodule status)"
+
+for SUBMODULE in "${SUBMODULES[@]}"; do
+  if [[ ! "${SUBMODULE}" =~ ^-.* ]]; then
+    git submodule update --init
+    exit
+  fi
+done
+
