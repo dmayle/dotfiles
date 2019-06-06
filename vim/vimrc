@@ -93,7 +93,7 @@ set t_Co=16
 
 " Use a colorscheme that's a bit brighter than the default. Force the 16 color
 " version of Solarized.
-set background=dark
+set background=light
 
 " Tell the solarized colorscheme to support terminal transparancy
 let g:solarized_termtrans=1
@@ -200,7 +200,7 @@ set spelllang=en_us,fr
 
 " Status Line - This will be disabled by VIM Powerline, but it's my preferred
 " vanilla status line.
-set statusline=%F%m%r%h%w\ [TYPE=%Y]\ %=\ %-(%{fugitive#statusline()}\ [POS=%04l,%04v][%p%%]\ [LEN=%L]%)
+"set statusline=%F%m%r%h%w\ [TYPE=%Y]\ %=\ %-(%{fugitive#statusline()}\ [POS=%04l,%04v][%p%%]\ [LEN=%L]%)
 "<PATH><MODIFIED?><READONLY?><HELP?><PREVIEW?> [TYPE=<FILETYPE>]  <- LEFT
 "<GIT> [POS=line,column][XX%] [LEN=X Lines]                       <- RIGHT
 
@@ -294,24 +294,24 @@ let delimitMate_excluded_regions_enabled = 0
 " Configuration for Powerline, using a patched font and the 16-color Solarized
 " colorscheme.
 " I re-enable it.
-let g:Powerline_symbols = 'fancy'
-let g:Powerline_colorscheme='solarized16'
+"let g:Powerline_symbols = 'fancy'
+"let g:Powerline_colorscheme='solarized16'
 
 " Tell Powerline to display an indicator when there is trailing whitespace in
 " the current buffer
-call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
+"call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
 
 " %%%%% IndentGuides %%%%%
 "
 " Use IndentGuides coloring that makes sense in Solarized.  Force 16-color for
 " now, since that's what I use, but switch to g:base00, e.g. when Solarized is
 " updated to export the color names.
-let g:indent_guides_auto_colors = 0
-augroup FixIndentGuides
-  au!
-  autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  cterm=NONE
-  autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=Grey40
-augroup END
+" let g:indent_guides_auto_colors = 0
+" augroup FixIndentGuides
+" au!
+" autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  cterm=NONE
+" autocmd VimEnter,Colorscheme * :hi IndentGuidesEven cterm=NONE ctermbg=0 guibg=Grey40
+" augroup END
 
 " %%%%% GUndo %%%%%
 "
@@ -326,11 +326,11 @@ nnoremap <F5> :GundoToggle<CR>
 " %%%%% Fugitive %%%%%
 "
 " Fixup diff handling for Fugitive buffers.
-augroup FixFugitive
-  au!
-  autocmd BufNewFile,BufRead fugitive://* set bufhidden=delete
-  au BufNewFile,BufRead,BufEnter */.git/index set ft=gitcommit
-augroup END
+"augroup FixFugitive
+"  au!
+"  autocmd BufNewFile,BufRead fugitive://* set bufhidden=delete
+"  au BufNewFile,BufRead,BufEnter */.git/index set ft=gitcommit
+"augroup END
 
 " %%%%% Syntastic %%%%%
 "
@@ -389,9 +389,9 @@ augroup PersonalFileTypeSettings
   " per-buffer, so any changes must be triggered with BufEnter.  In this case,
   " we tell VIM to retrigger FileType commands each time you change the buffer,
   " so that IndentGuides will be updated for each buffer you work on.
-  autocmd BufEnter * if &ft !=# 'help' && &ft !=# 'nerdtree' | filetype detect | endif
-  autocmd FileType * IndentGuidesDisable
-  autocmd FileType python,html,cheetah,java,sh,vim,cpp,go IndentGuidesEnable
+  " autocmd BufEnter * if &ft !=# 'help' && &ft !=# 'nerdtree' | filetype detect | endif
+  " autocmd FileType * IndentGuidesDisable
+  " autocmd FileType python,html,cheetah,java,sh,vim,cpp,go IndentGuidesEnable
 
   " Ensure that we autowrap git commits to 72 characters, per tpope's guidelines
   " for good git comments.
