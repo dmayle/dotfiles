@@ -1,7 +1,7 @@
 Installation:
 
     # In process of moving towards a Git Strap version that autoinstalls
-    git clone git://github.com/dmayle/dotfiles.git ~/.dotfiles
+    git clone git@github.com:dmayle/dotfiles.git ~/.dotfiles
 
 Create symlinks:
 
