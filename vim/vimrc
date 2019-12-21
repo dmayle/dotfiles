@@ -262,6 +262,9 @@ function! s:BufDelete()
 endfunction
 nmap <silent> <leader>bd :call <SID>BufDelete()<cr>d
 
+" (C)reate (F)ile under cursor (for when `gf` doesn't work)
+nmap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
+
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
@@ -360,13 +363,13 @@ augroup PersonalFileTypeSettings
   au!
   " Set up default spacing and tabs for a few filetypes.  I've left off Go,
   " since the filetype plugin handles it fore me.
-  autocmd FileType mail,text,python,gitcommit,cpp,java,sh,vim,puppet,xml setlocal tabstop=8 shiftwidth=2 expandtab
+  autocmd FileType mail,text,python,gitcommit,cpp,java,sh,vim,puppet,xml,json,javascript,html,yaml setlocal tabstop=8 shiftwidth=2 expandtab
 
   " Fix the comment handling, which is set to c-style by default
   autocmd FileType puppet setlocal commentstring=#\ %s
 
   " Standard GO tab settings (tabs, not spaces
-  autocmd FileType go setlocal tabstop=2 shiftwidth=2 noexpandtab
+  autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
 
   " Turn on spellchecking in these file types.
   autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
