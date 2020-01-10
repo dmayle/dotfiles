@@ -16,3 +16,5 @@ vim/data
 vim/sessions
 # Ignore vim plugins installed/managed by vim-plug
 vim/plugged/*
+# Don't checkin vim session files
+vim/session/*

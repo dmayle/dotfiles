@@ -35,7 +35,8 @@ set listchars=tab:▸\ ,eol:¬,trail:☐
 augroup VisualChars
   au!
   autocmd FileType * set listchars=tab:▸\ ,eol:¬,trail:☐
-  autocmd FileType go set listchars=tab:\ \ ,eol:¬,trail:☐
+  autocmd FileType go set listchars=tab:\|\ ,eol:¬,trail:☐
+  "autocmd FileType go set listchars=tab:\ \ ,eol:¬,trail:☐
 augroup END
 
 " Make sure there is always at least 3 lines of context on either side of the
@@ -165,11 +166,13 @@ set mouse=a
 
 " Use the advanced sgr protocol, which supports update-on-drag (like xterm2), as
 " well as large window sizes
-try
-  set ttymouse=sgr
-catch E474
-  set ttymouse=xterm2
-endtry
+if !has('nvim')
+  try
+    set ttymouse=sgr
+  catch E474
+    set ttymouse=xterm2
+  endtry
+endif
 
 " Store 1000 lines of command history
 set history=1000
@@ -264,6 +267,7 @@ nmap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
 nmap <silent> <leader>tt :TagbarToggle<CR>
 
 nmap <silent> <leader>nt :NERDTreeToggle<CR>
+nmap <silent> <leader>nf :NERDTreeFind<CR>
 
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******

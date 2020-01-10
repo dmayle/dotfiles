@@ -11,6 +11,9 @@ call plug#begin()
 Plug 'vim-scripts/bufexplorer.zip'
 Plug 'vim-scripts/matchit.zip'
 
+Plug 'fatih/vim-go'
+Plug 'tpope/vim-obsession'
+Plug 'dhruvasagar/vim-prosession'
 Plug 'majutsushi/tagbar'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'Yggdroot/indentLine'
