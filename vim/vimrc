@@ -80,16 +80,12 @@ inoremap <right> <nop>
 " Add an insert mode mapping to reflow the current line.
 inoremap <C-G>q <C-O>gqq<C-O>A
 
-" Turn on 16-color display.
-" In 8-color mode, VIM supports 16 foreground colors (8 dark, 8 light with or
-" without 'bold') and 8 dark background colors.  You can even get 16-background
-" colors (8 dark via 'NONE' or 'reverse', 8 light via 'reverse'), but then you
-" are limited to 8 bright foreground colors (with or without 'bold').  There is
-" no way to specify bright background colors with dark foreground colors.
-" (Attempting to do so will either end up with both bright, or one bright with
-" one dark.) Setting 16-color mode allows VIM to use any of the 16 foreground
-" colors with any of the 16 background colors
-set t_Co=16
+" Trialling true color support
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 
 " Use a colorscheme that's a bit brighter than the default. Force the 16 color
 " version of Solarized.
@@ -97,7 +93,7 @@ set background=light
 
 " Tell the solarized colorscheme to support terminal transparancy
 let g:solarized_termtrans=1
-colorscheme solarized
+colorscheme solarized8_high
 
 " If you need to set up chrome's hterm with solarized (e.g. ssh in a tab), then
 " use these lines:
@@ -175,8 +171,8 @@ catch E474
   set ttymouse=xterm2
 endtry
 
-" Store 200 lines of command history
-set history=200
+" Store 1000 lines of command history
+set history=1000
 
 " Keep unsaved files open with their changes
 set hidden
@@ -212,7 +208,7 @@ set laststatus=2
 set textwidth=0
 
 " Spell coloring
-hi SpellBad term=reverse ctermfg=white ctermbg=darkred guifg=#ffffff guibg=#7f0000 gui=undercurl
+" hi SpellBad term=reverse ctermfg=white ctermbg=darkred guifg=#ffffff guibg=#7f0000 gui=undercurl
 
 " make backspace "more powerful" (Allow backspace to 1# delete the autoindent,
 " 2# delete back up the previous line, and 3# delete characters from before
@@ -265,6 +261,10 @@ nmap <silent> <leader>bd :call <SID>BufDelete()<cr>d
 " (C)reate (F)ile under cursor (for when `gf` doesn't work)
 nmap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
 
+nmap <silent> <leader>tt :TagbarToggle<CR>
+
+nmap <silent> <leader>nt :NERDTreeToggle<CR>
+
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
@@ -292,13 +292,26 @@ let delimitMate_expand_cr = 1
 " https://github.com/Raimondi/delimitMate/issues/114
 let delimitMate_excluded_regions_enabled = 0
 
-" %%%%% Powerline %%%%%
+" %%%%% Airline %%%%%
 "
-" Configuration for Powerline, using a patched font and the 16-color Solarized
+" Configuration for Airline, using a patched font and the 256-color Solarized
 " colorscheme.
+let g:airline_theme='solarized'
+
 " I re-enable it.
 "let g:Powerline_symbols = 'fancy'
 "let g:Powerline_colorscheme='solarized16'
+let g:airline_powerline_fonts = 1
+
+" I think the filename is more imporant than the git branch, so I swap the
+" second and third airline sections (by manually copying the values)
+"let g:airline_section_c = '%{airline#util#wrap(airline#extensions#branch#get_head(),80)}'
+"let g:airline_section_b = '%<%<%{airline#extensions#fugitiveline#bufname()}%m %#__accent_red#%{airline#util#wrap(airline#parts#readonly(),0)}%#__restore__#'
+" Swapping Using the layout also swaps the color which I don't want
+"let g:airline#extensions#default#layout = [
+"    \ [ 'a', 'c', 'b' ],
+"    \ [ 'x', 'y', 'z', 'error', 'warning' ]
+"    \ ]
 
 " Tell Powerline to display an indicator when there is trailing whitespace in
 " the current buffer
@@ -386,6 +399,8 @@ augroup PersonalFileTypeSettings
 
   " Teach vim-commentary about nasm comments
   autocmd FileType asm set commentstring=;\ %s
+  xmap gc  <Plug>Commentary
+  nmap gcc <Plug>CommentaryLine
 
   " This trifecta allows us to create a default IndentGuides setting, and
   " override it per-filetype.  IndentGuides settings apply globally, and not

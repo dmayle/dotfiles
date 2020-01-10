@@ -39,8 +39,8 @@ fi
 
 # Choose a 16 color variation of xterm sequence so TMUX knows we have 16 color support
 case "$TERM" in
-  xterm) export TERM=xterm-16color;;
-  xterm-256color) export TERM=xterm-16color;;
+  xterm) export TERM=xterm-256color;;
+  xterm-256color) export TERM=xterm-256color;;
 esac
 
 # set a fancy prompt (non-color, unless we know we "want" color)
@@ -128,6 +128,17 @@ function tmux() {
   fi
 }
 function other() {
+  TMUX_CMD=$(which tmux)
+  if [[ $# != 0 ]]; then
+    # Don't break existing commands
+    $TMUX_CMD "$@"
+    return
+  fi
+  TMUX_SOCKET=
+  if [[ -n "$TMUX" ]]; then
+    TMUX_SOCKET=$(basename $(tmux display-message -p '#{socket_path}'))
+    TMUX_CMD="${TMUX_CMD} -L ${TMUX_SOCKET} -f ~/.tmux-${TMUX_SOCKET}.conf"
+  fi
   # Extract the session name, group number, and attached state from a session
   # line that looks like:
   # name: session_details [width x height] (optional group) (optional attached)
@@ -452,6 +463,9 @@ logcat_program() {
 
 # Do some PATH smashing (Ensures /usr/local/bin,sbin end up in the PATH, even
 # if they aren't already there).
+if ! [[ "$PATH" =~ (^|:)$HOME/.bin(:|$) ]]; then
+  export PATH="$HOME/.bin:$PATH"
+fi
 if ! [[ "$PATH" =~ (^|:)/usr/local/bin(:|$) ]]; then
   export PATH="/usr/local/bin:$PATH"
 fi
