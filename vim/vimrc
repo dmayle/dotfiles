@@ -252,6 +252,13 @@ nmap <silent> <leader>sc :if &relativenumber <Bar>
   \set relativenumber list <Bar>
     \endif<CR>
 
+" Shortcut to toggle paste on and off for VIM in a terminal
+nmap <silent> <leader>pp :if &paste <Bar>
+  \set nopaste <Bar>
+    \else <Bar>
+  \set paste <Bar>
+    \endif<CR>
+
 " Jump to the first line (if any) of the file longer than textwidth.
 nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth ? &textwidth + 1 : 9999) . "\\}")<CR>
 

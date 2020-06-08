@@ -1,0 +1,61 @@
+UnBundle 'scrooloose/nerdtree'
+UnBundle 'scrooloose/syntastic'
+UnBundle 'altercation/vim-colors-solarized'
+UnBundle 'mbbill/undotree'
+UnBundle 'mattn/gist-vim'
+UnBundle 'ycm-core/YouCompleteMe'
+UnBundle 'fatih/vim-go'
+UnBundle 'nathanaelkane/vim-indent-guides'
+UnBundle 'klen/python-mode'
+UnBundle 'mhinz/vim-signify'
+UnBundle 'powerline/fonts'
+UnBundle 'bling/vim-bufferline'
+
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop'  }
+
+" Customized plugging
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --go-completer' }
+
+" Duplicates
+"Plug 'vim-scripts/matchit.zip'
+"Plug 'majutsushi/tagbar'
+"Plug 'jiangmiao/auto-pairs'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
+"Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'tpope/vim-abolish'
+"Plug 'tpope/vim-commentary', {'on':['<Plug>Commentary', '<Plug>CommentaryLine']}
+"Plug 'tpope/vim-fugitive'
+"Plug 'tpope/vim-repeat'
+"Plug 'tpope/vim-surround'
+
+"Plug 'tpope/vim-obsession'
+"Plug 'dhruvasagar/vim-prosession'
+
+" Language Servers
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+
+Plug 'tomtom/tinykeymap_vim'
+Plug 'lambdalisue/vim-pyenv'
+Plug 'vim-scripts/bufexplorer.zip'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'Yggdroot/indentLine'
+Plug 'mrk21/yaml-vim', { 'for': 'yaml' }
+Plug 'vim-scripts/Rename', { 'on': 'Rename' }
+Plug 'lifepillar/vim-solarized8'
+Plug 'google/vim-maktaba'
+Plug 'ryanoasis/vim-devicons'
+Plug 'google/vim-syncopate', {'on':'SyncopateExportToClipboard'}
+Plug 'michaeljsmith/vim-indent-object'
+Plug 'scrooloose/nerdtree', { 'on': ['NERDTree', 'NERDTreeToggle'] }
+Plug 'mbbill/undotree', { 'on': 'UndotreeToggle' }
+Plug 'tpope/vim-speeddating'
+Plug 'tpope/vim-unimpaired'
+Plug 'triglav/vim-visual-increment'
+Plug 'vim-scripts/Buffer-grep'
+Plug 'vim-scripts/a.vim'
+"Plug 'vim-scripts/python.vim--Vasiliev'
+call plug#end()
