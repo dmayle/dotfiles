@@ -130,32 +130,32 @@ let g:ycm_language_server =
   \ [ 
   \   {
   \     'name': 'yaml',
-  \     'cmdline': [ '/home/douglas/.vim/plugged/vim-lsp-settings/servers/yaml-language-server/yaml-language-server', '--stdio' ],
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/yaml-language-server/yaml-language-server', '--stdio' ],
   \     'filetypes': [ 'yaml' ]
   \   },
   \   {
   \     'name': 'sql',
-  \     'cmdline': [ '/home/douglas/.vim/plugged/vim-lsp-settings/servers/sql-language-server', 'up', '--method', 'stdio' ],
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/sqls/sqls' ],
   \     'filetypes': [ 'sql' ]
   \   },
   \   {
   \     'name': 'dart',
-  \     'cmdline': [ '/home/douglas/.vim/plugged/vim-lsp-settings/servers/analysis-server-dart-snapshot' ],
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/analysis-server-dart-snapshot/analysis-server-dart-snapshot' ],
   \     'filetypes': [ 'dart' ]
   \   },
   \   {
   \     'name': 'docker',
-  \     'cmdline': [ '/home/douglas/.vim/plugged/vim-lsp-settings/servers/docker-langserver', '--stdio' ],
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/docker-langserver/docker-langserver', '--stdio' ],
   \     'filetypes': [ 'docker' ]
   \   },
   \   {
   \     'name': 'bash',
-  \     'cmdline': [ '/home/douglas/.vim/plugged/vim-lsp-settings/servers/bash-language-server', 'start' ],
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/bash-language-server/bash-language-server', 'start' ],
   \     'filetypes': [ 'sh' ]
   \   },
   \   {
   \     'name': 'vim',
-  \     'cmdline': [ '/home/douglas/.vim/plugged/vim-lsp-settings/servers/vim-language-server', '--stdio' ],
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/vim-language-server/vim-language-server', '--stdio' ],
   \     'filetypes': [ 'vim' ]
   \   }
   \ ]
