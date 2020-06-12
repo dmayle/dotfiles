@@ -154,6 +154,11 @@ let g:ycm_language_server =
   \     'filetypes': [ 'sh' ]
   \   },
   \   {
+  \     'name': 'pyls',
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/pyls/pyls' ],
+  \     'filetypes': [ 'python' ]
+  \   },
+  \   {
   \     'name': 'vim',
   \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/vim-language-server/vim-language-server', '--stdio' ],
   \     'filetypes': [ 'vim' ]

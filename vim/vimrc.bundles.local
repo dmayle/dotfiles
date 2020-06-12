@@ -38,6 +38,8 @@ Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 
+Plug 'dart-lang/dart-vim-plugin'
+Plug 'kana/vim-fakeclip'
 Plug 'tomtom/tinykeymap_vim'
 Plug 'lambdalisue/vim-pyenv'
 Plug 'vim-scripts/bufexplorer.zip'
