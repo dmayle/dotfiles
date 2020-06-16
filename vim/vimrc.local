@@ -30,7 +30,7 @@ colorscheme solarized8_high
 if !has('nvim')
   try
     set ttymouse=sgr
-  catch E474
+  catch /E474/
     set ttymouse=xterm2
   endtry
 endif
