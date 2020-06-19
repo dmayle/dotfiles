@@ -213,7 +213,7 @@ augroup PersonalFileTypeSettings
   au!
   " Set up default spacing and tabs for a few filetypes.  I've left off Go,
   " since the filetype plugin handles it fore me.
-  autocmd FileType mail,text,python,gitcommit,c,cpp,java,sh,vim,puppet,xml,json,javascript,html,yaml setlocal tabstop=8 shiftwidth=2 expandtab
+  autocmd FileType mail,text,python,gitcommit,c,cpp,java,sh,vim,puppet,xml,json,javascript,html,yaml,dart setlocal tabstop=8 shiftwidth=2 expandtab
 
   " Fix the comment handling, which is set to c-style by default
   autocmd FileType puppet setlocal commentstring=#\ %s
