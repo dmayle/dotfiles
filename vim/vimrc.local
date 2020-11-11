@@ -103,6 +103,9 @@ nmap <silent> <leader>pp :if &paste <Bar>
 " Jump to the first line (if any) of the file longer than textwidth.
 nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth ? &textwidth + 1 : 9999) . "\\}")<CR>
 
+nmap <silent> <leader>gf :LspDefinition<CR>
+nmap <silent> <leader>gg :LspDeclaration<CR>
+
 " Delete the current buffer, and jump to a list of buffers
 function! s:BufDelete()
   exe "BufExplorer"
@@ -125,6 +128,77 @@ vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
 " ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
+" %%%%% GutenTags %%%%%
+" Rundown at https://www.reddit.com/r/vim/comments/d77t6j
+let g:gutentags_ctags_tagfile = '.tags'
+
+let g:gutentags_exclude_filetypes = [
+      \ 'dart',
+      \ ]
+
+" let g:gutentags_project_info = [
+"       \ {'type': 'dart', 'file': 'pubspec.yaml'},
+"       \ ]
+
+" let g:gutentags_ctags_executable_dart = '/home/douglas/.bin/flutter_ctags'
+
+let g:gutentags_ctags_extra_args = [
+      \ '--tag-relative=yes',
+      \ '--fields=+ailmnS',
+      \ ]
+
+let g:gutentags_ctags_exclude = [
+      \ '*.git', '*.svg', '*.hg',
+      \ '*/tests/*',
+      \ 'build',
+      \ 'dist',
+      \ '*sites/*/files/*',
+      \ 'bazel-bin',
+      \ 'bazel-out',
+      \ 'bazel-projects',
+      \ 'bazel-testlogs',
+      \ 'bin',
+      \ 'node_modules',
+      \ 'bower_components',
+      \ 'cache',
+      \ 'compiled',
+      \ 'docs',
+      \ 'example',
+      \ 'bundle',
+      \ 'vendor',
+      \ '*.md',
+      \ '*-lock.json',
+      \ '*.lock',
+      \ '*bundle*.js',
+      \ '*build*.js',
+      \ '.*rc*',
+      \ '*.json',
+      \ '*.min.*',
+      \ '*.map',
+      \ '*.bak',
+      \ '*.zip',
+      \ '*.pyc',
+      \ '*.class',
+      \ '*.sln',
+      \ '*.Master',
+      \ '*.csproj',
+      \ '*.tmp',
+      \ '*.csproj.user',
+      \ '*.cache',
+      \ '*.pdb',
+      \ 'tags*',
+      \ 'cscope.*',
+      \ '*.css',
+      \ '*.less',
+      \ '*.scss',
+      \ '*.exe', '*.dll',
+      \ '*.mp3', '*.ogg', '*.flac',
+      \ '*.swp', '*.swo',
+      \ '*.bmp', '*.gif', '*.ico', '*.jpg', '*.png',
+      \ '*.rar', '*.zip', '*.tar', '*.tar.gz', '*.tar.xz', '*.tar.bz2',
+      \ '*.pdf', '*.doc', '*.docx', '*.ppt', '*.pptx',
+      \ ]
+
 " %%%%% YouCompleteMe %%%%%
 let g:ycm_language_server = 
   \ [ 
@@ -177,6 +251,33 @@ let g:airline_theme='solarized'
 " I re-enable it.
 "let g:airline_powerline_fonts = 1
 
+" %%%%% Promptline %%%%%
+let g:promptline_theme = 'airline'
+" Solarized Bash Color Table For Theme:
+" 0 base2 (beige)
+" 1 red
+" 2 green
+" 3 yellow
+" 4 blue
+" 5 magenta
+" 6 cyan
+" 7 base02 (black)
+" 8 base3 (bright beige)
+" 9 orange
+" 10 base1 (lightest grey)
+" 11 base0 (light grey)
+" 12 base00 (dark grey)
+" 13 violet
+" 14 base01 (darkest grey)
+" 15 base03 (darkest black)
+" Colors I like:
+" Background: blue(4)  > yellow(3) > magenta(5) > bright beige(8)
+" Foreground: beige(0) > beige(0)  > beige(0)   > grey(11)
+let g:promptline_preset = {
+    \'a' : [ '\w' ],
+    \'b' : [ '$(echo $(printf \\xE2\\x8E\\x88) $(kubectx -c)$(echo :$(kubens -c) | sed -e s@^:default\$@@))' ],
+    \'c' : [ promptline#slices#vcs_branch() ],
+    \'warn' : [ promptline#slices#last_exit_code() ]}
 " %%%%% GUndo %%%%%
 "
 " Allow GUndo to work with modern vim builds
@@ -189,7 +290,8 @@ nnoremap <F5> :GundoToggle<CR>
 
 " %%%%% Vim-LSP %%%%%
 
-" Use YouCompleteMe for code help
+" Use YouCompleteMe instead of lsp for code help
+" Only use lsp to install/update the code servers
 let g:lsp_diagnostics_enabled = 0
 let g:lsp_signs_enabled = 0
 

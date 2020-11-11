@@ -59,5 +59,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'triglav/vim-visual-increment'
 Plug 'vim-scripts/Buffer-grep'
 Plug 'vim-scripts/a.vim'
+Plug 'edkolev/promptline.vim'
 "Plug 'vim-scripts/python.vim--Vasiliev'
 call plug#end()
