@@ -1,7 +1,8 @@
 # Ignore generated tags file
-tags
-tags.lock
-tags.temp
+.tags
+.tags.lock
+.tags.temp
+**/.tags
 # Ignore generated *.pyc files
 *.pyc
 # Ignore VIM undo files.
