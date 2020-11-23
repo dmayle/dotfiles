@@ -49,6 +49,9 @@ Plug 'mrk21/yaml-vim', { 'for': 'yaml' }
 Plug 'vim-scripts/Rename', { 'on': 'Rename' }
 Plug 'lifepillar/vim-solarized8'
 Plug 'google/vim-maktaba'
+" Don't forget to `go get github.com/bazelbuild/buildtools/buildifier`
+Plug 'google/vim-codefmt'
+Plug 'google/vim-glaive'
 Plug 'ryanoasis/vim-devicons'
 Plug 'google/vim-syncopate', {'on':'SyncopateExportToClipboard'}
 Plug 'michaeljsmith/vim-indent-object'
@@ -62,3 +65,4 @@ Plug 'vim-scripts/a.vim'
 Plug 'edkolev/promptline.vim'
 "Plug 'vim-scripts/python.vim--Vasiliev'
 call plug#end()
+call glaive#Install()
