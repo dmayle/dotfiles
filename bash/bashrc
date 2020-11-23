@@ -220,6 +220,9 @@ if [[ -f /etc/bash_completion ]] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+# Prep GPG Agent for this terminal
+[[ -n "$(which gpg)" ]] && export GPG_TTY=$(tty)
+
 # Use ssh-reagent to share agents between sessions (screen, etc.)
 ssh-reagent () {
   [[ -n "$SSH_AUTH_SOCK" ]] && return
