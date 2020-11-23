@@ -126,8 +126,18 @@ vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
 vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
 
 " ##############################################################################
+" ****** DISABLE UNWANTED SPF13 VIM BEHAVIOR ******
+" ##############################################################################
+" %%%%% Visual Re-enable After Shifting  %%%%%
+vunmap <
+vunmap >
+
+" ##############################################################################
 " ****** PLUGIN SPECIFIC HANDLING ******
 " ##############################################################################
+" %%%%% UltiSnips %%%%%
+let g:snips_author = "Plezentek, Inc. All rights reserved"
+
 " %%%%% GutenTags %%%%%
 " Rundown at https://www.reddit.com/r/vim/comments/d77t6j
 let g:gutentags_ctags_tagfile = '.tags'
@@ -314,13 +324,13 @@ let python_highlight_all = 1
 augroup PersonalFileTypeSettings
   au!
   " Set up default spacing and tabs for a few filetypes.  I've left off Go,
-  " since the filetype plugin handles it fore me.
+  " since the filetype plugin handles it for me.
   autocmd FileType mail,text,python,gitcommit,c,cpp,java,sh,vim,puppet,xml,json,javascript,html,yaml,dart setlocal tabstop=8 shiftwidth=2 expandtab
 
   " Fix the comment handling, which is set to c-style by default
   autocmd FileType puppet setlocal commentstring=#\ %s
 
-  " Standard GO tab settings (tabs, not spaces
+  " Standard GO tab settings (tabs, not spaces)
   autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
 
   " Turn on spellchecking in these file types.
@@ -364,6 +374,25 @@ augroup PersonalFileTypeSettings
   " +2s says indent 2xshiftwidth on line continuations.
   autocmd FileType java setlocal cinoptions=j1,+2s
 augroup END
+
+" Undo mapping which blocks vim-codefmt
+unmap <Leader>=
+
+Glaive codefmt plugin[mappings]
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer yapf
+  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+  autocmd FileType rust AutoFormatBuffer rustfmt
+  autocmd FileType vue AutoFormatBuffer prettier
+augroup END
+
 
 " ##############################################################################
 " ****** COLUMN LAYOUT INDICATOR ******
