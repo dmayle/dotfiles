@@ -392,6 +392,9 @@ augroup PersonalFileTypeSettings
   "Teach VIM about go source
   autocmd BufNewFile,BufRead *.go set filetype=go
 
+  " Don't hide markdown punctuation
+  autocmd FileType markdown set conceallevel=0
+
   " Teach vim-commentary about nasm comments
   autocmd FileType asm set commentstring=;\ %s
   " xmap gc  <Plug>Commentary
