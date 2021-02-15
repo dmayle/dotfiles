@@ -149,6 +149,9 @@ vunmap >
 " %%%%% UltiSnips %%%%%
 let g:snips_author = "Plezentek, Inc. All rights reserved"
 
+" %%%%% IndentLines %%%%%
+let g:indentLine_fileTypeExclude = ['markdown']
+
 " %%%%% GutenTags %%%%%
 " Rundown at https://www.reddit.com/r/vim/comments/d77t6j
 let g:gutentags_ctags_tagfile = '.tags'
