@@ -4,7 +4,7 @@
     let g:spf13_no_autochdir = 1
 
     " Disable views
-    "   let g:spf13_no_views = 1
+    let g:spf13_no_views = 1
 
     " Leader keys
     "   let g:spf13_leader='\'
