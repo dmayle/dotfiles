@@ -42,6 +42,12 @@ function! s:InitLineNumbering()
   " Keep track of current window, since 'windo' chances current window
   let l:my_window = winnr()
 
+  " Global line number settings
+  set relativenumber
+  set number
+  set list
+  set signcolumn=auto
+
   " Setup all windows for line numbering
   windo call <SID>SetLineNumberingForWindow(0)
 
@@ -60,9 +66,13 @@ function! s:SetLineNumberingForWindow(entering)
   if a:entering
     setlocal number
     setlocal relativenumber
+    setlocal list
+    setlocal signcolumn=auto
   else
     setlocal number
     setlocal norelativenumber
+    setlocal list
+    setlocal signcolumn=auto
   endif
 endfunction
 
@@ -85,11 +95,11 @@ set visualbell
 
 " Shortcut to toggle between a screen copy mode (no line numbers or highlighted
 " special characters) and my normal handling.
-nmap <silent> <leader>sc :if &relativenumber <Bar>
-  \set norelativenumber nonumber nolist signcolumn=no <Bar>
+nmap <silent> <leader>sc :if &number <Bar>
+  \setlocal norelativenumber nonumber nolist signcolumn=no <Bar>
   \exe 'IndentLinesDisable' <Bar>
     \else <Bar>
-  \set relativenumber number list signcolumn=auto <Bar>
+  \setlocal relativenumber number list signcolumn=auto <Bar>
   \exe 'IndentLinesEnable' <Bar>
     \endif<CR>
 
@@ -125,6 +135,7 @@ nmap <silent> <leader>nn :NERDTreeFocus<CR>
 vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
 vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
 
+nmap <silent> <leader>H <Plug>(YCMHover)
 " ##############################################################################
 " ****** DISABLE UNWANTED SPF13 VIM BEHAVIOR ******
 " ##############################################################################
@@ -167,6 +178,7 @@ let g:gutentags_ctags_exclude = [
       \ 'bazel-out',
       \ 'bazel-projects',
       \ 'bazel-testlogs',
+      \ 'bazel-*',
       \ 'bin',
       \ 'node_modules',
       \ 'bower_components',
@@ -251,6 +263,10 @@ let g:ycm_language_server =
 
 let g:ycm_show_diagnostics_ui = 1
 let g:ycm_always_populate_location_list = 1
+let g:go_gopls_enabled = 0
+let g:go_def_mode = 'godef'
+let g:go_info_mode = 'guru'
+let g:go_referrers_mode = 'guru'
 
 " %%%%% Airline %%%%%
 "
@@ -304,12 +320,39 @@ nnoremap <F5> :GundoToggle<CR>
 " Only use lsp to install/update the code servers
 let g:lsp_diagnostics_enabled = 0
 let g:lsp_signs_enabled = 0
+let g:lsp_settings = {
+\  'yaml-language-server': {
+\    'disabled': 1,
+\  },
+\  'sqls': {
+\    'disabled': 1,
+\  },
+\  'analysis-server-dart-snapshot': {
+\    'disabled': 1,
+\  },
+\  'docker-langserver': {
+\    'disabled': 1,
+\  },
+\  'bash-language-server': {
+\    'disabled': 1,
+\  },
+\  'pyls': {
+\    'disabled': 1,
+\  },
+\  'vim-language-server': {
+\    'disabled': 1,
+\  },
+\  'gopls': {
+\    'disabled': 1,
+\  }
+\}
 
 " %%%%% NERDTree %%%%%
 
 let g:NERDTreeDirArrowExpandable = ''
 let g:NERDTreeDirArrowCollapsible = ''
 let NERDTreeQuitOnOpen=0
+let NERDTreeIgnore = ['^bazel-.*$']
 
 " %%%%% Vim-Go %%%%%
 "let g:go_code_completion_enabled = 0

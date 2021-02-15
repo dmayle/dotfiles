@@ -40,7 +40,7 @@ Plug 'mattn/vim-lsp-settings'
 
 Plug 'dart-lang/dart-vim-plugin'
 Plug 'kana/vim-fakeclip'
-Plug 'tomtom/tinykeymap_vim'
+" Plug 'tomtom/tinykeymap_vim'
 Plug 'lambdalisue/vim-pyenv'
 Plug 'vim-scripts/bufexplorer.zip'
 Plug 'ludovicchabant/vim-gutentags'
@@ -52,7 +52,8 @@ Plug 'google/vim-maktaba'
 " Don't forget to `go get github.com/bazelbuild/buildtools/buildifier`
 Plug 'google/vim-codefmt'
 Plug 'google/vim-glaive'
-Plug 'ryanoasis/vim-devicons'
+Plug 'xuyuanp/nerdtree-git-plugin'
+" Plug 'ryanoasis/vim-devicons'
 Plug 'google/vim-syncopate', {'on':'SyncopateExportToClipboard'}
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTree', 'NERDTreeToggle'] }
@@ -63,6 +64,7 @@ Plug 'triglav/vim-visual-increment'
 Plug 'vim-scripts/Buffer-grep'
 Plug 'vim-scripts/a.vim'
 Plug 'edkolev/promptline.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 "Plug 'vim-scripts/python.vim--Vasiliev'
 call plug#end()
 call glaive#Install()
