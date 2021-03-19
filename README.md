@@ -23,9 +23,6 @@ ln -s .dotfiles/bash/bashrc ~/.bash_profile
 ln -s .dotfiles/bash/aliases ~/.bash_aliases
 ln -s .dotfiles/editrc ~/.editrc
 ln -s .dotfiles/crontab ~/.crontab
-ln -s .dotfiles/tmux/outer.conf ~/.tmux-outer.conf
-ln -s .dotfiles/tmux/shared.conf ~/.tmux-shared.conf
-ln -s .dotfiles/tmux/inner.conf ~/.tmux-inner.conf
 ln -s .vim/vimrc ~/.vimrc
 ```
 

@@ -27,11 +27,83 @@ in
     longitude = "7.2";
   };
 
+  # Setup vi keybinding with readline
   programs.readline = {
     enable = true;
     extraConfig = ''
       set editing-mode vi
       set keymap vi
+    '';
+  };
+
+  # Configure solarized light color scheme for kitt
+  programs.kitty = {
+    enable = true;
+    extraConfig = ''
+      # Light
+
+      background              #fdf6e3
+      foreground              #657b83
+      cursor                  #586e75
+
+      selection_background    #475b62
+      selection_foreground    #eae3cb
+
+      color0                #073642
+      color8                #002b36
+
+      color1                #dc322f
+      color9                #cb4b16
+
+      color2                #859900
+      color10               #586e75
+
+      color3                #b58900
+      color11               #657b83
+
+      color4                #268bd2
+      color12               #839496
+
+      color5                #d33682
+      color13               #6c71c4
+
+      color6                #2aa198
+      color14               #93a1a1
+
+      color7                #eee8d5
+      color15               #fdf6e3
+    '';
+  };
+
+  programs.tmux = {
+    enable = true;
+    aggressiveResize = true;
+    clock24 = true;
+    keyMode = "vi";
+    shortcut = "a";
+    extraConfig = ''
+
+    # This tmux statusbar config was created by tmuxline.vim
+    # on Fri, 14 Feb 2020
+
+    set -g status-justify "left"
+    set -g status "on"
+    set -g status-left-style "none"
+    set -g message-command-style "fg=#eee8d5,bg=#93a1a1"
+    set -g status-right-style "none"
+    set -g pane-active-border-style "fg=#657b83"
+    set -g status-style "none,bg=#eee8d5"
+    set -g message-style "fg=#eee8d5,bg=#93a1a1"
+    set -g pane-border-style "fg=#93a1a1"
+    set -g status-right-length "100"
+    set -g status-left-length "100"
+    setw -g window-status-activity-style "none"
+    setw -g window-status-separator ""
+    setw -g window-status-style "none,fg=#93a1a1,bg=#eee8d5"
+    set -g status-left "#[fg=#eee8d5,bg=#657b83,bold] #S #[fg=#657b83,bg=#eee8d5,nobold,nounderscore,noitalics]"
+    set -g status-right "#[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] %Y-%m-%d  %H:%M #[fg=#657b83,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#657b83] #h "
+    setw -g window-status-format "#[fg=#93a1a1,bg=#eee8d5] #I #[fg=#93a1a1,bg=#eee8d5] #W "
+    setw -g window-status-current-format "#[fg=#eee8d5,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] #I #[fg=#eee8d5,bg=#93a1a1] #W #[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]"
     '';
   };
 
