@@ -40,7 +40,7 @@ in
   programs.kitty = {
     enable = true;
     extraConfig = ''
-      # Light
+      # Solarized Light Colorscheme
 
       background              #fdf6e3
       foreground              #657b83
@@ -72,6 +72,14 @@ in
 
       color7                #eee8d5
       color15               #fdf6e3
+
+      # Choose Powerline Symbols
+      symbol_map U+E0A0-U+E0A2,U+E0B0-U+E0B3,U+1F512 PowerlineSymbols
+
+      # Setup font size controls
+      map kitty_mod+0 set_font_size 11
+      map kitty_mod+equal change_font_size all +2.0
+      map kitty_mod+minux change_font_size all -2.0
     '';
   };
 
