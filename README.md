@@ -1,4 +1,13 @@
-Installation:
+# Configuration Repo
+
+## Method Update
+This repo is in the middle of migration for a pure dotfiles repo to a Nix Home
+Manager configuration.
+
+The end result will be the same, but pieces will be moving from one style to
+the other.
+
+## Installation:
 
 ```
 # In process of moving towards a Git Strap version that autoinstalls
@@ -12,7 +21,6 @@ ln -s .dotfiles/vim ~/.vim
 ln -s .dotfiles/bash/bashrc ~/.bashrc
 ln -s .dotfiles/bash/bashrc ~/.bash_profile
 ln -s .dotfiles/bash/aliases ~/.bash_aliases
-ln -s .dotfiles/inputrc ~/.inputrc
 ln -s .dotfiles/editrc ~/.editrc
 ln -s .dotfiles/crontab ~/.crontab
 ln -s .dotfiles/tmux/outer.conf ~/.tmux-outer.conf
