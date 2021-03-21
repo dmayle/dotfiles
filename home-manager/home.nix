@@ -178,9 +178,12 @@ in
 
       # Vim Git UI
       vim-fugitive
+      vim-signify
     ];
 
     extraConfig = ''
+      " Remember, all autocommand should be in autogroups
+
       " Enable 24-bit color support
       set termguicolors
 
@@ -192,12 +195,71 @@ in
       let g:Hexokinase_highlighters = ["backgroundfull"]
 
       " Personal Shortcuts (leader)
-      let mapleader = ','
+      nnoremap <Space> <Nop>
+      let mapleader = ' '
+
+      " Searches
       nnoremap <silent> <leader><space> :GFiles<CR>
       nnoremap <silent> <leader>ff :Rg<CR>
       inoremap <expr> <c-x><c-f> fzf#vim#complete#path(
         \ "find . -path '*/\.*' -prune -o print \| sed '1d;s:%..::'",
         \ fzf#wrap({'dir': expand('%:p:h')}))
+
+      " Load Git UI
+      nnoremap <silent> <leader>gg :G<cr>
+
+      " #######################################################################
+      " ****** LINE NUMBERING ******
+      " #######################################################################
+
+      " Show line numbers relative to the current cursor line to make repeated
+      " commands easier to compose. We only do this while in the buffer.  When
+      " focused in another buffer, we use standard numbering.
+
+      function! s:InitLineNumbering()
+        " Keep track of current window, since 'windo' chances current window
+        let l:my_window = winnr()
+
+        " Global line number settings
+        set relativenumber
+        set number
+        set list
+        set signcolumn=auto
+
+        " Setup all windows for line numbering
+        windo call <SID>SetLineNumberingForWindow(0)
+
+        " Go back to window
+        exec l:my_window . 'wincmd w'
+        "
+        " Set special (relative) numbering for focused window
+        call <SID>SetLineNumberingForWindow(1)
+      endfunction
+
+      function! s:SetLineNumberingForWindow(entering)
+        " Excluded buffers
+        if &ft == "help" || exists("b:NERDTree")
+          return
+        endif
+        if a:entering
+          setlocal number
+          setlocal relativenumber
+          setlocal list
+          setlocal signcolumn=auto
+        else
+          setlocal number
+          setlocal norelativenumber
+          setlocal list
+          setlocal signcolumn=auto
+        endif
+      endfunction
+
+      augroup MyLineNumbers
+        au!
+        autocmd VimEnter * call <SID>InitLineNumbering()
+        autocmd BufEnter,WinEnter * call <SID>SetLineNumberingForWindow(1)
+        autocmd WinLeave * call <SID>SetLineNumberingForWindow(0)
+      augroup END
     '';
   };
 
