@@ -161,6 +161,9 @@ in
       # split state
       vim-maximizer
 
+      # Configure fuzzy finder integration
+      fzf-vim
+
       # solarized
       NeoSolarized
 
@@ -172,6 +175,9 @@ in
 
       # Code commenting
       vim-commentary
+
+      # Vim Git UI
+      vim-fugitive
     ];
 
     extraConfig = ''
@@ -184,6 +190,14 @@ in
 
       " Turn on true-color highlighting
       let g:Hexokinase_highlighters = ["backgroundfull"]
+
+      " Personal Shortcuts (leader)
+      let mapleader = ','
+      nnoremap <silent> <leader><space> :GFiles<CR>
+      nnoremap <silent> <leader>ff :Rg<CR>
+      inoremap <expr> <c-x><c-f> fzf#vim#complete#path(
+        \ "find . -path '*/\.*' -prune -o print \| sed '1d;s:%..::'",
+        \ fzf#wrap({'dir': expand('%:p:h')}))
     '';
   };
 
