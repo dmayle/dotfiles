@@ -3,6 +3,21 @@ let
   unstableHomeManager = fetchTarball https://github.com/nix-community/home-manager/tarball/07f6c6481e0cbbcaf3447f43e964baf99465c8e1;
   unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/0b876eaed3ed4715ac566c59eb00004eca3114e8;
   unstablePkgs = import unstable { config.allowUnfree = true; };
+
+  # Custom neovim plugins
+  vim-maximizer = pkgs.vimUtils.buildVimPlugin rec {
+    name = "vim-maximizer";
+    src = pkgs.fetchFromGitHub {
+      owner = "szw";
+      repo = "vim-maximizer";
+      rev = "2e54952fe91e140a2e69f35f22131219fcd9c5f1";
+      sha256 = "031brldzxhcs98xpc3sr0m2yb99xq0z5yrwdlp8i5fqdgqrdqlzr";
+    };
+    meta = {
+      homepage = https://github.com/szw/vim-maximizer;
+      maintainers = [ "szw" ];
+    };
+  };
 in
 {
   imports =
@@ -90,28 +105,85 @@ in
     keyMode = "vi";
     shortcut = "a";
     extraConfig = ''
+      # Use tmux TERM for more features, and 256color for true color
+      set -g default-terminal "tmux-256color"
 
-    # This tmux statusbar config was created by tmuxline.vim
-    # on Fri, 14 Feb 2020
+      # Enable italic support
+      #set -as terminal-overrides ',*:sitm=\E[3m'
 
-    set -g status-justify "left"
-    set -g status "on"
-    set -g status-left-style "none"
-    set -g message-command-style "fg=#eee8d5,bg=#93a1a1"
-    set -g status-right-style "none"
-    set -g pane-active-border-style "fg=#657b83"
-    set -g status-style "none,bg=#eee8d5"
-    set -g message-style "fg=#eee8d5,bg=#93a1a1"
-    set -g pane-border-style "fg=#93a1a1"
-    set -g status-right-length "100"
-    set -g status-left-length "100"
-    setw -g window-status-activity-style "none"
-    setw -g window-status-separator ""
-    setw -g window-status-style "none,fg=#93a1a1,bg=#eee8d5"
-    set -g status-left "#[fg=#eee8d5,bg=#657b83,bold] #S #[fg=#657b83,bg=#eee8d5,nobold,nounderscore,noitalics]"
-    set -g status-right "#[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] %Y-%m-%d  %H:%M #[fg=#657b83,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#657b83] #h "
-    setw -g window-status-format "#[fg=#93a1a1,bg=#eee8d5] #I #[fg=#93a1a1,bg=#eee8d5] #W "
-    setw -g window-status-current-format "#[fg=#eee8d5,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] #I #[fg=#eee8d5,bg=#93a1a1] #W #[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]"
+      # Enable undercurl support
+      set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
+
+      # Enable colored underline support
+      set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
+
+      # This tmux statusbar config was created by tmuxline.vim
+      # on Fri, 14 Feb 2020
+
+      set -g status-justify "left"
+      set -g status "on"
+      set -g status-left-style "none"
+      set -g message-command-style "fg=#eee8d5,bg=#93a1a1"
+      set -g status-right-style "none"
+      set -g pane-active-border-style "fg=#657b83"
+      set -g status-style "none,bg=#eee8d5"
+      set -g message-style "fg=#eee8d5,bg=#93a1a1"
+      set -g pane-border-style "fg=#93a1a1"
+      set -g status-right-length "100"
+      set -g status-left-length "100"
+      setw -g window-status-activity-style "none"
+      setw -g window-status-separator ""
+      setw -g window-status-style "none,fg=#93a1a1,bg=#eee8d5"
+      set -g status-left "#[fg=#eee8d5,bg=#657b83,bold] #S #[fg=#657b83,bg=#eee8d5,nobold,nounderscore,noitalics]"
+      set -g status-right "#[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] %Y-%m-%d  %H:%M #[fg=#657b83,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#657b83] #h "
+      setw -g window-status-format "#[fg=#93a1a1,bg=#eee8d5] #I #[fg=#93a1a1,bg=#eee8d5] #W "
+      setw -g window-status-current-format "#[fg=#eee8d5,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] #I #[fg=#eee8d5,bg=#93a1a1] #W #[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]"
+    '';
+  };
+
+  programs.neovim = {
+    enable = true;
+    viAlias = true;
+    vimAlias = true;
+    vimdiffAlias = true;
+    plugins = with pkgs.vimPlugins; [
+      # File explorer
+      nerdtree
+
+      # Source code class explorer
+      tagbar
+
+      # Status bar with coloring
+      vim-airline
+      vim-airline-themes
+
+      # Toggle between maximizing current split, and then restoring previous
+      # split state
+      vim-maximizer
+
+      # solarized
+      NeoSolarized
+
+      # Configurable text colorizing
+      unstablePkgs.vimPlugins.vim-hexokinase
+
+      # Nix Filetype support
+      vim-nix
+
+      # Code commenting
+      vim-commentary
+    ];
+
+    extraConfig = ''
+      " Enable 24-bit color support
+      set termguicolors
+
+      " Make sure we use Solarized light
+      set background=light
+      colorscheme NeoSolarized
+
+      " Turn on true-color highlighting
+      let g:Hexokinase_highlighters = ["backgroundfull"]
     '';
   };
 
