@@ -181,7 +181,6 @@ in
       NeoSolarized
 
       # Configurable text colorizing
-      # unstablePkgs.vimPlugins.vim-hexokinase
       nvim-colorizer
 
       # Nix Filetype support
@@ -206,7 +205,6 @@ in
       colorscheme NeoSolarized
 
       " Turn on true-color highlighting
-      " let g:Hexokinase_highlighters = ["backgroundfull"]
 
       function! s:InitColoring()
         lua require'colorizer'.setup()
