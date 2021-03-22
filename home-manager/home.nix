@@ -192,6 +192,12 @@ in
       # Vim Git UI
       vim-fugitive
       vim-signify
+
+      # Builtin Nvim LSP support
+      # unstablePkgs.vimPlugins.nvim-lspconfig
+
+      # Lightweight autocompletion
+      # completion-nvim
     ];
 
     extraConfig = ''
@@ -215,6 +221,9 @@ in
         au!
         autocmd VimEnter * call <SID>InitColoring()
       augroup END
+
+      " Allow more-responsive async code
+      set updatetime=100
 
       " Personal Shortcuts (leader)
       nnoremap <Space> <Nop>
