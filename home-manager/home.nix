@@ -18,6 +18,19 @@ let
       maintainers = [ "szw" ];
     };
   };
+  nvim-colorizer = pkgs.vimUtils.buildVimPlugin rec {
+    name = "nvim-colorizer";
+    src = pkgs.fetchFromGitHub {
+      owner = "norcalli";
+      repo = "nvim-colorizer.lua";
+      rev = "36c610a9717cc9ec426a07c8e6bf3b3abcb139d6";
+      sha256 = "0gvqdfkqf6k9q46r0vcc3nqa6w45gsvp8j4kya1bvi24vhifg2p9";
+    };
+    meta = {
+      homepage = https://github.com/norcalli/nvim-colorizer.lua;
+      maintainers = [ "norcalli" ];
+    };
+  };
 in
 {
   imports =
@@ -168,7 +181,8 @@ in
       NeoSolarized
 
       # Configurable text colorizing
-      unstablePkgs.vimPlugins.vim-hexokinase
+      # unstablePkgs.vimPlugins.vim-hexokinase
+      nvim-colorizer
 
       # Nix Filetype support
       vim-nix
@@ -192,7 +206,17 @@ in
       colorscheme NeoSolarized
 
       " Turn on true-color highlighting
-      let g:Hexokinase_highlighters = ["backgroundfull"]
+      " let g:Hexokinase_highlighters = ["backgroundfull"]
+
+      function! s:InitColoring()
+        lua require'colorizer'.setup()
+        lua require'colorizer'.attach_to_buffer(0)
+      endfunction
+
+      augroup MyColoring
+        au!
+        autocmd VimEnter * call <SID>InitColoring()
+      augroup END
 
       " Personal Shortcuts (leader)
       nnoremap <Space> <Nop>
