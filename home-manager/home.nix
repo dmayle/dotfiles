@@ -18,6 +18,7 @@ let
       maintainers = [ "szw" ];
     };
   };
+
   nvim-colorizer = pkgs.vimUtils.buildVimPlugin rec {
     name = "nvim-colorizer";
     src = pkgs.fetchFromGitHub {
@@ -31,6 +32,20 @@ let
       maintainers = [ "norcalli" ];
     };
   };
+
+  indent-blankline = pkgs.vimUtils.buildVimPlugin rec {
+    name = "indent-blankline";
+    src = pkgs.fetchFromGitHub {
+      owner = "lukas-reineke";
+      repo = "indent-blankline.nvim";
+      rev = "d925b80b3f57c8e2bf913a36b37aa63b6ed75205";
+      sha256 = "1h1jsjn6ldpx0qv7vk3isqs7hrfz1srv5q6vrf44lv2r5di1gr65";
+    };
+    meta = {
+      homepage = https://github.com/lukas-reineke/indent-blankline.nvim;
+      maintainers = [ "lukas-reineke" ];
+    };
+  };
 in
 {
   imports =
@@ -42,6 +57,12 @@ in
     (import (builtins.fetchTarball {
       url = https://github.com/nix-community/neovim-nightly-overlay/tarball/5e3737ae3243e2e206360d39131d5eb6f65ecff5;
     }))
+
+    # For when I need to straight up override packages
+    (self: super: {
+      # Use nightly neovim as the basis for my regular neovim package
+      neovim-unwrapped = self.neovim-nightly;
+    })
   ];
 
   # Let Home Manager install and manage itself.
@@ -161,7 +182,6 @@ in
 
   programs.neovim = {
     enable = true;
-    package = pkgs.neovim-nightly;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
@@ -179,6 +199,11 @@ in
       # Toggle between maximizing current split, and then restoring previous
       # split state
       vim-maximizer
+
+      # Start using treesitter
+      nvim-treesitter
+      #unstable can install maintained parsers but can't use them
+      #unstablePkgs.vimPlugins.nvim-treesitter
 
       # Configure fuzzy finder integration
       fzf-vim
@@ -205,8 +230,8 @@ in
       # Lightweight autocompletion
       unstablePkgs.vimPlugins.completion-nvim
 
-      # Lua Indent guides
-      unstablePkgs.vimPlugins.indent-blankline-nvim
+      # Both Indent guides plugins
+      indent-blankline
     ];
 
     extraConfig = ''
@@ -215,12 +240,19 @@ in
       " Enable 24-bit color support
       set termguicolors
 
+      " I like to be able to occasionally use the mouse
+      set mouse=a
+
       " Make sure we use Solarized light
       set background=light
       colorscheme NeoSolarized
 
       " Allow more-responsive async code
       set updatetime=100
+
+      " Make sure both indent line plugins use the same character
+      " let g:indent_blankline_char = '|'
+      let g:indent_blankline_use_treesitter = v:true
 
       " #######################################################################
       " ****** PERSONAL SHORTCUTS (LEADER) ******
@@ -363,10 +395,12 @@ in
 
         -- Use a loop to simply setup all language servers
         local servers = { 'bashls', 'dockerls', 'gopls', 'terraformls', 'vimls', 'yamlls' }
-        -- Also: { 'sqls', 'rnix', 'efm', 'dartls', 'pyls_ms' }
+        -- Also: { 'sqls', 'rnix', 'efm', 'dartls' }
         for _, lsp in ipairs(servers) do
           nvim_lsp[lsp].setup { on_attach = on_attach }
         end
+
+        -- MS Python language server needs customized config
         nvim_lsp['pyls_ms'].setup {
           on_attach = on_attach,
           InterpreterPah = "${pkgs.python3Full}/bin/python",
@@ -374,6 +408,7 @@ in
           cmd = { "${pkgs.dotnet-sdk}/bin/dotnet", "exec", "${unstablePkgs.python-language-server}/lib/Microsoft.Python.LanguageServer.dll" }
         }
       EOLUA
+
         " Re-trigger filetype detection so LSP works on first file
         let &ft=&ft
       endfunction
@@ -396,6 +431,14 @@ in
       set shortmess+=c
     '';
   };
+
+  # home.file."${config.xdg.configHome}/nvim/parser/bash.so".source = "${pkgs.tree-sitter.builtGrammars.bash}/parser";
+  # home.file."${config.xdg.configHome}/nvim/parser/c.so".source = "${pkgs.tree-sitter.builtGrammars.c}/parser";
+  # home.file."${config.xdg.configHome}/nvim/parser/cpp.so".source = "${pkgs.tree-sitter.builtGrammars.cpp}/parser";
+  # home.file."${config.xdg.configHome}/nvim/parser/go.so".source = "${pkgs.tree-sitter.builtGrammars.go}/parser";
+  # home.file."${config.xdg.configHome}/nvim/parser/html.so".source = "${pkgs.tree-sitter.builtGrammars.html}/parser";
+  # home.file."${config.xdg.configHome}/nvim/parser/javascript.so".source = "${pkgs.tree-sitter.builtGrammars.javascript}/parser";
+  # home.file."${config.xdg.configHome}/nvim/parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.python}/parser";
 
   systemd.user.services.wlsunset.Service = {
     Restart = "always";
