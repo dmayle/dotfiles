@@ -232,10 +232,20 @@ in
 
       # Both Indent guides plugins
       indent-blankline
+
+      # Built-in debugger
+      vimspector
     ];
 
     extraConfig = ''
       " Remember, all autocommands should be in autogroups
+
+      " #######################################################################
+      " ****** OVERALL SETTINGS ******
+      " #######################################################################
+
+      " I don't want files overriding my settings
+      set modelines=0
 
       " Enable 24-bit color support
       set termguicolors
@@ -250,9 +260,20 @@ in
       " Allow more-responsive async code
       set updatetime=100
 
-      " Make sure both indent line plugins use the same character
-      " let g:indent_blankline_char = '|'
+      " #######################################################################
+      " ****** PLUGIN SETTINGS ******
+      " #######################################################################
+
+      " %%%%%%%%%% Indent Blankline %%%%%%%%%%
+      " Enable treesitter support
       let g:indent_blankline_use_treesitter = v:true
+
+      " #######################################################################
+      " ****** FILETYPE SETTINGS ******
+      " #######################################################################
+
+      " Default to bash support in shell scripts
+      let g:is_bash = 1
 
       " #######################################################################
       " ****** PERSONAL SHORTCUTS (LEADER) ******
@@ -270,6 +291,36 @@ in
 
       " Load Git UI
       nnoremap <silent> <leader>gg :G<cr>
+
+      nnoremap <silent> <leader>pp :call <SID>TogglePaste()<cr>
+      nnoremap <silent> <leader>sc :call <SID>ToggleScreenMess()<cr>
+
+      " #######################################################################
+      " ****** PERSONAL FUNCTIONS ******
+      " #######################################################################
+
+      function! s:TogglePaste()
+        if &paste
+          set nopaste
+        else
+          set paste
+        endif
+      endfunction
+
+      " When copying from the buffer in tmux, we wan't to get rid of visual
+      " aids like indent lines, line numbering, gutter
+      function! s:ToggleScreenMess()
+        if &signcolumn ==? "auto"
+          " Turn off
+          set nonumber nolist norelativenumber signcolumn=no
+          exe 'IndentBlanklineDisable'
+        else
+          " Turn on
+          set number list signcolumn=auto
+          setlocal relativenumber
+          exe 'IndentBlanklineEnable'
+        endif
+      endfunction
 
       " #######################################################################
       " ****** COLORING CONTENT ******
@@ -304,30 +355,30 @@ in
         set signcolumn=auto
 
         " Setup all windows for line numbering
-        windo call <SID>SetLineNumberingForWindow(0)
+        windo call s:SetLineNumberingForWindow(0)
 
         " Go back to window
         exec l:my_window . 'wincmd w'
         "
         " Set special (relative) numbering for focused window
-        call <SID>SetLineNumberingForWindow(1)
+        call s:SetLineNumberingForWindow(1)
       endfunction
 
       function! s:SetLineNumberingForWindow(entering)
         " Excluded buffers
-        if &ft == "help" || exists("b:NERDTree")
+        if &ft ==? "help" || exists("b:NERDTree")
           return
         endif
         if a:entering
-          setlocal number
-          setlocal relativenumber
-          setlocal list
-          setlocal signcolumn=auto
+          if &signcolumn ==? "auto"
+            " Normal state, turn on relative number
+            setlocal relativenumber
+          else
+            " Visual Indicators Disabled
+            setlocal norelativenumber
+          endif
         else
-          setlocal number
           setlocal norelativenumber
-          setlocal list
-          setlocal signcolumn=auto
         endif
       endfunction
 
