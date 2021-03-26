@@ -187,7 +187,11 @@ in
     vimdiffAlias = true;
     plugins = with pkgs.vimPlugins; [
       # File explorer
-      nerdtree
+      # nerdtree
+      unstablePkgs.vimPlugins.nvim-tree-lua
+
+      # Simple buf list/navigate
+      bufexplorer
 
       # Source code class explorer
       tagbar
@@ -247,6 +251,9 @@ in
       " I don't want files overriding my settings
       set modelines=0
 
+      " I don't like beeping
+      set visualbell
+
       " Enable 24-bit color support
       set termguicolors
 
@@ -267,6 +274,78 @@ in
       " %%%%%%%%%% Indent Blankline %%%%%%%%%%
       " Enable treesitter support
       let g:indent_blankline_use_treesitter = v:true
+
+      " %%%%% GutenTags %%%%%
+      " Explanaiton of all this at https://www.reddit.com/r/vim/comments/d77t6j
+      let g:gutentags_ctags_tagfile = '.tags'
+
+      let g:gutentags_exclude_filetypes = [
+            \ 'dart',
+            \ ]
+
+      " let g:gutentags_project_info = [
+      "       \ {'type': 'dart', 'file': 'pubspec.yaml'},
+      "       \ ]
+
+      " let g:gutentags_ctags_executable_dart = '/home/douglas/.bin/flutter_ctags'
+
+      let g:gutentags_ctags_extra_args = [
+            \ '--tag-relative=yes',
+            \ '--fields=+ailmnS',
+            \ ]
+
+      let g:gutentags_ctags_exclude = [
+            \ '*.git', '*.svg', '*.hg',
+            \ '*/tests/*',
+            \ 'build',
+            \ 'dist',
+            \ '*sites/*/files/*',
+            \ 'bazel-bin',
+            \ 'bazel-out',
+            \ 'bazel-projects',
+            \ 'bazel-testlogs',
+            \ 'bazel-*',
+            \ 'bin',
+            \ 'node_modules',
+            \ 'bower_components',
+            \ 'cache',
+            \ 'compiled',
+            \ 'docs',
+            \ 'example',
+            \ 'bundle',
+            \ 'vendor',
+            \ '*.md',
+            \ '*-lock.json',
+            \ '*.lock',
+            \ '*bundle*.js',
+            \ '*build*.js',
+            \ '.*rc*',
+            \ '*.json',
+            \ '*.min.*',
+            \ '*.map',
+            \ '*.bak',
+            \ '*.zip',
+            \ '*.pyc',
+            \ '*.class',
+            \ '*.sln',
+            \ '*.Master',
+            \ '*.csproj',
+            \ '*.tmp',
+            \ '*.csproj.user',
+            \ '*.cache',
+            \ '*.pdb',
+            \ 'tags*',
+            \ 'cscope.*',
+            \ '*.css',
+            \ '*.less',
+            \ '*.scss',
+            \ '*.exe', '*.dll',
+            \ '*.mp3', '*.ogg', '*.flac',
+            \ '*.swp', '*.swo',
+            \ '*.bmp', '*.gif', '*.ico', '*.jpg', '*.png',
+            \ '*.rar', '*.zip', '*.tar', '*.tar.gz', '*.tar.xz', '*.tar.bz2',
+            \ '*.pdf', '*.doc', '*.docx', '*.ppt', '*.pptx',
+            \ ]
 
       " #######################################################################
       " ****** FILETYPE SETTINGS ******
@@ -295,6 +374,22 @@ in
       nnoremap <silent> <leader>pp :call <SID>TogglePaste()<cr>
       nnoremap <silent> <leader>sc :call <SID>ToggleScreenMess()<cr>
 
+      " replace the current buffer (delete) with bufexplorer
+      nnoremap <silent> <leader>bd :call <SID>BufDelete()<cr>
+
+      " Jump in and out of nvim tree
+      nnoremap <silent> <leader>nt :NvimTreeToggle<CR>
+      nnoremap <silent> <leader>nf :NvimTreeFindFile<CR>
+
+      " (C)reate (F)ile under cursor (for when `gf` doesn't work)
+      nnoremap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
+
+      nnoremap <silent> <leader>tt :TagbarToggle<CR>
+
+      " base64 encode encode and decode visual selection
+      vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
+      vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
+
       " #######################################################################
       " ****** PERSONAL FUNCTIONS ******
       " #######################################################################
@@ -320,6 +415,13 @@ in
           setlocal relativenumber
           exe 'IndentBlanklineEnable'
         endif
+      endfunction
+
+      " Currently broken in nvim :-(
+      function! s:BufDelete()
+        let l:cur_buffer = bufnr('%')
+        exe "BufExplorer"
+        exe "bdelete ".l:cur_buffer
       endfunction
 
       " #######################################################################
