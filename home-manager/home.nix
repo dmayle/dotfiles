@@ -242,7 +242,10 @@ in
     ];
 
     extraConfig = ''
-      " Remember, all autocommands should be in autogroups
+      " VimScript Reminders:
+      " 1) All autocommands should be in autogroups
+      " 2) All functions should be prefixed with 's:' but use '<SID>' when
+      "    calling from mappings or commands
 
       " #######################################################################
       " ****** OVERALL SETTINGS ******
@@ -267,13 +270,61 @@ in
       " Allow more-responsive async code
       set updatetime=100
 
+      " Always show available completion options, but selection must be manual
+      set completeopt=menuone,noinsert,noselect
+
+      " Don't show useless match messages while matching
+      set shortmess+=c
+
+      " Visual reminders of file width
+      set colorcolumn=+1,+21,+41
+
       " #######################################################################
       " ****** PLUGIN SETTINGS ******
       " #######################################################################
 
+      " %%%%% Airline Status Line %%%%%
+      " Match to overall vim theme
+      let g:airline_theme='solarized'
+
+      " %%%%% Promptline Bash Prompt Generator %%%%%
+      " I only install Promptline when I update Airline, run this, then uninstall
+      let g:promptline_theme = 'airline'
+      " Solarized Bash Color Table For Theme:
+      " 0 base2 (beige)
+      " 1 red
+      " 2 green
+      " 3 yellow
+      " 4 blue
+      " 5 magenta
+      " 6 cyan
+      " 7 base02 (black)
+      " 8 base3 (bright beige)
+      " 9 orange
+      " 10 base1 (lightest grey)
+      " 11 base0 (light grey)
+      " 12 base00 (dark grey)
+      " 13 violet
+      " 14 base01 (darkest grey)
+      " 15 base03 (darkest black)
+      " Colors I like:
+      " Background: blue(4)  > yellow(3) > magenta(5) > bright beige(8)
+      " Foreground: beige(0) > beige(0)  > beige(0)   > grey(11)
+      let g:promptline_preset = {
+          \'a' : [ '\w' ],
+          \'b' : [ '$(echo $(printf \\xE2\\x8E\\x88) $(kubectx -c)$(echo :$(kubens -c) | sed -e s@^:default\$@@))' ],
+          \'c' : [ promptline#slices#vcs_branch() ],
+          \'warn' : [ promptline#slices#last_exit_code() ]}
+
       " %%%%%%%%%% Indent Blankline %%%%%%%%%%
       " Enable treesitter support
       let g:indent_blankline_use_treesitter = v:true
+
+      " %%%%%%%%%% NvimTree %%%%%%%%%%
+      let g:nvim_tree_ignore = [ '.git', '^bazel-.*$' ]
+
+      " %%%%%%%%%% Vim-Go %%%%%%%%%%
+      let g:go_code_completion_enabled = 0
 
       " %%%%% GutenTags %%%%%
       " Explanaiton of all this at https://www.reddit.com/r/vim/comments/d77t6j
@@ -380,6 +431,7 @@ in
       " Jump in and out of nvim tree
       nnoremap <silent> <leader>nt :NvimTreeToggle<CR>
       nnoremap <silent> <leader>nf :NvimTreeFindFile<CR>
+      nnoremap <silent> <leader>nn :call <SID>NvimTreeFocus()<cr>
 
       " (C)reate (F)ile under cursor (for when `gf` doesn't work)
       nnoremap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
@@ -417,11 +469,30 @@ in
         endif
       endfunction
 
-      " Currently broken in nvim :-(
+      " We make a persistent hidden buffer so that we have somewhere to go
+      " while deleting the current buffer
+      let s:BufDeleteBuffer = -1
+
       function! s:BufDelete()
+        if s:BufDeleteBuffer == -1
+          let s:BufDeleteBuffer = bufnr("BufDelete_".matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:], 1)
+          call setbufvar(s:BufDeleteBuffer, "&buftype", "nofile")
+        endif
+
         let l:cur_buffer = bufnr('%')
-        exe "BufExplorer"
+        exe "b ".s:BufDeleteBuffer
         exe "bdelete ".l:cur_buffer
+        exe "BufExplorer"
+      endfunction
+
+      function! s:NvimTreeFocus()
+        " This function is meant to be used if NvimTree is already open, but
+        " let's assume I meant to open it when trying to focus it.
+        exe ":NvimTreeOpen"
+        let l:nvim_tree_buffer = bufwinnr("NvimTree")
+        if l:nvim_tree_buffer != -1
+          exe l:nvim_tree_buffer."wincmd w"
+        endif
       endfunction
 
       " #######################################################################
@@ -495,8 +566,11 @@ in
       " ****** LSP Configuration ******
       " #######################################################################
 
-      " function! s:InitLSP()
-      function! InitLSP()
+      " Use <Tab> and <S-Tab> to navigate through popup menu
+      inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+      inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+      function! s:InitLSP()
       lua << EOLUA
         local nvim_lsp = require('lspconfig')
         local on_attach = function(client, bufnr)
@@ -568,20 +642,9 @@ in
 
       augroup MyLSPConfig
         au!
-        autocmd VimEnter * call InitLSP()
-        " autocmd VimEnter * call <SID>InitLSP()
+        autocmd VimEnter * call <SID>InitLSP()
         autocmd BufEnter * lua require'completion'.on_attach()
       augroup END
-
-      " Use <Tab> and <S-Tab> to navigate through popup menu
-      inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-      inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-      " Always show available completion options, but selection must be manual
-      set completeopt=menuone,noinsert,noselect
-
-      " Don't show useless match messages while matching
-      set shortmess+=c
     '';
   };
 
