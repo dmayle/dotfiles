@@ -472,10 +472,11 @@ in
       set showcmd
 
       " I speak english and french
-      set spellang=en_us,fr
+      " set spell
+      set spelllang=en_us,fr
 
       " Make backspace more powerful
-      set backpsace=indent,eol,start
+      set backspace=indent,eol,start
 
       " Make tabs insert 'indents' when used at the beginning of the line
       set smarttab
@@ -485,6 +486,19 @@ in
 
       " Default to showing the current line (useful for long terminals)
       set cursorline
+
+      " I find it useful to have lots of command history
+      set history=1000
+
+      " When joining lines, don't insert unnecessary whitespace
+      set nojoinspaces
+
+      " Have splits appear "after" current buffer
+      set splitright splitbelow
+
+      " #######################################################################
+      " ****** BACKUP SETTINGS ******
+      " #######################################################################
 
       " Use backup settings safe for NFS userdir mounts
       let $HOST=hostname()
@@ -509,6 +523,8 @@ in
 
       " Save the current undo state between launches
       set undofile
+      set undolevels=1000
+      set undoreload=10000
 
       " Set to only keep one (current) backup
       set backup writebackup
