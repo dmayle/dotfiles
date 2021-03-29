@@ -2,6 +2,7 @@
 let
   unstableHomeManager = fetchTarball https://github.com/nix-community/home-manager/tarball/07f6c6481e0cbbcaf3447f43e964baf99465c8e1;
   unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/0b876eaed3ed4715ac566c59eb00004eca3114e8;
+ 
   unstablePkgs = import unstable { config.allowUnfree = true; };
 
   # Custom neovim plugins
@@ -44,6 +45,20 @@ let
     meta = {
       homepage = https://github.com/lukas-reineke/indent-blankline.nvim;
       maintainers = [ "lukas-reineke" ];
+    };
+  };
+
+  vim-glaive = pkgs.vimUtils.buildVimPlugin rec {
+    name = "vim-glaive";
+    src = pkgs.fetchFromGitHub {
+      owner = "google";
+      repo = "vim-glaive";
+      rev = "c17bd478c1bc358dddf271a13a4a025efb30514d";
+      sha256 = "0py6wqqnblr4n1xz1nwlxp0l65qmd76448gz0bf5q9a1sf0mkh5g";
+    };
+    meta = {
+      homepage = https://github.com/google/vim-glaive;
+      maintainers = [ "google" ];
     };
   };
 in
@@ -186,8 +201,62 @@ in
     vimAlias = true;
     vimdiffAlias = true;
     plugins = with pkgs.vimPlugins; [
+      #######################################################################
+      # ****** BASIC TOOLING ******
+      #######################################################################
+      # Plugin libraries
+      vim-maktaba
+      vim-glaive
+
+      # Make % command (jump to matching pair) work better
+      matchit-zip
+
+      # Make . command (repeat) work better
+      vim-repeat
+
+      # Ensure quotes and brackets are added together
+      auto-pairs
+
+      # Start using treesitter
+      nvim-treesitter
+      #unstable can install maintained parsers but can't use them
+      #unstablePkgs.vimPlugins.nvim-treesitter
+
+      #######################################################################
+      # ****** LOOK AND FEEL ******
+      #######################################################################
+
+      # solarized
+      NeoSolarized
+
+      # Configurable text colorizing
+      nvim-colorizer
+
+      # Both Indent guides plugins
+      indent-blankline
+
+      #######################################################################
+      # ****** UPDATED TEXT/COMMAND FEATURES ******
+      #######################################################################
+
+      # Code commenting
+      vim-commentary
+
+      # Toggle between maximizing current split, and then restoring previous
+      # split state
+      vim-maximizer
+
+      # For converting camelCase to snake_case mostly
+      vim-abolish
+
+      #######################################################################
+      # ****** UPDATED UI FEATURES ******
+      #######################################################################
+      # Explorer for Vim's tree-based undo history
+      undotree
+
       # File explorer
-      # nerdtree
+      # NvimTree (faster NerdTree replacement)
       unstablePkgs.vimPlugins.nvim-tree-lua
 
       # Simple buf list/navigate
@@ -200,45 +269,39 @@ in
       vim-airline
       vim-airline-themes
 
-      # Toggle between maximizing current split, and then restoring previous
-      # split state
-      vim-maximizer
+      # Built-in debugger
+      vimspector
 
-      # Start using treesitter
-      nvim-treesitter
-      #unstable can install maintained parsers but can't use them
-      #unstablePkgs.vimPlugins.nvim-treesitter
-
-      # Configure fuzzy finder integration
-      fzf-vim
-
-      # solarized
-      NeoSolarized
-
-      # Configurable text colorizing
-      nvim-colorizer
-
-      # Nix Filetype support
-      vim-nix
-
-      # Code commenting
-      vim-commentary
+      # Tag/source code explorer
+      tagbar
 
       # Vim Git UI
       vim-fugitive
       vim-signify
+
+      # Configure fuzzy finder integration
+      fzf-vim
+
+      #######################################################################
+      # ****** FILETYPE SPECIFIC PLUGINS ******
+      #######################################################################
+
+      # Nix Filetype support
+      vim-nix
+
+      #######################################################################
+      # ****** CODE ENHANCEMENT ******
+      #######################################################################
+
+      # Autoformatting plugin (to someday be replaced with LSP formatter)
+      # https://www.reddit.com/r/neovim/comments/jvisg5/lets_talk_formatting_again/
+      vim-codefmt
 
       # Builtin Nvim LSP support
       unstablePkgs.vimPlugins.nvim-lspconfig
 
       # Lightweight autocompletion
       unstablePkgs.vimPlugins.completion-nvim
-
-      # Both Indent guides plugins
-      indent-blankline
-
-      # Built-in debugger
-      vimspector
     ];
 
     extraConfig = ''
@@ -448,8 +511,8 @@ in
         autocmd FileType java setlocal cinoptions=j1,+2s
       augroup END
 
-      Glaive codefmt plugin[mappings]
       augroup codefmt_autoformat_settings
+        autocmd VimEnter * Glaive codefmt plugin[mappings]
         autocmd FileType bzl AutoFormatBuffer buildifier
         autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
         autocmd FileType dart AutoFormatBuffer dartfmt
@@ -502,6 +565,8 @@ in
 
       " Push and close git interface
       nnoremap <silent> <leader>gp :call <SID>GitPushAndClose()<CR>
+
+      nnoremap <silent> <leader>ut :UndotreeToggle<CR>
 
       " #######################################################################
       " ****** PERSONAL FUNCTIONS ******
