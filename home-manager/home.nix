@@ -89,6 +89,20 @@ let
       maintainers = [ "kana" ];
     };
   };
+
+  conflict-marker = pkgs.vimUtils.buildVimPlugin rec {
+    name = "conflict-marker";
+    src = pkgs.fetchFromGitHub {
+      owner = "rhysd";
+      repo = "conflict-marker.vim";
+      rev = "6a9b8f92a57ea8a90cbf62c960db9e5894be2d7a";
+      sha256 = "0vw5kvnmwwia65gni97vk42b9s47r3p5bglrhpcxsvs3f4s250vq";
+    };
+    meta = {
+      homepage = https://github.com/rhysd/conflict-marker.vim;
+      maintainers = [ "rhysd" ];
+    };
+  };
 in
 {
   imports =
@@ -240,6 +254,7 @@ in
       #######################################################################
       # ****** ENHANCE EXISTING FUNCTIONALITY ******
       #######################################################################
+
       # Make % command (jump to matching pair) work better
       matchit-zip
 
@@ -263,6 +278,12 @@ in
       # Automate the update and connection of tags files
       vim-gutentags
 
+      # Ensure increment operator (Ctrl-A, Ctrl-X) works in visual/block mode
+      vim-visual-increment
+
+      # Live search/replace preview
+      vim-over
+
       #######################################################################
       # ****** LOOK AND FEEL ******
       #######################################################################
@@ -275,6 +296,9 @@ in
 
       # Both Indent guides plugins
       indent-blankline
+
+      # Font for airline
+      # powerline-fonts
 
       #######################################################################
       # ****** UPDATED TEXT/COMMAND FEATURES ******
@@ -295,6 +319,12 @@ in
 
       # Bracket mappings mostly for navigation
       vim-unimpaired
+
+      # Add text object for indentation level (mostly for python)
+      vim-indent-object
+
+      # Add bracket mappings for diff conflict markers ]x [x
+      conflict-marker
 
       #######################################################################
       # ****** UPDATED UI FEATURES ******
@@ -336,6 +366,19 @@ in
 
       # Nix Filetype support
       vim-nix
+
+      # Vim browser markdown preview
+      unstablePkgs.vimPlugins.vim-markdown-composer
+
+      # Better YAML support
+      vim-yaml
+
+      # Dart language support
+      dart-vim-plugin
+
+      # Working on introducing
+      # vim-pyenv (depends on environments)
+      # Rename (maybe replaced by NvimTree rename)
 
       #######################################################################
       # ****** CODE ENHANCEMENT ******
@@ -560,6 +603,7 @@ in
       augroup END
 
       augroup codefmt_autoformat_settings
+        au!
         autocmd VimEnter * Glaive codefmt plugin[mappings]
         autocmd FileType bzl AutoFormatBuffer buildifier
         autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
