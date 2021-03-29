@@ -61,6 +61,34 @@ let
       maintainers = [ "google" ];
     };
   };
+
+  vim-syncopate = pkgs.vimUtils.buildVimPlugin rec {
+    name = "vim-syncopate";
+    src = pkgs.fetchFromGitHub {
+      owner = "google";
+      repo = "vim-syncopate";
+      rev = "cc68632a72c269e8d75f1f22a6fa588fd5b46e02";
+      sha256 = "0vb68h07wkqlwfr24s4nsxyclla60sii7lbg6wlgwhdn837hiqyx";
+    };
+    meta = {
+      homepage = https://github.com/google/vim-syncopate;
+      maintainers = [ "google" ];
+    };
+  };
+
+  vim-fakeclip = pkgs.vimUtils.buildVimPlugin rec {
+    name = "vim-fakeclip";
+    src = pkgs.fetchFromGitHub {
+      owner = "kana";
+      repo = "vim-fakeclip";
+      rev = "59858dabdb55787d7f047c4ab26b45f11ebb533b";
+      sha256 = "1jrfi1vc7svhypvg2gizx40vracr91m9d912b61j0c7z8swix908";
+    };
+    meta = {
+      homepage = https://github.com/kana/vim-fakeclip;
+      maintainers = [ "kana" ];
+    };
+  };
 in
 {
   imports =
@@ -204,10 +232,14 @@ in
       #######################################################################
       # ****** BASIC TOOLING ******
       #######################################################################
+
       # Plugin libraries
       vim-maktaba
       vim-glaive
 
+      #######################################################################
+      # ****** ENHANCE EXISTING FUNCTIONALITY ******
+      #######################################################################
       # Make % command (jump to matching pair) work better
       matchit-zip
 
@@ -217,10 +249,19 @@ in
       # Ensure quotes and brackets are added together
       auto-pairs
 
+      # Allow number increment (Ctrl-A, Ctrl-X) to work for dates
+      vim-speeddating
+
+      # Additional copy/paste buffer '&' for tmux
+      vim-fakeclip
+
       # Start using treesitter
       nvim-treesitter
       #unstable can install maintained parsers but can't use them
       #unstablePkgs.vimPlugins.nvim-treesitter
+
+      # Automate the update and connection of tags files
+      vim-gutentags
 
       #######################################################################
       # ****** LOOK AND FEEL ******
@@ -249,9 +290,16 @@ in
       # For converting camelCase to snake_case mostly
       vim-abolish
 
+      # Delete, update, insert quotes, brackets, tags, parentheses, etc.
+      vim-surround
+
+      # Bracket mappings mostly for navigation
+      vim-unimpaired
+
       #######################################################################
       # ****** UPDATED UI FEATURES ******
       #######################################################################
+
       # Explorer for Vim's tree-based undo history
       undotree
 
