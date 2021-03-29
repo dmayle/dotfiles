@@ -405,6 +405,64 @@ in
       " Default to bash support in shell scripts
       let g:is_bash = 1
 
+      " Turn on all conditional python highlighting
+      let python_highlight_all = 1
+
+      augroup PersonalFileTypeSettings
+        au!
+        " Set up default spacing and tabs for a few filetypes.  I've left off Go,
+        " since the filetype plugin handles it for me.
+        autocmd FileType mail,text,python,gitcommit,c,cpp,java,sh,vim,puppet,xml,json,javascript,html,yaml,dart setlocal tabstop=8 shiftwidth=2 expandtab
+
+        " Fix the comment handling, which is set to c-style by default
+        autocmd FileType puppet setlocal commentstring=#\ %s
+
+        " Standard GO tab settings (tabs, not spaces)
+        autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
+
+        " Turn on spellchecking in these file types.
+        autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
+
+        " Help files trigger the 'text' filetype autocommand, but we don't want
+        " spellchecking in the help buffer, so we manually disable it.
+        autocmd FileType help setlocal nospell
+
+        " Don't hide markdown punctuation
+        autocmd FileType markdown set conceallevel=0
+
+        " Teach vim-commentary about nasm comments
+        autocmd FileType asm set commentstring=;\ %s
+
+        " Ensure that we autowrap git commits to 72 characters, per tpope's guidelines
+        " for good git comments.
+        autocmd FileType gitcommit setlocal textwidth=72
+
+        " I use 80-column lines in mail, plain text, C++ files, and my vimrc.
+        autocmd FileType mail,text,vim,cpp,c setlocal textwidth=80
+
+        " I use 100-column lines in Java files
+        autocmd FileType java setlocal textwidth=100
+
+        " Change line continuation rules for Java. j1 is for Java anonymous classes,
+        " +2s says indent 2xshiftwidth on line continuations.
+        autocmd FileType java setlocal cinoptions=j1,+2s
+      augroup END
+
+      Glaive codefmt plugin[mappings]
+      augroup codefmt_autoformat_settings
+        autocmd FileType bzl AutoFormatBuffer buildifier
+        autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+        autocmd FileType dart AutoFormatBuffer dartfmt
+        autocmd FileType go AutoFormatBuffer gofmt
+        autocmd FileType gn AutoFormatBuffer gn
+        autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+        autocmd FileType java AutoFormatBuffer google-java-format
+        autocmd FileType python AutoFormatBuffer yapf
+        " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+        autocmd FileType rust AutoFormatBuffer rustfmt
+        autocmd FileType vue AutoFormatBuffer prettier
+      augroup END
+
       " #######################################################################
       " ****** PERSONAL SHORTCUTS (LEADER) ******
       " #######################################################################
