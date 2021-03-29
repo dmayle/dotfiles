@@ -310,11 +310,11 @@ in
       " Colors I like:
       " Background: blue(4)  > yellow(3) > magenta(5) > bright beige(8)
       " Foreground: beige(0) > beige(0)  > beige(0)   > grey(11)
-      let g:promptline_preset = {
-          \'a' : [ '\w' ],
-          \'b' : [ '$(echo $(printf \\xE2\\x8E\\x88) $(kubectx -c)$(echo :$(kubens -c) | sed -e s@^:default\$@@))' ],
-          \'c' : [ promptline#slices#vcs_branch() ],
-          \'warn' : [ promptline#slices#last_exit_code() ]}
+      " let g:promptline_preset = {
+      "     \'a' : [ '\w' ],
+      "     \'b' : [ '$(echo $(printf \\xE2\\x8E\\x88) $(kubectx -c)$(echo :$(kubens -c) | sed -e s@^:default\$@@))' ],
+      "     \'c' : [ promptline#slices#vcs_branch() ],
+      "     \'warn' : [ promptline#slices#last_exit_code() ]}
 
       " %%%%%%%%%% Indent Blankline %%%%%%%%%%
       " Enable treesitter support
@@ -442,6 +442,9 @@ in
       vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
       vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
 
+      " Push and close git interface
+      nnoremap <silent> <leader>gp :call <SID>GitPushAndClose()<CR>
+
       " #######################################################################
       " ****** PERSONAL FUNCTIONS ******
       " #######################################################################
@@ -466,6 +469,14 @@ in
           set number list signcolumn=auto
           setlocal relativenumber
           exe 'IndentBlanklineEnable'
+        endif
+      endfunction
+
+      " Function so that we can push directly from Fugitive git index
+      function! s:GitPushAndClose()
+        exe ":Gpush"
+        if getbufvar("", "fugitive_type") ==? "index"
+          exe "wincmd c"
         endif
       endfunction
 
