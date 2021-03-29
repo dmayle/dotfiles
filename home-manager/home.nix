@@ -425,13 +425,99 @@ in
       set updatetime=100
 
       " Always show available completion options, but selection must be manual
-      set completeopt=menuone,noinsert,noselect
+      set completeopt=menuone,noinsert,noselect,longest
 
       " Don't show useless match messages while matching
       set shortmess+=c
 
       " Visual reminders of file width
       set colorcolumn=+1,+21,+41
+
+      " Set visual characters for tabs, end of line, and trailing whitespace.
+      augroup VisualChars
+        au!
+        autocmd FileType * set listchars=tab:▸\ ,eol:¬,trail:☐
+        autocmd FileType go set listchars=tab:\|\ ,eol:¬,trail:☐
+      augroup END
+
+      " Make sure there is always at least 3 lines of context on either side of
+      " the cursor (above and below).
+      set scrolloff=3
+
+      " These are my format options, use :help fo-table to understand
+      set formatoptions+=rcoqnl1j
+
+      " Make Y yank to the end of line, similar to D and C
+      nnoremap Y y$
+
+      " If w! doesn't work (because you're editing a root file), use w!! to save
+      cnoremap <silent> w!! :exec ":echo ':w!!'"<CR>:%!sudo tee > /dev/null %
+
+      " Add an insert mode mapping to reflow the current line.
+      inoremap <C-G>q <C-O>gqq<C-O>A
+
+      " I prefer my diffs vertical for side-by-side comparison
+      set diffopt+=vertical
+
+      " Default to case insensitive searching
+      set ignorecase
+
+      " Unless I use case in my search string, then case matters
+      set smartcase
+
+      " Keep unsaved files open with ther changes, even when switching buffers
+      set hidden
+
+      " Show the length of the visual selection while making it
+      set showcmd
+
+      " I speak english and french
+      set spellang=en_us,fr
+
+      " Make backspace more powerful
+      set backpsace=indent,eol,start
+
+      " Make tabs insert 'indents' when used at the beginning of the line
+      set smarttab
+
+      " Reasonable defaults for indentation
+      set autoindent nocindent nosmartindent
+
+      " Default to showing the current line (useful for long terminals)
+      set cursorline
+
+      " Use backup settings safe for NFS userdir mounts
+      let $HOST=hostname()
+      let $MYBACKUPDIR=$HOME . '/.vimbak-' . $HOST
+      let $MYUNDODIR=$HOME . '/.vimundo-' . $HOST
+
+      if !isdirectory(fnameescape($MYBACKUPDIR))
+        silent! execute '!mkdir -p ' . shellescape($MYBACKUPDIR)
+        silent! execute '!chmod 700 ' . shellescape($MYBACKUPDIR)
+      endif
+
+      if !isdirectory(fnameescape($MYUNDODIR))
+        silent! execute '!mkdir -p ' . shellescape($MYUNDODIR)
+        silent! execute '!chmod 700 ' . shellescape($MYUNDODIR)
+      endif
+
+      " Set directory for swap files
+      set directory=$MYBACKUPDIR
+
+      " Set directory for undo files
+      set undodir=$MYUNDODIR
+
+      " Save the current undo state between launches
+      set undofile
+
+      " Set to only keep one (current) backup
+      set backup writebackup
+
+      " Set directory for backup files
+      set backupdir=$MYBACKUPDIR
+
+      " Sensible list of files we don't want backed up
+      set backupskip=/tmp/*,/private/tmp/*,/var/tmp/tmp/*,$TMPDIR/*,$TMP/*,$TEMP/*
 
       " #######################################################################
       " ****** PLUGIN SETTINGS ******
@@ -476,9 +562,6 @@ in
 
       " %%%%%%%%%% NvimTree %%%%%%%%%%
       let g:nvim_tree_ignore = [ '.git', '^bazel-.*$' ]
-
-      " %%%%%%%%%% Vim-Go %%%%%%%%%%
-      let g:go_code_completion_enabled = 0
 
       " %%%%% GutenTags %%%%%
       " Explanaiton of all this at https://www.reddit.com/r/vim/comments/d77t6j
@@ -558,9 +641,6 @@ in
 
       " Default to bash support in shell scripts
       let g:is_bash = 1
-
-      " Turn on all conditional python highlighting
-      let python_highlight_all = 1
 
       augroup PersonalFileTypeSettings
         au!
