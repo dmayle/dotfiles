@@ -7,30 +7,18 @@ Manager configuration.
 The end result will be the same, but pieces will be moving from one style to
 the other.
 
+This process is almost complete
+
 ## Installation:
 
 ```
-# In process of moving towards a Git Strap version that autoinstalls
-git clone git@github.com:dmayle/dotfiles.git ~/.dotfiles
+git clone git@github.com:dmayle/dotfiles.git ~/src/dotfiles
 ```
 
 Create symlinks:
 
 ```
-ln -s .dotfiles/vim ~/.vim
-ln -s .dotfiles/bash/bashrc ~/.bashrc
-ln -s .dotfiles/bash/bashrc ~/.bash_profile
-ln -s .dotfiles/bash/aliases ~/.bash_aliases
-ln -s .dotfiles/editrc ~/.editrc
 ln -s .dotfiles/crontab ~/.crontab
-ln -s .vim/vimrc ~/.vimrc
-```
-
-Switch to the `~/.dotfiles` directory, and fetch submodules:
-
-```
-cd ~/.dotfiles
-git submodule update --init
 ```
 
 Tell crontab to import our self-updating, version-controlled crontab

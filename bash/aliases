@@ -1,2 +1,0 @@
-alias kensure='klist &>/dev/null || kinit'
-alias vi=vim
