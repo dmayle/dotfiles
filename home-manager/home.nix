@@ -164,6 +164,9 @@ in
     historyFileSize = 20000;
     # Still need to setup prompt.rc
     initExtra = ''
+      # Command hashing is used by various shell scripts, so enable it
+      set -h
+
       function tmux() {
         TMUX_CMD=$(which tmux)
         if [[ $# != 0 ]]; then
@@ -278,6 +281,7 @@ in
       }
       ssh-reagent
 
+      [[ -f ~/src/dotfiles/bash/prompt.rc ]] && source ~/src/dotfiles/bash/prompt.rc
     '';
   };
 
