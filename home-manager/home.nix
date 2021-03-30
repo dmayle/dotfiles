@@ -147,6 +147,140 @@ in
     '';
   };
 
+  programs.dircolors = {
+    enable = true;
+    enableBashIntegration = true;
+  };
+
+  programs.direnv = {
+    enable = true;
+    enableBashIntegration = true;
+    enableNixDirenvIntegration = true;
+  };
+
+  programs.bash = {
+    enable = true;
+    historyControl = [ "ignoredups" "ignorespace" "erasedups" ];
+    historyFileSize = 20000;
+    # Still need to setup prompt.rc
+    initExtra = ''
+      function tmux() {
+        TMUX_CMD=$(which tmux)
+        if [[ $# != 0 ]]; then
+          # Don't break existing commands
+          $TMUX_CMD "$@"
+          return
+        fi
+
+        # TMUX_SOCKET=
+        # if [[ -n "$TMUX" ]]; then
+        #   TMUX_SOCKET=$(basename $(tmux display-message -p '#{socket_path}'))
+        #   TMUX_CMD="''${TMUX_CMD} -L ''${TMUX_SOCKET} -f ~/.tmux-''${TMUX_SOCKET}.conf"
+        # fi
+        # Extract the session name, group number, and attached state from a session
+        # line that looks like:
+        # name: session_details [width x height] (optional group) (optional attached)
+        SESSION_REGEX='^([^:]*):[^[]*\[[^]]*\] ?(\([^)]*[0-9]\))? ?(\(attached\))?'
+        # Actually, the default output for list-sessions has changed, so I use
+        # the -F FORMAT option below to simulate the parts we care about
+        # Just check if the session is attached or not
+        ATTACHED_REGEX='\(attached\)$'
+        # Look for words of the form 'word0' and extract the word and the number
+        TRAILING_NUMBER_REGEX='^(.*[^0-9])?([0-9]+)$'
+        # Reading the value directly into the array requires newer bash.  OSX ships
+        # with an old enough bash that I'm using a manual loop to read the sessions
+        # into the array.
+        unset SESSIONS
+        while IFS= read -r line; do SESSIONS+=("$line"); done <<< "$($TMUX_CMD list-sessions -F '#S:[]#{?session_group, (#{session_group}),}#{?session_attached, (attached),}' 2>/dev/null)"
+        if [[ ''${#SESSIONS[@]} -eq 1 ]]; then
+          if [[ -z "''${SESSIONS[0]}" ]]; then
+            # No existing session, so start tmux with a specially named session
+            $TMUX_CMD new -s group0
+          elif [[ ''${SESSIONS[0]} =~ $ATTACHED_REGEX ]]; then
+            # Existing, attached session, so create a new session that groups to it
+            [[ ''${SESSIONS[0]} =~ $SESSION_REGEX ]] || return -1
+            SESSION_NAME="''${BASH_REMATCH[1]}"
+            [[ "''${SESSION_NAME}" =~ $TRAILING_NUMBER_REGEX ]] \
+              && $TMUX_CMD new-session -t "$SESSION_NAME" -s "''${BASH_REMATCH[1]}$((''${BASH_REMATCH[2]} + 1))" \
+              || $TMUX_CMD new-session -t "$SESSION_NAME" -s "''${SESSION_NAME}0"
+          else
+            # Default behavior is to attach to an existing session, no matter the name
+            $TMUX_CMD attach
+          fi
+          return
+        fi
+        # With multiple existing sessions, we have to get the name of the existing
+        # group (like the highlander, there can be only one), and either attach to
+        # the first free session, or create a new one if none are free.
+        GROUP_NAME=
+        FREE_GROUP_SESSION=
+        MAX_SESSION_NAME=
+        MAX_SESSION_NUM=
+        for SESSION in "''${SESSIONS[@]}"; do
+          [[ ''${SESSION} =~ $SESSION_REGEX ]] || return -1
+          if [[ -n "$GROUP_NAME" && -n "''${BASH_REMATCH[2]}" && "$GROUP_NAME" != "''${BASH_REMATCH[2]}" ]]; then
+            echo "ERROR: More than one group found"
+            $TMUX_CMD list-sessions
+            return
+          fi
+          # Get the name of the group
+          if [[ -n "''${BASH_REMATCH[2]}" ]]; then
+            GROUP_NAME="''${BASH_REMATCH[2]}"
+            SESSION_NAME="''${BASH_REMATCH[1]}"
+            if [[ "''${SESSION_NAME}" =~ $TRAILING_NUMBER_REGEX ]]; then
+              if [[ ''${BASH_REMATCH[2]} > $MAX_SESSION_NUM ]]; then
+                MAX_SESSION_NUM=''${BASH_REMATCH[2]}
+                MAX_SESSION_NAME="''${BASH_REMATCH[1]}"
+              fi
+            elif [[ -z "$MAX_SESSION_NAME" ]]; then
+              MAX_SESSION_NAME="$SESSION_NAME"
+              MAX_SESSION_NUM=0
+            fi
+            # else we already have a session at level 0, so MAX_SESSION isn't affected
+            if [[ ! $SESSION =~ $ATTACHED_REGEX ]]; then
+              # In the case of multiple free sessions, this just picks the one
+              # closest to the bottom of the list
+              FREE_GROUP_SESSION="$SESSION_NAME"
+            fi
+          fi
+          # else this is ungrouped session.  If that's the case, and all sessions are
+          # ungrouped, we can't choose which one to join, so we will happily fall
+          # through to the end.
+        done
+        if [[ -n "$FREE_GROUP_SESSION" ]]; then
+          $TMUX_CMD attach -t "$FREE_GROUP_SESSION"
+        elif [[ -n "$GROUP_NAME" ]]; then
+          # We are guaranteed to have a max session by the time we get here
+          $TMUX_CMD new-session -t "$SESSION_NAME" -s "''${MAX_SESSION_NAME}$((''${MAX_SESSION_NUM} + 1))"
+        else
+          # We can only get here if we have no existing session group, and multiple
+          # ungrouped sessions, so we don't know which to join.  Let the user
+          # manually decide.
+          echo "ERROR: No group, but multiple sessions.  You must manually attach to a group"
+          return -1
+        fi
+      }
+
+      # Use ssh-reagent to share agents between sessions (screen, etc.)
+      ssh-reagent () {
+        [[ -n "$SSH_AUTH_SOCK" ]] && return
+        for agent in $(ls {/tmp,/var/run/ssh-agent}/ssh-*/agent.* 2>/dev/null); do
+          export SSH_AUTH_SOCK=$agent
+          if ssh-add -l 2>&1 > /dev/null; then
+            echo Found working SSH Agent:
+            ssh-add -l
+            return
+          fi
+        done
+        echo Cannot find ssh agent - restarting...
+        eval $(ssh-agent)
+        ssh-add
+      }
+      ssh-reagent
+
+    '';
+  };
+
   # Configure solarized light color scheme for kitt
   programs.kitty = {
     enable = true;
