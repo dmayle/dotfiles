@@ -38,6 +38,7 @@ Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 
+Plug 'hashivim/vim-terraform'
 Plug 'dart-lang/dart-vim-plugin'
 Plug 'kana/vim-fakeclip'
 " Plug 'tomtom/tinykeymap_vim'

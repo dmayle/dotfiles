@@ -1,0 +1,462 @@
+" Prevent file mode lines from changing VIM settings (can cause security
+" exploits anyway).
+set modelines=0
+
+" Trialling true color support
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+" Use a colorscheme that's a bit brighter than the default. Force the 16 color
+" version of Solarized.
+set background=light
+
+" Tell the solarized colorscheme to support terminal transparancy
+" let g:solarized_termtrans=1
+colorscheme solarized8_high
+
+" If you need to set up chrome's hterm with solarized (e.g. ssh in a tab), then
+" use these lines:
+" term_.prefs_.set('background-color', "#002B36")
+" term_.prefs_.set('foreground-color', "#839496")
+" term_.prefs_.set('color-palette-overrides', ["#073642", "#dc322f", "#859900",
+" "#b58900", "#268bd2", "#d33682", "#2aa198", "#eee8d5", "#002b36", "#cb4b16",
+" "#586e75", "#657b83", "#839496", "#6c71c4", "#93a1a1", "#fdf6e3"])
+
+" Use the advanced sgr protocol, which supports update-on-drag (like xterm2), as
+" well as large window sizes
+if !has('nvim')
+  try
+    set ttymouse=sgr
+  catch /E474/
+    set ttymouse=xterm2
+  endtry
+endif
+
+" Show line numbers relative to the current cursor line to make repeated
+" commands easier to compose. We only do this while in the buffer.  When focused
+" in another buffer, we use standard numbering.
+function! s:InitLineNumbering()
+  " Keep track of current window, since 'windo' chances current window
+  let l:my_window = winnr()
+
+  " Global line number settings
+  set relativenumber
+  set number
+  set list
+  set signcolumn=auto
+
+  " Setup all windows for line numbering
+  windo call <SID>SetLineNumberingForWindow(0)
+
+  " Go back to window
+  exec l:my_window . 'wincmd w'
+  "
+  " Set special (relative) numbering for focused window
+  call <SID>SetLineNumberingForWindow(1)
+endfunction
+
+function! s:SetLineNumberingForWindow(entering)
+  " Excluded buffers
+  if &ft == "help" || exists("b:NERDTree")
+    return
+  endif
+  if a:entering
+    setlocal number
+    setlocal relativenumber
+    setlocal list
+    setlocal signcolumn=auto
+  else
+    setlocal number
+    setlocal norelativenumber
+    setlocal list
+    setlocal signcolumn=auto
+  endif
+endfunction
+
+augroup MyLineNumbers
+  au!
+  autocmd VimEnter * call <SID>InitLineNumbering()
+  autocmd BufEnter,WinEnter * call <SID>SetLineNumberingForWindow(1)
+  autocmd WinLeave * call <SID>SetLineNumberingForWindow(0)
+augroup END
+
+" informs sh syntax that /bin/sh is actually bash
+let is_bash=1
+
+" I don't like beeping
+set visualbell
+
+" ##############################################################################
+" ****** PERSONAL LEADER SHORTCUTS ******
+" ##############################################################################
+
+" Shortcut to toggle between a screen copy mode (no line numbers or highlighted
+" special characters) and my normal handling.
+nmap <silent> <leader>sc :if &number <Bar>
+  \setlocal norelativenumber nonumber nolist signcolumn=no <Bar>
+  \exe 'IndentLinesDisable' <Bar>
+    \else <Bar>
+  \setlocal relativenumber number list signcolumn=auto <Bar>
+  \exe 'IndentLinesEnable' <Bar>
+    \endif<CR>
+
+" Shortcut to toggle paste on and off for VIM in a terminal
+nmap <silent> <leader>pp :if &paste <Bar>
+  \set nopaste <Bar>
+    \else <Bar>
+  \set paste <Bar>
+    \endif<CR>
+
+" Jump to the first line (if any) of the file longer than textwidth.
+nmap <silent> <leader><space> :call search("^.\\{" . (&textwidth ? &textwidth + 1 : 9999) . "\\}")<CR>
+
+nmap <silent> <leader>gf :LspDefinition<CR>
+nmap <silent> <leader>gg :LspDeclaration<CR>
+
+" Delete the current buffer, and jump to a list of buffers
+function! s:BufDelete()
+  exe "BufExplorer"
+endfunction
+nmap <silent> <leader>bd :call <SID>BufDelete()<cr>d
+
+" (C)reate (F)ile under cursor (for when `gf` doesn't work)
+nmap <silent> <leader>cf :call writefile([], expand("<cfile>"), "t")<cr>
+
+nmap <silent> <leader>tt :TagbarToggle<CR>
+
+nmap <silent> <leader>nt :NERDTreeToggle<CR>
+nmap <silent> <leader>nf :NERDTreeFind<CR>
+nmap <silent> <leader>nn :NERDTreeFocus<CR>
+
+" base64 encode encode and decode visual selection
+vnoremap <leader>6d c<c-r>=system('base64 --decode', @")<cr><esc>
+vnoremap <leader>6e c<c-r>=system('base64 -w 0', @")<cr><esc>
+
+nmap <silent> <leader>H <Plug>(YCMHover)
+" ##############################################################################
+" ****** DISABLE UNWANTED SPF13 VIM BEHAVIOR ******
+" ##############################################################################
+" %%%%% Visual Re-enable After Shifting  %%%%%
+vunmap <
+vunmap >
+
+" ##############################################################################
+" ****** PLUGIN SPECIFIC HANDLING ******
+" ##############################################################################
+" %%%%% UltiSnips %%%%%
+let g:snips_author = "Plezentek, Inc. All rights reserved"
+
+" %%%%% Vim-Terriform %%%%%
+let g:terraform_fmt_on_save = 1
+
+" %%%%% IndentLines %%%%%
+let g:indentLine_fileTypeExclude = ['markdown']
+
+" %%%%% GutenTags %%%%%
+" Rundown at https://www.reddit.com/r/vim/comments/d77t6j
+let g:gutentags_ctags_tagfile = '.tags'
+
+let g:gutentags_exclude_filetypes = [
+      \ 'dart',
+      \ ]
+
+" let g:gutentags_project_info = [
+"       \ {'type': 'dart', 'file': 'pubspec.yaml'},
+"       \ ]
+
+" let g:gutentags_ctags_executable_dart = '/home/douglas/.bin/flutter_ctags'
+
+let g:gutentags_ctags_extra_args = [
+      \ '--tag-relative=yes',
+      \ '--fields=+ailmnS',
+      \ ]
+
+let g:gutentags_ctags_exclude = [
+      \ '*.git', '*.svg', '*.hg',
+      \ '*/tests/*',
+      \ 'build',
+      \ 'dist',
+      \ '*sites/*/files/*',
+      \ 'bazel-bin',
+      \ 'bazel-out',
+      \ 'bazel-projects',
+      \ 'bazel-testlogs',
+      \ 'bazel-*',
+      \ 'bin',
+      \ 'node_modules',
+      \ 'bower_components',
+      \ 'cache',
+      \ 'compiled',
+      \ 'docs',
+      \ 'example',
+      \ 'bundle',
+      \ 'vendor',
+      \ '*.md',
+      \ '*-lock.json',
+      \ '*.lock',
+      \ '*bundle*.js',
+      \ '*build*.js',
+      \ '.*rc*',
+      \ '*.json',
+      \ '*.min.*',
+      \ '*.map',
+      \ '*.bak',
+      \ '*.zip',
+      \ '*.pyc',
+      \ '*.class',
+      \ '*.sln',
+      \ '*.Master',
+      \ '*.csproj',
+      \ '*.tmp',
+      \ '*.csproj.user',
+      \ '*.cache',
+      \ '*.pdb',
+      \ 'tags*',
+      \ 'cscope.*',
+      \ '*.css',
+      \ '*.less',
+      \ '*.scss',
+      \ '*.exe', '*.dll',
+      \ '*.mp3', '*.ogg', '*.flac',
+      \ '*.swp', '*.swo',
+      \ '*.bmp', '*.gif', '*.ico', '*.jpg', '*.png',
+      \ '*.rar', '*.zip', '*.tar', '*.tar.gz', '*.tar.xz', '*.tar.bz2',
+      \ '*.pdf', '*.doc', '*.docx', '*.ppt', '*.pptx',
+      \ ]
+
+" %%%%% YouCompleteMe %%%%%
+let g:ycm_language_server = 
+  \ [ 
+  \   {
+  \     'name': 'yaml',
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/yaml-language-server/yaml-language-server', '--stdio' ],
+  \     'filetypes': [ 'yaml' ]
+  \   },
+  \   {
+  \     'name': 'sql',
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/sqls/sqls' ],
+  \     'filetypes': [ 'sql' ]
+  \   },
+  \   {
+  \     'name': 'dart',
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/analysis-server-dart-snapshot/analysis-server-dart-snapshot' ],
+  \     'filetypes': [ 'dart' ]
+  \   },
+  \   {
+  \     'name': 'docker',
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/docker-langserver/docker-langserver', '--stdio' ],
+  \     'filetypes': [ 'docker' ]
+  \   },
+  \   {
+  \     'name': 'bash',
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/bash-language-server/bash-language-server', 'start' ],
+  \     'filetypes': [ 'sh' ]
+  \   },
+  \   {
+  \     'name': 'pyls',
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/pyls/pyls' ],
+  \     'filetypes': [ 'python' ]
+  \   },
+  \   {
+  \     'name': 'vim',
+  \     'cmdline': [ '/home/douglas/.local/share/vim-lsp-settings/servers/vim-language-server/vim-language-server', '--stdio' ],
+  \     'filetypes': [ 'vim' ]
+  \   }
+  \ ]
+
+let g:ycm_show_diagnostics_ui = 1
+let g:ycm_always_populate_location_list = 1
+let g:go_gopls_enabled = 0
+let g:go_def_mode = 'godef'
+let g:go_info_mode = 'guru'
+let g:go_referrers_mode = 'guru'
+
+" %%%%% Airline %%%%%
+"
+" Configuration for Airline, using a patched font and the 256-color Solarized
+" colorscheme.
+let g:airline_theme='solarized'
+
+" I re-enable it.
+"let g:airline_powerline_fonts = 1
+
+" %%%%% Promptline %%%%%
+let g:promptline_theme = 'airline'
+" Solarized Bash Color Table For Theme:
+" 0 base2 (beige)
+" 1 red
+" 2 green
+" 3 yellow
+" 4 blue
+" 5 magenta
+" 6 cyan
+" 7 base02 (black)
+" 8 base3 (bright beige)
+" 9 orange
+" 10 base1 (lightest grey)
+" 11 base0 (light grey)
+" 12 base00 (dark grey)
+" 13 violet
+" 14 base01 (darkest grey)
+" 15 base03 (darkest black)
+" Colors I like:
+" Background: blue(4)  > yellow(3) > magenta(5) > bright beige(8)
+" Foreground: beige(0) > beige(0)  > beige(0)   > grey(11)
+let g:promptline_preset = {
+    \'a' : [ '\w' ],
+    \'b' : [ '$(echo $(printf \\xE2\\x8E\\x88) $(kubectx -c)$(echo :$(kubens -c) | sed -e s@^:default\$@@))' ],
+    \'c' : [ promptline#slices#vcs_branch() ],
+    \'warn' : [ promptline#slices#last_exit_code() ]}
+" %%%%% GUndo %%%%%
+"
+" Allow GUndo to work with modern vim builds
+if has('python3')
+    let g:gundo_prefer_python3 = 1          " anything else breaks on Ubuntu 16.04+
+endif
+
+" Add a handy mapping for bringing up the undo tree.
+nnoremap <F5> :GundoToggle<CR>
+
+" %%%%% Vim-LSP %%%%%
+
+" Use YouCompleteMe instead of lsp for code help
+" Only use lsp to install/update the code servers
+let g:lsp_diagnostics_enabled = 0
+let g:lsp_signs_enabled = 0
+let g:lsp_settings = {
+\  'yaml-language-server': {
+\    'disabled': 1,
+\  },
+\  'sqls': {
+\    'disabled': 1,
+\  },
+\  'analysis-server-dart-snapshot': {
+\    'disabled': 1,
+\  },
+\  'docker-langserver': {
+\    'disabled': 1,
+\  },
+\  'bash-language-server': {
+\    'disabled': 1,
+\  },
+\  'pyls': {
+\    'disabled': 1,
+\  },
+\  'vim-language-server': {
+\    'disabled': 1,
+\  },
+\  'gopls': {
+\    'disabled': 1,
+\  }
+\}
+
+" %%%%% NERDTree %%%%%
+
+let g:NERDTreeDirArrowExpandable = ''
+let g:NERDTreeDirArrowCollapsible = ''
+let NERDTreeQuitOnOpen=0
+let NERDTreeIgnore = ['^bazel-.*$']
+
+" %%%%% Vim-Go %%%%%
+"let g:go_code_completion_enabled = 0
+
+" ##############################################################################
+" ****** FILE SPECIFIC HANDLING ******
+" ##############################################################################
+
+" Turn on all conditional python highlighting
+let python_highlight_all = 1
+
+augroup PersonalFileTypeSettings
+  au!
+  " Set up default spacing and tabs for a few filetypes.  I've left off Go,
+  " since the filetype plugin handles it for me.
+  autocmd FileType mail,text,python,gitcommit,c,cpp,java,sh,vim,puppet,xml,json,javascript,html,yaml,dart setlocal tabstop=8 shiftwidth=2 expandtab
+
+  " Fix the comment handling, which is set to c-style by default
+  autocmd FileType puppet setlocal commentstring=#\ %s
+
+  " Standard GO tab settings (tabs, not spaces)
+  autocmd FileType go setlocal tabstop=4 shiftwidth=4 noexpandtab
+
+  " Turn on spellchecking in these file types.
+  autocmd FileType mail,text,python,gitcommit,cpp setlocal spell
+
+  " Help files trigger the 'text' filetype autocommand, but we don't want
+  " spellchecking in the help buffer, so we manually disable it.
+  autocmd FileType help setlocal nospell
+
+  "Teach VIM about spitfire templates
+  autocmd BufNewFile,BufRead *.spt set filetype=cheetah
+
+  "Teach VIM about go source
+  autocmd BufNewFile,BufRead *.go set filetype=go
+
+  " Don't hide markdown punctuation
+  autocmd FileType markdown set conceallevel=0
+
+  " Teach vim-commentary about nasm comments
+  autocmd FileType asm set commentstring=;\ %s
+  " xmap gc  <Plug>Commentary
+  " nmap gcc <Plug>CommentaryLine
+
+  " This trifecta allows us to create a default IndentGuides setting, and
+  " override it per-filetype.  IndentGuides settings apply globally, and not
+  " per-buffer, so any changes must be triggered with BufEnter.  In this case,
+  " we tell VIM to retrigger FileType commands each time you change the buffer,
+  " so that IndentGuides will be updated for each buffer you work on.
+  " autocmd BufEnter * if &ft !=# 'help' && &ft !=# 'nerdtree' | filetype detect | endif
+  " autocmd FileType * IndentGuidesDisable
+  " autocmd FileType python,html,cheetah,java,sh,vim,cpp,go IndentGuidesEnable
+
+  " Ensure that we autowrap git commits to 72 characters, per tpope's guidelines
+  " for good git comments.
+  autocmd FileType gitcommit setlocal textwidth=72
+
+  " I use 80-column lines in mail, plain text, C++ files, and my vimrc.
+  autocmd FileType mail,text,vim,cpp,c setlocal textwidth=80
+
+  " I use 100-column lines in Java files
+  autocmd FileType java setlocal textwidth=100
+
+  " Change line continuation rules for Java. j1 is for Java anonymous classes,
+  " +2s says indent 2xshiftwidth on line continuations.
+  autocmd FileType java setlocal cinoptions=j1,+2s
+augroup END
+
+" Undo mapping which blocks vim-codefmt
+unmap <Leader>=
+
+Glaive codefmt plugin[mappings]
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer yapf
+  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+  autocmd FileType rust AutoFormatBuffer rustfmt
+  autocmd FileType vue AutoFormatBuffer prettier
+augroup END
+
+
+" ##############################################################################
+" ****** COLUMN LAYOUT INDICATOR ******
+" ##############################################################################
+
+" Enable VIM 7.3+ native column indicator support if possible
+if exists("+colorcolumn")
+  " Use the textwidth value as the column length indicator
+  set colorcolumn=+1,+21,+41
+else
+  " No native support, I can't stand using overlength
+endif
+
+" SPF13 allows the abomination that is a curser on a non-existent character. Fix
+set virtualedit=
