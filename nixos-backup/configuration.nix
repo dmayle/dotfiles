@@ -5,7 +5,8 @@
 { config, pkgs, ... }:
 let
   # Import recent version of unstable for one-off uses
-  unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/0b876eaed3ed4715ac566c59eb00004eca3114e8;
+  #unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/71dc8325680ecfaf145de4f27eed2b9d02477bb5;
+  unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/bd249526ff5fdfa797673e8f42a99a97c9179c45;
   unstablePkgs = import unstable { config.allowUnfree = true; };
 
   # Import NUR user package archive
@@ -102,9 +103,16 @@ in
   networking.useDHCP = false;
 
   # The two detected interfaces on this machine
-  networking.interfaces.eno1.useDHCP = true;
   networking.interfaces.enp2s0.useDHCP = true;
+  # networking.interfaces.eno1.useDHCP = true;
   # networking.interfaces.wlp1s0.useDHCP = true;
+  # networking.interfaces.enp2s0 = {
+  #   useDHCP = false;
+  #   ipv4.addresses = [ {
+  #     address = "192.168.88.2";
+  #     prefixLength = 24;
+  #   } ];
+  # };
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -129,16 +137,15 @@ in
   # services.xserver.desktopManager.gnome3.enable = true;
   
 
+  # Install lorri for better/faster direnv nix integration
+  services.lorri.enable = true;
+
   # Until I can get Ly or Qingy or TBSM working
   services.xserver.displayManager.defaultSession = "sway";
   services.xserver.displayManager.sddm.enable = true;
 
   # Don't know why this is setup
   services.xserver.libinput.enable = true;
-
-  # Configure keymap in X11 (not the fully correct one)
-  services.xserver.layout = "gb";
-  services.xserver.xkbOptions = "caps:swapescape";
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -193,6 +200,11 @@ in
     gnumake
     git
     universal-ctags
+    direnv
+    stdenv.cc.cc.lib
+
+    # Disk management
+    gparted
 
     # systool for debugging i915 issues
     libsysfs
@@ -209,11 +221,12 @@ in
     pciutils # lspci
     ethtool
 
-    # Second ethernet card
-    unstablePkgs.linuxPackages.r8125
-
     # Brother laser printer driver
     brgenml1cupswrapper
+
+    # 3D Modelling
+    openscad
+    octave
 
     # NUR caching
     cachix
@@ -224,6 +237,9 @@ in
     # Both browsers are useful
     firefox
     google-chrome
+    (unstablePkgs.linkFarm "chrome-without-stable" [
+      { name = "bin/google-chrome"; path = google-chrome + /bin/google-chrome-stable; }
+    ])
 
     # Screen capture utility
     unstablePkgs.flameshot
@@ -232,9 +248,14 @@ in
     gimp
 
     # flutter for development
-    flutter
+    unstablePkgs.flutter
+
+    clang-tools
 
     gnupg
+
+    # Video recording
+    unstablePkgs.obs-studio
 
     # Partiioning
     gparted
@@ -251,12 +272,29 @@ in
     pavucontrol
     qjackctl
 
+    # File Manager
+    xfce.thunar
+    xfce.thunar-volman
+    xfce.thunar-archive-plugin
+
     # My terminal toolkit
     tmux
     neovim
 
+    # Bazel for building software
+    unstablePkgs.bazel
+    # Utility to allow bazel toolchains to work on NixOS
+    patchelf
+    # Indexing tool to easily find bazel toolchains that need patching
+    nix-index
+    # Find replacement used by one-line
+    fd
+
     # Video player
     vlc
+
+    # Handy tools for darting in and out of k8s namespaces
+    kubectx
 
     # Language servers (always latest)
     # Missing dart and SQL
@@ -275,6 +313,8 @@ in
     dotnet-sdk
     python3Full
   ];
+
+  # Google Chrome uses the binary google-chrome-stable, but we need google-chrome for flutter to work
 
   programs.neovim = {
     enable = true;
@@ -363,9 +403,12 @@ in
     enable = true;
     wrapperFeatures.gtk = true;
     extraPackages = with pkgs; [
-      # Menu bar (using dmenu_path to support wofi)
+      # Menu popup (I'm using wofi UI with dmenu for command search)
       dmenu
       wofi
+
+      # Waybar bar replace with idle inhibit support
+      waybar
 
       # Screen capture utils (to be replaced with flameshot)
       grim
@@ -417,6 +460,9 @@ in
       # Allow X programs to work
       xwayland
 
+      # Simple notes
+      qownnotes
+
       # Gettys
       nur.repos.dmayle.tbsm
     ];
@@ -427,16 +473,184 @@ in
       export SDL_VIDEODRIVER=wayland
       export XDG_CURRENT_DESKTOP="sway"
       export XDG_SESSION_TYPE="wayland"
-      export XKB_DEFAULT_LAYOUT=gb
-      export XKB_DEFAULT_OPTIONS="caps:swapescape"
       export _JAVA_AWT_WM_NONREPARENTING=1
     '';
   };
 
+  programs.waybar.enable = true;
+
   # Additional Sway Config
   # 1. Have sway start this systemd session
   # 2. Configure keyboard media shortcuts for volume
-  environment.etc."sway/config".text = builtins.replaceStrings [ "alacritty" "dmenu " ] [ "kitty" "wofi --dmenu " ] (builtins.readFile "${pkgs.sway}/etc/sway/config") + ''
+  environment.etc."sway/config".text = ''
+      # Read `man 5 sway` for a complete reference.
+      
+      ### Variables
+      #
+      # Logo key. Use Mod1 for Alt.
+      set $mod Mod4
+      # Home row direction keys, like vim
+      set $left h
+      set $down j
+      set $up k
+      set $right l
+      # Your preferred terminal emulator
+      set $term kitty
+      # Your preferred application launcher
+      # Note: pass the final command to swaymsg so that the resulting window can be opened
+      # on the original workspace that the command was run on.
+      set $menu dmenu_path | wofi --dmenu | xargs swaymsg exec --
+      
+      ### Input configuration
+
+      # Use a UK layout, windows variant
+      input * {
+      	xkb_layout "gb"
+	xkb_variant "extd"
+	xkb_options "caps:swapescape"
+	xkb_numlock enabled
+      }
+
+      # Read `man 5 sway-input` for more information about this section.
+      
+      ### Key bindings
+      #
+      # Basics:
+      #
+          # Start a terminal
+          bindsym $mod+Return exec $term
+      
+          # Kill focused window
+          bindsym $mod+Shift+q kill
+      
+          # Start your launcher
+          bindsym $mod+d exec $menu
+      
+          # Drag floating windows by holding down $mod and left mouse button.
+          # Resize them with right mouse button + $mod.
+          # Despite the name, also works for non-floating windows.
+          # Change normal to inverse to use left mouse button for resizing and right
+          # mouse button for dragging.
+          floating_modifier $mod normal
+      
+          # Reload the configuration file
+          bindsym $mod+Shift+c reload
+      
+          # Exit sway (logs you out of your Wayland session)
+          bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+      #
+      # Moving around:
+      #
+          # Move your focus around
+          bindsym $mod+$left focus left
+          bindsym $mod+$down focus down
+          bindsym $mod+$up focus up
+          bindsym $mod+$right focus right
+          # Or use $mod+[up|down|left|right]
+          bindsym $mod+Left focus left
+          bindsym $mod+Down focus down
+          bindsym $mod+Up focus up
+          bindsym $mod+Right focus right
+      
+          # Move the focused window with the same, but add Shift
+          bindsym $mod+Shift+$left move left
+          bindsym $mod+Shift+$down move down
+          bindsym $mod+Shift+$up move up
+          bindsym $mod+Shift+$right move right
+          # Ditto, with arrow keys
+          bindsym $mod+Shift+Left move left
+          bindsym $mod+Shift+Down move down
+          bindsym $mod+Shift+Up move up
+          bindsym $mod+Shift+Right move right
+      #
+      # Workspaces:
+      #
+          # Switch to workspace
+          bindsym $mod+1 workspace number 1
+          bindsym $mod+2 workspace number 2
+          bindsym $mod+3 workspace number 3
+          bindsym $mod+4 workspace number 4
+          bindsym $mod+5 workspace number 5
+          bindsym $mod+6 workspace number 6
+          bindsym $mod+7 workspace number 7
+          bindsym $mod+8 workspace number 8
+          bindsym $mod+9 workspace number 9
+          bindsym $mod+0 workspace number 10
+          # Move focused container to workspace
+          bindsym $mod+Shift+1 move container to workspace number 1
+          bindsym $mod+Shift+2 move container to workspace number 2
+          bindsym $mod+Shift+3 move container to workspace number 3
+          bindsym $mod+Shift+4 move container to workspace number 4
+          bindsym $mod+Shift+5 move container to workspace number 5
+          bindsym $mod+Shift+6 move container to workspace number 6
+          bindsym $mod+Shift+7 move container to workspace number 7
+          bindsym $mod+Shift+8 move container to workspace number 8
+          bindsym $mod+Shift+9 move container to workspace number 9
+          bindsym $mod+Shift+0 move container to workspace number 10
+          # Note: workspaces can have any name you want, not just numbers.
+          # We just use 1-10 as the default.
+      #
+      # Layout stuff:
+      #
+          # You can "split" the current object of your focus with
+          # $mod+b or $mod+v, for horizontal and vertical splits
+          # respectively.
+          bindsym $mod+b splith
+          bindsym $mod+v splitv
+      
+          # Switch the current container between different layout styles
+          bindsym $mod+s layout stacking
+          bindsym $mod+w layout tabbed
+          bindsym $mod+e layout toggle split
+      
+          # Make the current focus fullscreen
+          bindsym $mod+f fullscreen
+      
+          # Toggle the current focus between tiling and floating mode
+          bindsym $mod+Shift+space floating toggle; border normal
+      
+          # Swap focus between the tiling area and the floating area
+          bindsym $mod+space focus mode_toggle
+      
+          # Move focus to the parent container
+          bindsym $mod+a focus parent
+      #
+      # Scratchpad:
+      #
+          # Sway has a "scratchpad", which is a bag of holding for windows.
+          # You can send windows there and get them back later.
+      
+          # Move the currently focused window to the scratchpad
+          bindsym $mod+Shift+minus move scratchpad
+      
+          # Show the next scratchpad window or hide the focused scratchpad window.
+          # If there are multiple scratchpad windows, this command cycles through them.
+          bindsym $mod+minus scratchpad show
+      #
+      # Resizing containers:
+      #
+      mode "resize" {
+          # left will shrink the containers width
+          # right will grow the containers width
+          # up will shrink the containers height
+          # down will grow the containers height
+          bindsym $left resize shrink width 10px
+          bindsym $down resize grow height 10px
+          bindsym $up resize shrink height 10px
+          bindsym $right resize grow width 10px
+      
+          # Ditto, with arrow keys
+          bindsym Left resize shrink width 10px
+          bindsym Down resize grow height 10px
+          bindsym Up resize shrink height 10px
+          bindsym Right resize grow width 10px
+      
+          # Return to default mode
+          bindsym Return mode "default"
+          bindsym Escape mode "default"
+      }
+      bindsym $mod+r mode "resize"
+      
       # Start sway user session to trigger the start of graphical session
       exec "systemctl --user import-environment; systemctl --user start sway-session.target"
 
@@ -458,8 +672,19 @@ in
       bindsym XF86AudioLowerVolume exec 'pamixer -ud 2 && pamixer --get-volume > $SWAYSOCK.wob'
       bindsym XF86AudioMute exec 'pamixer --toggle-mute && ( pamixer --get-mute && echo 0 > $SWAYSOCK.wob ) || pamixer --get-volume > $SWAYSOCK.wob'
 
-      # Manually lock sessin
+      # Manually lock session
       bindsym --release $mod+Shift+p exec loginctl lock-session
+
+      # Create terminal as floating
+      # bindsym $mod+Shift+Return exec $term --class visor; for_window [class="visor"] move scratchpad, scratchpad show
+      #
+      # Some rules to prevent screen dim/lock while watching video
+      for_window [class="^Firefox$"]                      inhibit_idle fullscreen
+      for_window [app_id="^firefox$"]                     inhibit_idle fullscreen
+      for_window [class="^Chromium$"]                     inhibit_idle fullscreen
+      for_window [class="^Google-chrome$"]                inhibit_idle fullscreen
+      for_window [class="^mpv$"]                          inhibit_idle visible
+      for_window [app_id="^mpv$"]                         inhibit_idle visible
     '';
 
   # This seems to be required by polkit
@@ -482,16 +707,206 @@ in
     path = with pkgs; [ bash swayidle swaylock sway unstablePkgs.ddcutil ];
     script = ''
       swayidle -w \
-        timeout 300 'ddcutil set 10 20' \
+        timeout 3000 'ddcutil set 10 20' \
           resume 'ddcutil set 10 100' \
-        timeout 600 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
-        timeout 900 'swaymsg "output * dpms off"' \
-          resume 'swaymsg "output * dpms on"' \
+        timeout 6000 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
+        timeout 9000 'swaymsg "output * dpms off"' \
+          resume 'swaymsg "output * dpms on" && ddcutil set 10 100' \
         before-sleep 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
         lock 'swaylock -elfF -s fill -i ${bgNixSnowflake}'
-        idlehint 300
+        idlehint 3000
     '';
   };
+
+  #environment.etc."xdg/waybar/config".text = ''
+  #'';
+  environment.etc."xdg/waybar/style.css".text = ''
+    /* List of colors */
+    
+    /* {
+        --base03:    #002b36;
+        --base02:    #073642;
+        --base01:    #586e75;
+        --base00:    #657b83;
+        --base0:     #839496;
+        --base1:     #93a1a1;
+        --base2:     #eee8d5;
+        --base3:     #fdf6e3;
+        --yellow:    #b58900;
+        --orange:    #cb4b16;
+        --red:       #dc322f;
+        --magenta:   #d33682;
+        --violet:    #6c71c4;
+        --blue:      #268bd2;
+        --cyan:      #2aa198;
+        --green:     #859900;
+    } */
+    
+    * {
+        border: none;
+        border-radius: 0;
+        font-family: Hack, Helvetica, Arial, sans-serif;
+        font-size: 13px;
+        min-height: 0;
+    }
+    
+    window#waybar {
+        background-color: #002b36;
+        color: #d33682;
+        transition-property: background-color;
+        transition-duration: .5s;
+    }
+    
+    window#waybar.hidden {
+        opacity: 0.2;
+    }
+    
+    /*
+    window#waybar.empty {
+        background-color: transparent;
+    }
+    window#waybar.solo {
+        background-color: #FFFFFF;
+    }
+    */
+    
+    window#waybar.termite {
+        background-color: #3F3F3F;
+    }
+    
+    window#waybar.chromium {
+        background-color: #000000;
+        border: none;
+    }
+    
+    #workspaces {
+        border-bottom: 1px solid #586e75;
+    }
+    
+    /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
+    #workspaces button {
+        padding: 0 5px;
+        background-color: transparent;
+        color: #657b83;
+        border-bottom: 3px solid transparent;
+    }
+    
+    #workspaces button.focused {
+        background-color: #073642;
+        border-bottom: 1px solid #ff0;
+    }
+    
+    #workspaces button.urgent {
+        background-color: #d33682;
+    }
+    
+    #mode {
+        background-color: #002b36;
+        border-bottom: 1px solid #dc322f;
+    }
+    
+    #clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio, #custom-media, #tray, #mode, #idle_inhibitor {
+        padding: 0 10px;
+        margin: 0 2px;
+        color: #657b83;
+    }
+    /*
+    #clock {
+        background-color: #073642;
+    }
+    */
+    #battery {
+        background-color: #073642;
+    }
+    
+    #battery.charging {
+        color: #eee8d5;
+        background-color: #859900;
+    }
+    
+    @keyframes blink {
+        to {
+            background-color: #d33682;
+            color: #93a1a1;
+        }
+    }
+    
+    #battery.critical:not(.charging) {
+        background-color: #dc322f;
+        color: #93a1a1;
+        animation-name: blink;
+        animation-duration: 0.5s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+    }
+    
+    label:focus {
+        background-color: #073642;
+    }
+    
+    #cpu {
+        background-color: #073642;
+    }
+    
+    #memory {
+        background-color: #073642;
+    }
+    
+    #backlight {
+        background-color: #073642;
+    }
+    
+    #network {
+        background-color: #073642;
+    }
+    
+    #network.disconnected {
+        background-color: #002b36;
+    }
+    
+    #pulseaudio {
+        background-color: #073642;
+    }
+    
+    #pulseaudio.muted {
+        background-color: #002b36;
+    }
+    
+    #custom-media {
+        background-color: #66cc99;
+        color: #2a5c45;
+        min-width: 100px;
+    }
+    
+    #custom-media.custom-spotify {
+        background-color: #66cc99;
+    }
+    
+    #custom-media.custom-vlc {
+        background-color: #ffa000;
+    }
+    
+    #temperature {
+        background-color: #073642;
+    }
+    
+    #temperature.critical {
+        background-color: #dc322f;
+    }
+    
+    #tray {
+        background-color: #002b36;
+    }
+    
+    #idle_inhibitor {
+        background-color: #002b36;
+    }
+    
+    #idle_inhibitor.activated {
+        background-color: #073642;
+    }
+  '';
 
   environment.etc.inputrc.text = (builtins.readFile "${unstable}/nixos/modules/programs/bash/inputrc") + ''
     set editing-mode vi
@@ -499,6 +914,13 @@ in
   '';
 
   # Setup for Ly Getty/Display Manager
+  environment.etc."xdg/tbsm/sway.desktop".source = "${pkgs.sway-unwrapped}/share/wayland-sessions/sway.desktop";
+  environment.etc."xdg/tbsm/whitelist/sway.desktop".source = "${pkgs.sway-unwrapped}/share/wayland-sessions/sway.desktop";
+  environment.etc."xdg/tbsm/tbsm.conf".text = ''
+    verboseLevel="3"  # 0=quiet, 1=silent, 2=info, 3=verbose
+    configDir=/etc/xdg/tbsm
+    defaultSession="${pkgs.sway-unwrapped}/share/wayland-sessions/sway.desktop"
+  '';
   environment.etc."ly/config.ini".text = ''
     animate = true
     tty = 2
@@ -531,6 +953,29 @@ in
   #   serviceConfig = {
   #     Type = "idle";
   #     ExecStart = "${pkgs.nur.repos.fgaz.ly}/bin/ly";
+  #     StandardInput = "tty";
+  #     TTYPath = "/dev/tty2";
+  #     TTYReset = "yes";
+  #     TTYVHangup = "yes";
+  #   };
+  # };
+  # systemd.services.tbsm = {
+  #   enable = true;
+  #   description = "TUI display manager";
+  #   documentation = [ "https://github.com/loh-tar/tbsm" ];
+  #   conflicts = [ "getty@tty2.service" ];
+  #   after = [
+  #     "systemd-user-sessions.service"
+  #     "plymouth-quit-wait.service"
+  #     "getty@tty2.service"
+  #     "user.slice"
+  #   ];
+  #   aliases = [ "display-manager.service" ];
+  #   requires = [ "user.slice" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     Type = "idle";
+  #     ExecStart = "${pkgs.nur.repos.dmayle.tbsm}/bin/tbsm";
   #     StandardInput = "tty";
   #     TTYPath = "/dev/tty2";
   #     TTYReset = "yes";

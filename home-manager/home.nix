@@ -282,6 +282,8 @@ in
       ssh-reagent
 
       [[ -f ~/src/dotfiles/bash/prompt.rc ]] && source ~/src/dotfiles/bash/prompt.rc
+
+      eval "$(direnv hook bash)"
     '';
   };
 
@@ -1120,6 +1122,8 @@ in
     Restart = "always";
     RestartSec = 3;
   };
+
+  #services.lorri.enable = true;
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
