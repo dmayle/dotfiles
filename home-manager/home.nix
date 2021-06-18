@@ -529,6 +529,9 @@ in
       # vim-pyenv (depends on environments)
       # Rename (maybe replaced by NvimTree rename)
 
+      # bazel build file support
+      vim-bazel
+
       #######################################################################
       # ****** CODE ENHANCEMENT ******
       #######################################################################
