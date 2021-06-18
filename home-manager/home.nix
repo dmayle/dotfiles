@@ -582,12 +582,15 @@ in
       " Visual reminders of file width
       set colorcolumn=+1,+21,+41
 
-      " Set visual characters for tabs, end of line, and trailing whitespace.
+      " Set visual characters for tabs and trailing whitespace.
       augroup VisualChars
         au!
-        autocmd FileType * set listchars=tab:▸\ ,eol:¬,trail:☐
-        autocmd FileType go set listchars=tab:\|\ ,eol:¬,trail:☐
+        autocmd FileType * set listchars=tab:▸\ ,trail:☐
+        autocmd FileType go set listchars=tab:\|\ ,trail:☐
       augroup END
+
+      " Make sure that trailing whitespace is Red
+      match errorMsg /\s\+$/
 
       " Make sure there is always at least 3 lines of context on either side of
       " the cursor (above and below).
