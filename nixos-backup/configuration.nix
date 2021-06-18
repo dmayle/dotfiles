@@ -6,7 +6,8 @@
 let
   # Import recent version of unstable for one-off uses
   #unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/71dc8325680ecfaf145de4f27eed2b9d02477bb5;
-  unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/bd249526ff5fdfa797673e8f42a99a97c9179c45;
+  #unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/bd249526ff5fdfa797673e8f42a99a97c9179c45;
+  unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/83f6711464e03a856fb554693fe2e0f3af2ab0d5;
   unstablePkgs = import unstable { config.allowUnfree = true; };
 
   # Import NUR user package archive
@@ -26,18 +27,18 @@ in
       # "${unstable}/nixos/modules/config/xdg/portal.nix"
 
       # Management if i2c group is in unstable
-      "${unstable}/nixos/modules/hardware/i2c.nix"
+      #"${unstable}/nixos/modules/hardware/i2c.nix"
 
       # Working Pipewire is in unstable
-      "${unstable}/nixos/modules/services/desktops/pipewire/pipewire.nix"
-      "${unstable}/nixos/modules/services/desktops/pipewire/pipewire-media-session.nix"
+      #"${unstable}/nixos/modules/services/desktops/pipewire/pipewire.nix"
+      #"${unstable}/nixos/modules/services/desktops/pipewire/pipewire-media-session.nix"
 
       # Controlling neovim tree-sitter parsers is in unstable
       "${unstable}/nixos/modules/programs/neovim.nix"
     ];
   disabledModules = [
     # "config/xdg/portal.nix"
-    "services/desktops/pipewire.nix"
+    #"services/desktops/pipewire.nix"
     "programs/neovim.nix"
   ];
 
@@ -121,12 +122,28 @@ in
     useXkbConfig = true;
   };
 
+  fonts = {
+    enableDefaultFonts = true;
+    fonts = with pkgs; [
+      corefonts
+      dejavu_fonts
+      fira-code
+      freefont_ttf
+      fira-code-symbols
+      (nerdfonts.override { fonts = [ "DroidSansMono" ]; })
+    ];
+  };
+
   # This is a DBUS standard for desktop access, it's used by Flameshot to get
   # screenshot data from wayland
   xdg.portal.enable = true;
   xdg.portal.gtkUsePortal = true;
-  xdg.portal.extraPortals = with unstablePkgs;
-    [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
+  xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
+  #xdg.portal.extraPortals = with unstablePkgs;
+  #  [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
+  #systemd.user.services.xdg-desktop-portal.environment = {
+  #  XDG_DESKTOP_PORTAL_DIR = config.environment.variables.XDG_DESKTOP_PORTAL_DIR;
+  #};
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -135,7 +152,7 @@ in
   # Enable the GNOME 3 Desktop Environment.
   # services.xserver.displayManager.gdm.enable = true;
   # services.xserver.desktopManager.gnome3.enable = true;
-  
+
 
   # Install lorri for better/faster direnv nix integration
   services.lorri.enable = true;
@@ -146,6 +163,11 @@ in
 
   # Don't know why this is setup
   services.xserver.libinput.enable = true;
+
+  # Install useful man pages
+  documentation.enable = true;
+  documentation.man.enable = true;
+  documentation.dev.enable = true;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -159,13 +181,13 @@ in
 
   # Enable PipeWire Audio System
   services.pipewire = {
-    package = unstablePkgs.pipewire;
+    #package = unstablePkgs.pipewire;
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
     jack.enable = true;
-    media-session.package = unstablePkgs.pipewire.mediaSession;
+    #media-session.package = unstablePkgs.pipewire.mediaSession;
   };
 
 
@@ -196,12 +218,17 @@ in
     gnome3.adwaita-icon-theme
     colordiff
 
+    manpages
+
     # Development tools
     gnumake
     git
     universal-ctags
     direnv
-    stdenv.cc.cc.lib
+    #stdenv.cc.cc.lib
+    #pkgs.cc.cc.lib
+    gdb
+    valgrind
 
     # Disk management
     gparted
@@ -220,6 +247,8 @@ in
     ripgrep # RipGrep
     pciutils # lspci
     ethtool
+    doxygen
+    doxygen_gui
 
     # Brother laser printer driver
     brgenml1cupswrapper
@@ -311,20 +340,20 @@ in
     go
     gcc
     dotnet-sdk
-    python3Full
+    #python3Full
   ];
 
   # Google Chrome uses the binary google-chrome-stable, but we need google-chrome for flutter to work
 
   programs.neovim = {
     enable = true;
-    runtime."parser/bash.so".source = "${pkgs.tree-sitter.builtGrammars.bash}/parser";
-    runtime."parser/c.so".source = "${pkgs.tree-sitter.builtGrammars.c}/parser";
-    runtime."parser/cpp.so".source = "${pkgs.tree-sitter.builtGrammars.cpp}/parser";
-    runtime."parser/go.so".source = "${pkgs.tree-sitter.builtGrammars.go}/parser";
-    runtime."parser/html.so".source = "${pkgs.tree-sitter.builtGrammars.html}/parser";
-    runtime."parser/javascript.so".source = "${pkgs.tree-sitter.builtGrammars.javascript}/parser";
-    runtime."parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.python}/parser";
+    runtime."parser/bash.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-bash}/parser";
+    runtime."parser/c.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-c}/parser";
+    runtime."parser/cpp.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-cpp}/parser";
+    runtime."parser/go.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-go}/parser";
+    runtime."parser/html.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-html}/parser";
+    runtime."parser/javascript.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-javascript}/parser";
+    runtime."parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-python}/parser";
   };
 
   # Overlays are useful for mucking with config generated by other modules
@@ -359,7 +388,7 @@ in
 
     # For when I need to straight up override package with unstable
     (self: super: {
-      xdg-desktop-portal = unstablePkgs.xdg-desktop-portal;
+      #xdg-desktop-portal = unstablePkgs.xdg-desktop-portal;
 
       # Use nightly neovim as the basis for my regular neovim package
       neovim-unwrapped = self.neovim-nightly;
@@ -415,7 +444,7 @@ in
       slurp
 
       # Testing tree sitter parsers
-      unstablePkgs.tree-sitter
+      tree-sitter
 
       # Brightness (let me know that lock is coming)
       unstablePkgs.ddcutil
@@ -482,9 +511,10 @@ in
   # Additional Sway Config
   # 1. Have sway start this systemd session
   # 2. Configure keyboard media shortcuts for volume
+  environment.etc."sway/keymap_backtick.xkb".source = ./keymap_backtick.xkb;
   environment.etc."sway/config".text = ''
       # Read `man 5 sway` for a complete reference.
-      
+
       ### Variables
       #
       # Logo key. Use Mod1 for Alt.
@@ -500,7 +530,7 @@ in
       # Note: pass the final command to swaymsg so that the resulting window can be opened
       # on the original workspace that the command was run on.
       set $menu dmenu_path | wofi --dmenu | xargs swaymsg exec --
-      
+
       ### Input configuration
 
       # Use a UK layout, windows variant
@@ -509,33 +539,34 @@ in
 	xkb_variant "extd"
 	xkb_options "caps:swapescape"
 	xkb_numlock enabled
+	xkb_file "/etc/sway/keymap_backtick.xkb"
       }
 
       # Read `man 5 sway-input` for more information about this section.
-      
+
       ### Key bindings
       #
       # Basics:
       #
           # Start a terminal
           bindsym $mod+Return exec $term
-      
+
           # Kill focused window
           bindsym $mod+Shift+q kill
-      
+
           # Start your launcher
           bindsym $mod+d exec $menu
-      
+
           # Drag floating windows by holding down $mod and left mouse button.
           # Resize them with right mouse button + $mod.
           # Despite the name, also works for non-floating windows.
           # Change normal to inverse to use left mouse button for resizing and right
           # mouse button for dragging.
           floating_modifier $mod normal
-      
+
           # Reload the configuration file
           bindsym $mod+Shift+c reload
-      
+
           # Exit sway (logs you out of your Wayland session)
           bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
       #
@@ -551,7 +582,7 @@ in
           bindsym $mod+Down focus down
           bindsym $mod+Up focus up
           bindsym $mod+Right focus right
-      
+
           # Move the focused window with the same, but add Shift
           bindsym $mod+Shift+$left move left
           bindsym $mod+Shift+$down move down
@@ -597,21 +628,21 @@ in
           # respectively.
           bindsym $mod+b splith
           bindsym $mod+v splitv
-      
+
           # Switch the current container between different layout styles
           bindsym $mod+s layout stacking
           bindsym $mod+w layout tabbed
           bindsym $mod+e layout toggle split
-      
+
           # Make the current focus fullscreen
           bindsym $mod+f fullscreen
-      
+
           # Toggle the current focus between tiling and floating mode
           bindsym $mod+Shift+space floating toggle; border normal
-      
+
           # Swap focus between the tiling area and the floating area
           bindsym $mod+space focus mode_toggle
-      
+
           # Move focus to the parent container
           bindsym $mod+a focus parent
       #
@@ -619,10 +650,10 @@ in
       #
           # Sway has a "scratchpad", which is a bag of holding for windows.
           # You can send windows there and get them back later.
-      
+
           # Move the currently focused window to the scratchpad
           bindsym $mod+Shift+minus move scratchpad
-      
+
           # Show the next scratchpad window or hide the focused scratchpad window.
           # If there are multiple scratchpad windows, this command cycles through them.
           bindsym $mod+minus scratchpad show
@@ -638,21 +669,19 @@ in
           bindsym $down resize grow height 10px
           bindsym $up resize shrink height 10px
           bindsym $right resize grow width 10px
-      
+
           # Ditto, with arrow keys
           bindsym Left resize shrink width 10px
           bindsym Down resize grow height 10px
           bindsym Up resize shrink height 10px
           bindsym Right resize grow width 10px
-      
+
           # Return to default mode
           bindsym Return mode "default"
           bindsym Escape mode "default"
       }
       bindsym $mod+r mode "resize"
-      
-      # Start sway user session to trigger the start of graphical session
-      exec "systemctl --user import-environment; systemctl --user start sway-session.target"
+
 
       # Configure Wob (Wayland Overlay Bar)
       exec mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob | wob
@@ -685,6 +714,9 @@ in
       for_window [class="^Google-chrome$"]                inhibit_idle fullscreen
       for_window [class="^mpv$"]                          inhibit_idle visible
       for_window [app_id="^mpv$"]                         inhibit_idle visible
+
+      # Start sway user session to trigger the start of graphical session
+      exec "systemctl --user import-environment; systemctl --user start sway-session.target"
     '';
 
   # This seems to be required by polkit
@@ -722,7 +754,7 @@ in
   #'';
   environment.etc."xdg/waybar/style.css".text = ''
     /* List of colors */
-    
+
     /* {
         --base03:    #002b36;
         --base02:    #073642;
@@ -741,7 +773,7 @@ in
         --cyan:      #2aa198;
         --green:     #859900;
     } */
-    
+
     * {
         border: none;
         border-radius: 0;
@@ -749,18 +781,18 @@ in
         font-size: 13px;
         min-height: 0;
     }
-    
+
     window#waybar {
         background-color: #002b36;
         color: #d33682;
         transition-property: background-color;
         transition-duration: .5s;
     }
-    
+
     window#waybar.hidden {
         opacity: 0.2;
     }
-    
+
     /*
     window#waybar.empty {
         background-color: transparent;
@@ -769,20 +801,20 @@ in
         background-color: #FFFFFF;
     }
     */
-    
+
     window#waybar.termite {
         background-color: #3F3F3F;
     }
-    
+
     window#waybar.chromium {
         background-color: #000000;
         border: none;
     }
-    
+
     #workspaces {
         border-bottom: 1px solid #586e75;
     }
-    
+
     /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
     #workspaces button {
         padding: 0 5px;
@@ -790,21 +822,21 @@ in
         color: #657b83;
         border-bottom: 3px solid transparent;
     }
-    
+
     #workspaces button.focused {
         background-color: #073642;
         border-bottom: 1px solid #ff0;
     }
-    
+
     #workspaces button.urgent {
         background-color: #d33682;
     }
-    
+
     #mode {
         background-color: #002b36;
         border-bottom: 1px solid #dc322f;
     }
-    
+
     #clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio, #custom-media, #tray, #mode, #idle_inhibitor {
         padding: 0 10px;
         margin: 0 2px;
@@ -818,19 +850,19 @@ in
     #battery {
         background-color: #073642;
     }
-    
+
     #battery.charging {
         color: #eee8d5;
         background-color: #859900;
     }
-    
+
     @keyframes blink {
         to {
             background-color: #d33682;
             color: #93a1a1;
         }
     }
-    
+
     #battery.critical:not(.charging) {
         background-color: #dc322f;
         color: #93a1a1;
@@ -840,69 +872,69 @@ in
         animation-iteration-count: infinite;
         animation-direction: alternate;
     }
-    
+
     label:focus {
         background-color: #073642;
     }
-    
+
     #cpu {
         background-color: #073642;
     }
-    
+
     #memory {
         background-color: #073642;
     }
-    
+
     #backlight {
         background-color: #073642;
     }
-    
+
     #network {
         background-color: #073642;
     }
-    
+
     #network.disconnected {
         background-color: #002b36;
     }
-    
+
     #pulseaudio {
         background-color: #073642;
     }
-    
+
     #pulseaudio.muted {
         background-color: #002b36;
     }
-    
+
     #custom-media {
         background-color: #66cc99;
         color: #2a5c45;
         min-width: 100px;
     }
-    
+
     #custom-media.custom-spotify {
         background-color: #66cc99;
     }
-    
+
     #custom-media.custom-vlc {
         background-color: #ffa000;
     }
-    
+
     #temperature {
         background-color: #073642;
     }
-    
+
     #temperature.critical {
         background-color: #dc322f;
     }
-    
+
     #tray {
         background-color: #002b36;
     }
-    
+
     #idle_inhibitor {
         background-color: #002b36;
     }
-    
+
     #idle_inhibitor.activated {
         background-color: #073642;
     }
