@@ -49,10 +49,10 @@ function __promptline_kube_context {
       printf "%s" "${context_symbol}${context:-unknown}"
       if hash kubens 2>/dev/null; then
         if namespace=$( { kubens -c; } 2>/dev/null ); then
-	  if namespace != "default"; then
+          if [ $namespace != "default" ]; then
             printf "%s" ":${namespace:-unknown}"
-	  fi
-	fi
+          fi
+        fi
       fi
       return
     fi
