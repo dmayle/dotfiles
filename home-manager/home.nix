@@ -157,6 +157,9 @@ in
     historyFileSize = 20000;
     # Still need to setup prompt.rc
     initExtra = ''
+      # Prep GPG Agent for this terminal
+      [[ -n "$(which gpg)" ]] && export GPG_TTY=$(tty)
+
       [ -f ~/.nix-profile/etc/profile.d/nix.sh ] && source ~/.nix-profile/etc/profile.d/nix.sh;
       # Command hashing is used by various shell scripts, so enable it
       set -h
