@@ -105,10 +105,6 @@ let
   };
 in
 {
-  imports =
-    [
-      "${unstableHomeManager}/modules/services/wlsunset.nix"
-    ];
 
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {
@@ -134,14 +130,6 @@ in
   # paths it should manage.
   home.username = "douglas";
   home.homeDirectory = "/home/douglas";
-
-  services.wlsunset = {
-    package = unstablePkgs.wlsunset;
-    enable = true;
-    # Nice, France
-    latitude = "43.7";
-    longitude = "7.2";
-  };
 
   # Setup vi keybinding with readline
   programs.readline = {
@@ -169,6 +157,7 @@ in
     historyFileSize = 20000;
     # Still need to setup prompt.rc
     initExtra = ''
+      [ -f ~/.nix-profile/etc/profile.d/nix.sh ] && source ~/.nix-profile/etc/profile.d/nix.sh;
       # Command hashing is used by various shell scripts, so enable it
       set -h
 
@@ -384,7 +373,7 @@ in
 
   programs.neovim = {
     enable = true;
-    withPython = false;
+    # withPython = false;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
@@ -418,8 +407,6 @@ in
 
       # Start using treesitter
       nvim-treesitter
-      #unstable can install maintained parsers but can't use them
-      #unstablePkgs.vimPlugins.nvim-treesitter
 
       # Automate the update and connection of tags files
       vim-gutentags
@@ -1109,7 +1096,7 @@ in
           on_attach = on_attach,
           InterpreterPah = "${pkgs.python3Full}/bin/python",
           Version = "3.8",
-          cmd = { "${pkgs.dotnet-sdk}/bin/dotnet", "exec", "${unstablePkgs.python-language-server}/lib/Microsoft.Python.LanguageServer.dll" }
+          cmd = { "${pkgs.dotnet-sdk}/bin/dotnet", "exec", "${pkgs.python-language-server}/lib/Microsoft.Python.LanguageServer.dll" }
         }
       EOLUA
 
@@ -1123,19 +1110,6 @@ in
         autocmd BufEnter * lua require'completion'.on_attach()
       augroup END
     '';
-  };
-
-  # home.file."${config.xdg.configHome}/nvim/parser/bash.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-bash}/parser";
-  # home.file."${config.xdg.configHome}/nvim/parser/c.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-c}/parser";
-  # home.file."${config.xdg.configHome}/nvim/parser/cpp.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-cpp}/parser";
-  # home.file."${config.xdg.configHome}/nvim/parser/go.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-go}/parser";
-  # home.file."${config.xdg.configHome}/nvim/parser/html.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-html}/parser";
-  # home.file."${config.xdg.configHome}/nvim/parser/javascript.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-javascript}/parser";
-  # home.file."${config.xdg.configHome}/nvim/parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-python}/parser";
-
-  systemd.user.services.wlsunset.Service = {
-    Restart = "always";
-    RestartSec = 3;
   };
 
   #services.lorri.enable = true;
