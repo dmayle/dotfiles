@@ -3,7 +3,7 @@
 {
   imports = [
     ./other-linux.nix
-    ./home.nix
+    ./common.nix
   ];
 }
 
