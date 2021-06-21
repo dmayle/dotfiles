@@ -103,6 +103,56 @@ let
       maintainers = [ "rhysd" ];
     };
   };
+
+  nvim-spell-en-utf8-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.utf-8.spl";
+    sha256 = "fecabdc949b6a39d32c0899fa2545eab25e63f2ed0a33c4ad1511426384d3070";
+  };
+
+  nvim-spell-en-utf8-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.utf-8.sug";
+    sha256 = "5b6e5e6165582d2fd7a1bfa41fbce8242c72476222c55d17c2aa2ba933c932ec";
+  };
+
+  nvim-spell-en-ascii-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.ascii.spl";
+    sha256 = "cebcba489d45da3355940f340582e20ce35ecdcd44f9cc168be873f08e782449";
+  };
+
+  nvim-spell-en-ascii-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.ascii.sug";
+    sha256 = "b0d5d0ed19735f837248ef97bccb444ad730340b1785c8f6a8e4458f6872216c";
+  };
+
+  nvim-spell-en-latin1-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.latin1.spl";
+    sha256 = "620d9efcd79cfc9d639818fb52807e3dae61a37c800d694a010cd525a2161845";
+  };
+
+  nvim-spell-en-latin1-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.latin1.sug";
+    sha256 = "e6de97e4bcb3f9b4aaf7e1eb54a81b9390d5c231f427fa4be3798a25e4622b02";
+  };
+
+  nvim-spell-fr-utf8-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/fr.utf-8.spl";
+    sha256 = "abfb9702b98d887c175ace58f1ab39733dc08d03b674d914f56344ef86e63b61";
+  };
+
+  nvim-spell-fr-utf8-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/fr.utf-8.sug";
+    sha256 = "0294bc32b42c90bbb286a89e23ca3773b7ef50eff1ab523b1513d6a25c6b3f58";
+  };
+
+  nvim-spell-fr-latin1-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/fr.latin1.spl";
+    sha256 = "086ccda0891594c93eab143aa83ffbbd25d013c1b82866bbb48bb1cb788cc2ff";
+  };
+
+  nvim-spell-fr-latin1-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/fr.latin1.sug";
+    sha256 = "5cb2c97901b9ca81bf765532099c0329e2223c139baa764058822debd2e0d22a";
+  };
 in
 {
 
@@ -122,9 +172,16 @@ in
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  home.packages = [
-    pkgs.clang-tools
-  ];
+  home.file."${config.xdg.configHome}/nvim/spell/en.utf-8.spl".source = nvim-spell-en-utf8-dictionary;
+  home.file."${config.xdg.configHome}/nvim/spell/en.utf-8.sug".source = nvim-spell-en-utf8-suggestions;
+  home.file."${config.xdg.configHome}/nvim/spell/en.ascii.spl".source = nvim-spell-en-ascii-dictionary;
+  home.file."${config.xdg.configHome}/nvim/spell/en.ascii.sug".source = nvim-spell-en-ascii-suggestions;
+  home.file."${config.xdg.configHome}/nvim/spell/en.latin1.spl".source = nvim-spell-en-latin1-dictionary;
+  home.file."${config.xdg.configHome}/nvim/spell/en.latin1.sug".source = nvim-spell-en-latin1-suggestions;
+  home.file."${config.xdg.configHome}/nvim/spell/fr.utf-8.spl".source = nvim-spell-fr-utf8-dictionary;
+  home.file."${config.xdg.configHome}/nvim/spell/fr.utf-8.sug".source = nvim-spell-fr-utf8-suggestions;
+  home.file."${config.xdg.configHome}/nvim/spell/fr.latin1.spl".source = nvim-spell-fr-latin1-dictionary;
+  home.file."${config.xdg.configHome}/nvim/spell/fr.latin1.sug".source = nvim-spell-fr-latin1-suggestions;
 
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
