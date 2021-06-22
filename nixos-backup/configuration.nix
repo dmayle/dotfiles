@@ -219,6 +219,7 @@ in
     colordiff
 
     manpages
+    anki
 
     # Development tools
     gnumake
@@ -311,7 +312,8 @@ in
     neovim
 
     # Bazel for building software
-    unstablePkgs.bazel
+    bazel
+    bazel-buildtools
     # Utility to allow bazel toolchains to work on NixOS
     patchelf
     # Indexing tool to easily find bazel toolchains that need patching
