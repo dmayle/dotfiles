@@ -537,11 +537,11 @@ in
 
       # Use a UK layout, windows variant
       input * {
-      	xkb_layout "gb"
-	xkb_variant "extd"
-	xkb_options "caps:swapescape"
-	xkb_numlock enabled
-	xkb_file "/etc/sway/keymap_backtick.xkb"
+          xkb_layout "gb"
+          xkb_variant "extd"
+          xkb_options "caps:swapescape"
+          xkb_numlock enabled
+          xkb_file "/etc/sway/keymap_backtick.xkb"
       }
 
       # Read `man 5 sway-input` for more information about this section.
@@ -752,193 +752,396 @@ in
     '';
   };
 
-  #environment.etc."xdg/waybar/config".text = ''
-  #'';
+  environment.etc."xdg/waybar/config".text = ''
+    // =============================================================================
+    //
+    // Waybar configuration (https://hg.sr.ht/~begs/dotfiles)
+    //
+    // Configuration reference: https://github.com/Alexays/Waybar/wiki/Configuration
+    //
+    // =============================================================================
+
+    {
+        // -------------------------------------------------------------------------
+        // Global configuration
+        // -------------------------------------------------------------------------
+
+        "layer": "top",
+        "position": "top",
+        "height": 36,
+
+        "modules-left": [
+            "sway/mode",
+            "sway/workspaces",
+            "custom/right-blue-background"
+        ],
+
+        "modules-center": [
+            "sway/window"
+        ],
+
+        "modules-right": [
+            "idle_inhibitor",
+            "custom/left-yellow-background",
+            "pulseaudio",
+            "custom/left-magenta-yellow",
+            "network",
+            "custom/left-base03-magenta",
+            "tray",
+            "clock#date",
+            "custom/left-base3-base03",
+            "clock#time"
+        ],
+
+        // -------------------------------------------------------------------------
+        // Modules
+        // -------------------------------------------------------------------------
+
+        "clock#time": {
+            "interval": 10,
+            "format": "{:%H:%M}",
+            "tooltip": false
+        },
+
+        "clock#date": {
+            "interval": 20,
+            "format": "{:%e %b %Y}", // Icon: calendar-alt
+            //"tooltip-format": "{:%e %B %Y}"
+            "tooltip": false
+        },
+
+        "idle_inhibitor": {
+            "format": "{icon}",
+            "format-icons": {
+                "activated": "☕",
+                "deactivated": "🥱"
+            }
+        },
+
+        "network": {
+            "interval": 5,
+            // TODO: format-icons
+            "format-wifi": " {essid} ({signalStrength}%)", // Icon: wifi
+            "format-ethernet": "🛰️ {ifname}: {ipaddr}/{cidr}", // Icon: ethernet
+            "format-disconnected": "DISCONNECTED",
+            "tooltip": false
+        },
+
+        "sway/mode": {
+            "format": "⚠️ <span style=\"italic\">{}</span>", // Icon: expand-arrows-alt
+            "tooltip": false
+        },
+
+        "sway/window": {
+            "format": "{}",
+            "max-length": 30,
+            "tooltip": false
+        },
+
+        "sway/workspaces": {
+            "all-outputs": false,
+            "disable-scroll": false,
+            "format": " {name} ",
+        },
+
+        "pulseaudio": {
+            "scroll-step": 2,
+            // Format: output sound input sound
+            "format": "{icon} {volume}% {format_source}",
+            "format-bluetooth": "{icon} {volume}%",
+            "format-muted": "🔇 ❌ {format_source}",
+            // input sound
+            "format-source": "🎙️ {volume}%",
+            "format-source-muted": "🎙️ ❌",
+            "format-icons": {
+                "headphones": "🎧",
+                "handsfree": "",
+                "headset": "",
+                "phone": "",
+                "portable": "",
+                "car": "",
+                "default": ["🔈", "🔉", "🔊"]
+            },
+            "on-click": "pavucontrol"
+        },
+
+        "tray": {
+            "icon-size": 21
+            //"spacing": 10
+        },
+
+        "custom/right-blue-background": {
+            "format": "",
+            "tooltip": false
+        },
+
+        "custom/right-cyan-background": {
+            "format": "",
+            "tooltip": false
+        },
+
+        "custom/left-base3-base03": {
+            "format": "",
+            "tooltip": false
+        },
+
+        "custom/left-base03-magenta": {
+            "format": "",
+            "tooltip": false
+        },
+
+        "custom/left-magenta-yellow": {
+            "format": "",
+            "tooltip": false
+        },
+
+        "custom/left-yellow-background": {
+            "format": "",
+            "tooltip": false
+        },
+    }
+  '';
+
   environment.etc."xdg/waybar/style.css".text = ''
-    /* List of colors */
 
-    /* {
-        --base03:    #002b36;
-        --base02:    #073642;
-        --base01:    #586e75;
-        --base00:    #657b83;
-        --base0:     #839496;
-        --base1:     #93a1a1;
-        --base2:     #eee8d5;
-        --base3:     #fdf6e3;
-        --yellow:    #b58900;
-        --orange:    #cb4b16;
-        --red:       #dc322f;
-        --magenta:   #d33682;
-        --violet:    #6c71c4;
-        --blue:      #268bd2;
-        --cyan:      #2aa198;
-        --green:     #859900;
-    } */
+    @keyframes blink-warning {
+        70% {
+            color: @base2;
+        }
 
-    * {
-        border: none;
-        border-radius: 0;
-        font-family: Hack, Helvetica, Arial, sans-serif;
-        font-size: 13px;
-        min-height: 0;
-    }
-
-    window#waybar {
-        background-color: #002b36;
-        color: #d33682;
-        transition-property: background-color;
-        transition-duration: .5s;
-    }
-
-    window#waybar.hidden {
-        opacity: 0.2;
-    }
-
-    /*
-    window#waybar.empty {
-        background-color: transparent;
-    }
-    window#waybar.solo {
-        background-color: #FFFFFF;
-    }
-    */
-
-    window#waybar.termite {
-        background-color: #3F3F3F;
-    }
-
-    window#waybar.chromium {
-        background-color: #000000;
-        border: none;
-    }
-
-    #workspaces {
-        border-bottom: 1px solid #586e75;
-    }
-
-    /* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-    #workspaces button {
-        padding: 0 5px;
-        background-color: transparent;
-        color: #657b83;
-        border-bottom: 3px solid transparent;
-    }
-
-    #workspaces button.focused {
-        background-color: #073642;
-        border-bottom: 1px solid #ff0;
-    }
-
-    #workspaces button.urgent {
-        background-color: #d33682;
-    }
-
-    #mode {
-        background-color: #002b36;
-        border-bottom: 1px solid #dc322f;
-    }
-
-    #clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio, #custom-media, #tray, #mode, #idle_inhibitor {
-        padding: 0 10px;
-        margin: 0 2px;
-        color: #657b83;
-    }
-    /*
-    #clock {
-        background-color: #073642;
-    }
-    */
-    #battery {
-        background-color: #073642;
-    }
-
-    #battery.charging {
-        color: #eee8d5;
-        background-color: #859900;
-    }
-
-    @keyframes blink {
         to {
-            background-color: #d33682;
-            color: #93a1a1;
+            color: @base2;
+            background-color: @magenta;
         }
     }
 
-    #battery.critical:not(.charging) {
-        background-color: #dc322f;
-        color: #93a1a1;
-        animation-name: blink;
-        animation-duration: 0.5s;
+    @keyframes blink-critical {
+        70% {
+            color: @base2;
+        }
+
+        to {
+            color: @base2;
+            background-color: @red;
+        }
+    }
+
+    /* Solarized */
+    @define-color base03 #002b36;
+    @define-color base02 #073642;
+    @define-color base01 #586e75;
+    @define-color base00 #657b83;
+    @define-color base0 #839496;
+    @define-color base1 #93a1a1;
+    @define-color base2 #eee8d5;
+    @define-color base3 #fdf6e3;
+    @define-color yellow #b58900;
+    @define-color orange #cb4b16;
+    @define-color red #dc322f;
+    @define-color magenta #d33682;
+    @define-color violet #6c71c4;
+    @define-color blue #268bd2;
+    @define-color cyan #2aa198;
+    @define-color green #859900;
+
+    /* Reset all styles */
+    * {
+        border: none;
+        border-radius: 0;
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+        font-family: DroidSansMono, Roboto, Helvetica, Arial, sans-serif;
+        font-size: 24pt;
+    }
+
+    /* The whole bar */
+    #waybar {
+        background: transparent;
+        color: @base2;
+        font-family: Terminus, Siji;
+        font-size: 30pt;
+        /*font-weight: bold;*/
+    }
+
+    /* Each module */
+    #battery,
+    #clock,
+    #cpu,
+    #language,
+    #memory,
+    #mode,
+    #network,
+    #pulseaudio,
+    #temperature,
+    #custom-alsa,
+    #sndio,
+    #tray {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Each module that should blink */
+    #mode,
+    #memory,
+    #temperature,
+    #battery {
         animation-timing-function: linear;
         animation-iteration-count: infinite;
         animation-direction: alternate;
     }
 
-    label:focus {
-        background-color: #073642;
+    /* Each critical module */
+    #memory.critical,
+    #cpu.critical,
+    #temperature.critical,
+    #battery.critical {
+        color: @red;
     }
 
-    #cpu {
-        background-color: #073642;
+    /* Each critical that should blink */
+    #mode,
+    #memory.critical,
+    #temperature.critical,
+    #battery.critical.discharging {
+        animation-name: blink-critical;
+        animation-duration: 2s;
     }
 
-    #memory {
-        background-color: #073642;
+    /* Each warning */
+    #network.disconnected,
+    #memory.warning,
+    #cpu.warning,
+    #temperature.warning,
+    #battery.warning {
+        color: @magenta;
     }
 
-    #backlight {
-        background-color: #073642;
+    /* Each warning that should blink */
+    #battery.warning.discharging {
+        animation-name: blink-warning;
+        animation-duration: 3s;
+    }
+
+    /* And now modules themselves in their respective order */
+
+    #mode { /* Shown current Sway mode (resize etc.) */
+        color: @base2;
+        background: @mode;
+    }
+
+    /* Workspaces stuff */
+    #workspaces button {
+        /*font-weight: bold;*/
+        padding-left: 4px;
+        padding-right: 4px;
+        color: @base3;
+        background: @cyan;
+    }
+
+    #workspaces button.focused {
+        background: @blue;
+    }
+
+    /*#workspaces button.urgent {
+        border-color: #c9545d;
+        color: #c9545d;
+    }*/
+
+    #window {
+        margin-right: 40px;
+        margin-left: 40px;
+    }
+
+    #custom-alsa,
+    #pulseaudio,
+    #sndio {
+        background: @yellow;
+        color: @base2;
     }
 
     #network {
-        background-color: #073642;
+        background: @magenta;
+        color: @base2;
     }
 
-    #network.disconnected {
-        background-color: #002b36;
+    #memory {
+        background: @memory;
+        color: @base03;
     }
 
-    #pulseaudio {
-        background-color: #073642;
-    }
-
-    #pulseaudio.muted {
-        background-color: #002b36;
-    }
-
-    #custom-media {
-        background-color: #66cc99;
-        color: #2a5c45;
-        min-width: 100px;
-    }
-
-    #custom-media.custom-spotify {
-        background-color: #66cc99;
-    }
-
-    #custom-media.custom-vlc {
-        background-color: #ffa000;
+    #cpu {
+        background: @cpu;
+        color: @base2;
     }
 
     #temperature {
-        background-color: #073642;
+        background: @temp;
+        color: @base03;
     }
 
-    #temperature.critical {
-        background-color: #dc322f;
+    #language {
+        background: @layout;
+        color: @base2;
+    }
+
+    #battery {
+        background: @battery;
+        color: @base03;
     }
 
     #tray {
-        background-color: #002b36;
+        background: @date;
     }
 
-    #idle_inhibitor {
-        background-color: #002b36;
+    #clock.date {
+        background: @base03;
+        color: @base2;
     }
 
-    #idle_inhibitor.activated {
-        background-color: #073642;
+    #clock.time {
+        background: @base3;
+        color: @base03;
+    }
+
+    #pulseaudio.muted {
+        /* No styles */
+    }
+
+    #custom-right-blue-background {
+        font-size: 38px;
+        color: @blue;
+        background: transparent;
+    }
+
+    #custom-right-cyan-background {
+        font-size: 38px;
+        color: @cyan;
+        background: transparent;
+    }
+
+    #custom-left-base3-base03 {
+        font-size: 38px;
+        color: @base3;
+        background: @base03;
+    }
+
+    #custom-left-base03-magenta {
+        font-size: 38px;
+        color: @base03;
+        background: @magenta;
+    }
+
+    #custom-left-magenta-yellow {
+        font-size: 38px;
+        color: @magenta;
+        background: @yellow;
+    }
+
+    #custom-left-yellow-background {
+        font-size: 38px;
+        color: @yellow;
+        background: transparent;
     }
   '';
 
