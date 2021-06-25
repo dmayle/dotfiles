@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   unstableHomeManager = fetchTarball https://github.com/nix-community/home-manager/tarball/07f6c6481e0cbbcaf3447f43e964baf99465c8e1;
   unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/0b876eaed3ed4715ac566c59eb00004eca3114e8;
@@ -1169,6 +1169,15 @@ in
         autocmd VimEnter * call <SID>InitLSP()
         autocmd BufEnter * lua require'completion'.on_attach()
       augroup END
+    '';
+  };
+
+  home.activation = {
+    gitCheckoutAction = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD mkdir -p ~/src
+      $DRY_RUN_CMD sh -c 'test -d ~/src/rules_docker || git clone git@github.com:dmayle/rules_docker.git ~/src/rules_docker'
+      $DRY_RUN_CMD sh -c 'test -d ~/src/dotfiles || git clone git@github.com:dmayle/dotfiles.git ~/src/dotfiles'
+      $DRY_RUN_CMD sh -c 'test -d ~/src/chrometiler || git clone git@github.com:dmayle/chrometiler.git ~/src/chrometiler'
     '';
   };
 

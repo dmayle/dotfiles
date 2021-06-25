@@ -251,6 +251,10 @@ in
     doxygen
     doxygen_gui
 
+    # For nix-du | tred | dot -Tsvg > result.svg
+    nix-du
+    graphviz
+
     # Brother laser printer driver
     brgenml1cupswrapper
 
