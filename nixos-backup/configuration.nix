@@ -745,14 +745,14 @@ in
     path = with pkgs; [ bash swayidle swaylock sway unstablePkgs.ddcutil ];
     script = ''
       swayidle -w \
-        timeout 3000 'ddcutil set 10 20' \
+        timeout 300 'ddcutil set 10 20' \
           resume 'ddcutil set 10 100' \
-        timeout 6000 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
-        timeout 9000 'swaymsg "output * dpms off"' \
+        timeout 600 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
+        timeout 900 'swaymsg "output * dpms off"' \
           resume 'swaymsg "output * dpms on" && ddcutil set 10 100' \
         before-sleep 'swaylock -elfF -s fill -i ${bgNixSnowflake}' \
         lock 'swaylock -elfF -s fill -i ${bgNixSnowflake}'
-        idlehint 3000
+        idlehint 300
     '';
   };
 
