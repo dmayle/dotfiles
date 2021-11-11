@@ -3,15 +3,171 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { lib, config, pkgs, ... }:
+let
+  nvidia-acceleration-overlay = (self: super: {
+    linuxPackages = super.linuxPackages.extend (final: prev: {
+      nvidia_x11.args = [ "-e" ./nvidia_x11_builder.sh ];
+      nvidia_x11.libPath = super.pkgs.lib.makeLibraryPath [ super.pkgs.libdrm super.pkgs.xorg.libXext super.pkgs.xorg.libX11 super.pkgs.xorg.libXv super.pkgs.xorg.libXrandr super.pkgs.xorg.libxcb super.pkgs.zlib super.pkgs.stdenv.cc.cc super.pkgs.wayland super.pkgs.mesa super.pkgs.libglvnd ];
+      nvidia_x11.libPath32 = super.pkgsi686Linux.lib.makeLibraryPath [ super.pkgsi686Linux.libdrm super.pkgsi686Linux.xorg.libXext super.pkgsi686Linux.xorg.libX11 super.pkgsi686Linux.xorg.libXv super.pkgsi686Linux.xorg.libXrandr super.pkgsi686Linux.xorg.libxcb super.pkgsi686Linux.zlib super.pkgsi686Linux.stdenv.cc.cc super.pkgsi686Linux.wayland super.pkgsi686Linux.mesa super.pkgsi686Linux.libglvnd ];
+    });
+    glxinfo = super.glxinfo.overrideAttrs ( old: {
+      buildInputs = with super.pkgs; [ xorg.libX11 libglvnd ];
+    });
+    # glmark2 = super.glmark2.overrideAttrs ( old: {
+    #   buildInputs = with super.pkgs; [ xorg.libX11 libglvnd ];
+    # });
+    mesa = super.mesa.overrideAttrs ( old: {
+      mesonFlags = super.mesa.mesonFlags ++ [ "-Dgbm-backends-path=/run/opengl-driver/lib/gbm:${placeholder "out"}/lib/gbm:${placeholder "out"}/lib" ];
+    });
+    xdg-desktop-portal-wlr = super.xdg-desktop-portal-wlr.overrideAttrs ( old: rec {
+      pname = "xdg-desktop-portal-wlr";
+      version = "0.5.0";
+      src = super.fetchFromGitHub {
+        owner = "emersion";
+	repo = pname;
+	rev = "v${version}";
+	sha256 = "sha256:1ipg35gv8ja39ijwbyi96qlyq2y1fjdggl40s38rv68bsya8zry1";
+      };
+    });
+    meson59 = super.meson.overrideAttrs ( old: rec {
+      pname = "meson";
+      version = "0.59.0";
+      patches = builtins.filter (elem: elem != (builtins.elemAt super.meson.patches 2)) super.meson.patches ++ [ ./gir-fallback-path-59.patch ];
+      src = super.python3.pkgs.fetchPypi {
+        inherit pname version;
+	sha256 = "sha256:0xp45ihjkl90s4crzh9qmaajxq7invbv5k0yw3gl7dk4vycc4xp3";
+      };
+    });
+    wlroots = super.wlroots.overrideAttrs( old: {
+      # version = "0.14.2";
+      # nativeBuildInputs = with super.pkgs; [ meson59 ninja pkg-config xwayland ];
+      # buildInputs = with super.pkgs; [
+      #   libGL
+      #   libglvnd
+      #   wayland
+      #   wayland-protocols
+      #   libinput
+      #   libxkbcommon
+      #   pixman
+      #   xorg.xcbutilwm
+      #   xorg.libX11
+      #   libcap
+      #   xorg.xcbutilimage
+      #   xorg.xcbutilerrors
+      #   mesa
+      #   libpng
+      #   ffmpeg
+      #   xorg.xcbutilrenderutil
+      #   #super.pkgs.seatd
+      #   libseat
+      #   libdrm
+      #   libuuid
+      #   vulkan-headers
+      #   vulkan-loader
+      #   glslang
+      # ];
+      # src = super.fetchFromGitLab {
+      #   domain = "gitlab.freedesktop.org";
+      #   owner = "wlroots";
+      #   repo = "wlroots";
+      #   rev = "02a1ae169e66f53f2174add581c19d165d8ba882";
+      #   sha256 = "sha256:1rkhpkylm3gdxksmdjgbaknn2yf7bbyhd77p9ajz79bfks5l7sli";
+      # };
+      postPatch = ''
+        sed -i 's/assert(argb8888 &&/assert(true || argb8888 ||/g' 'render/wlr_renderer.c'
+        #sed -i 's/\(EGL_EXT_device_enumeration")\)/\1 || check_egl_ext(client_exts_str, "EGL_EXT_device_base")/' 'render/egl.c'
+        #sed -i 's/\(EGL_EXT_device_query")\)/\1 || check_egl_ext(client_exts_str, "EGL_EXT_device_base")/' 'render/egl.c'
+      '';
+    });
+    # sway
+    # fc25e4944efdc5bc7e33a81180908927dba93ee6
+    # sway-unwrapped = super.sway-unwrapped.overrideAttrs ( old: {
+    #   version = "1.6.2";
+    #   nativeBuildInputs = with super.pkgs; [ meson59 ninja pkg-config wayland-scanner scdoc ];
+    #   buildInputs = with super.pkgs; [
+    #     wayland
+    #     libxkbcommon
+    #     pcre
+    #     json_c
+    #     dbus
+    #     libevdev
+    #     pango
+    #     cairo
+    #     libinput
+    #     libcap
+    #     pam
+    #     gdk-pixbuf
+    #     librsvg
+    #     wayland-protocols
+    #     libdrm
+    #     wlroots
+    #   ];
+    #   src = super.fetchFromGitHub {
+    #     owner = "swaywm";
+    #     repo = "sway";
+    #     rev = "fc25e4944efdc5bc7e33a81180908927dba93ee6";
+    #     sha256 = "sha256:1y0ara7hvg88qd9avida1cji3hgpxazl92n294rw6bmnyzc4y1nj";
+    #   };
+    # });
+    # libdrm = super.libdrm.overrideAttrs ( old: rec {
+    #   pname = "libdrm";
+    #   version = "2.4.108";
+    #   src = super.fetchurl {
+    #     url = "https://dri.freedesktop.org/${pname}/${pname}-${version}.tar.xz";
+    #     sha256 = "sha256-odeUjLxTZ2P94UtL615Np4Z2B5ZtTPRjAQh+i4/j1qA=";
+    #   };
+    # });
+    xwayland = super.xwayland.overrideAttrs (old: rec {
+      pname = "xwayland";
+      version = "21.1.3";
+      src = super.fetchurl {
+        url = "mirror://xorg/individual/xserver/${pname}-${version}.tar.xz";
+        sha256 = "sha256-68J1fzn9TH2xZU/YZZFYnCEaogFy1DpU93rlZ87b+KI=";
+      };
+      buildInputs = with super.pkgs; [
+        egl-wayland
+        epoxy
+        xorg.fontutil
+        libglvnd
+        xorg.libX11
+        xorg.libXau
+        xorg.libXaw
+        xorg.libXdmcp
+        xorg.libXext
+        xorg.libXfixes
+        xorg.libXfont2
+        xorg.libXmu
+        xorg.libXpm
+        xorg.libXrender
+        xorg.libXres
+        xorg.libXt
+        libdrm
+        libtirpc
+        libunwind
+        xorg.libxcb
+        xorg.libxkbfile
+        xorg.libxshmfence
+        mesa
+        openssl
+        pixman
+        wayland
+        wayland-protocols
+        xorg.xkbcomp
+        xorg.xorgproto
+        xorg.xtrans
+        zlib
+      ];
+    });
+  });
 
+in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      # ./wayland-overlay.nix
       ./sound.nix
-      ./nvidia.nix
       ./sway.nix
+      ./nvidia-wayland.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -22,7 +178,7 @@
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Set your time zone.
-  time.timeZone = "Americas/Los_Angeles";
+  time.timeZone = "America/Los_Angeles";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -57,8 +213,8 @@
   xdg.portal.gtkUsePortal = true;
   xdg.portal.extraPortals = with pkgs; [
     xdg-desktop-portal-wlr
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-kde
+    #xdg-desktop-portal-gtk
+    #xdg-desktop-portal-kde
   ];
 
   # Enable the X11 windowing system.
@@ -70,8 +226,8 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.displayManager.defaultSession = "sway";
-  #services.xserver.desktopManager.gnome.enable = true;
+  #services.xserver.displayManager.defaultSession = "sway";
+  services.xserver.desktopManager.gnome.enable = true;
   services.xserver.libinput.enable = true;
 
   systemd.targets.sleep.enable = false;
@@ -83,7 +239,7 @@
     enable = true;
   };
 
-  
+
 
   # Configure keymap in X11
   services.xserver.layout = "gb";
@@ -119,6 +275,8 @@
   #   firefox
   # ];
   environment.systemPackages = with pkgs; [
+    glxinfo
+    glmark2
     meld
     colordiff
     anki
@@ -180,6 +338,7 @@
   ];
 
   nixpkgs.overlays = [
+    nvidia-acceleration-overlay
     (self: super: {
       wl-clipboard-x11 = super.stdenv.mkDerivation rec {
         pname = "wl-clipboard-x11";

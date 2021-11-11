@@ -6,10 +6,30 @@ let
     url = "https://i.imgur.com/4Xqpx6R.png";
     sha256 = "bf0d77eceef6d85c62c94084f5450e2125afc4c8eed9f6f81298771e286408ac";
   };
+  nvidia-sway = (pkgs.writeShellScriptBin "nvidia-sway" ''
+    env \
+      MOZ_ENABLE_WAYLAND=1 \
+      QT_QPA_PLATFORM=wayland \
+      QT_WAYLAND_DISABLE_WINDOWDECORATION="1" \
+      SDL_VIDEODRIVER=wayland \
+      XDG_CURRENT_DESKTOP="sway" \
+      XDG_SESSION_TYPE="wayland" \
+      _JAVA_AWT_WM_NONREPARENTING=1 \
+      GBM_BACKEND=nvidia-drm \
+      GBM_BACKENDS_PATH=/etc/gbm \
+      __GLX_VENDOR_LIBRARY_NAME=nvidia \
+      WLR_NO_HARDWARE_CURSORS=1 \
+      WLR_BACKENDS=libinput,drm \
+      VDPAU_DRIVER=va_gl \
+      WLR_RENDERER=gles2 \
+        sway --unsupported-gpu -d &>/tmp/sway.log
+      #WLR_RENDERER=vulkan \
+  '');
 
 in
 {
   config = {
+    environment.systemPackages = [ nvidia-sway ];
     programs.sway = {
       enable = true;
       wrapperFeatures.gtk = true;
@@ -39,22 +59,27 @@ in
       ];
       extraOptions = [
         "--unsupported-gpu"
+        #"--my-next-gpu-wont-be-nvidia"
       ];
       extraSessionCommands = ''
         export MOZ_ENABLE_WAYLAND=1
-	export QT_QPA_PLATFORM=wayland
-	export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
-	export SDL_VIDEODRIVER=wayland
-	export XDG_CURRENT_DESKTOP="sway"
-	export XDG_SESSION_TYPE="wayland"
-	export _JAVA_AWT_WM_NONREPARENTING=1
-	export GBM_BACKEND=nvidia-drm
+        export QT_QPA_PLATFORM=wayland
+        export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+        export SDL_VIDEODRIVER=wayland
+        export XDG_CURRENT_DESKTOP="sway"
+        export XDG_SESSION_TYPE="wayland"
+        export _JAVA_AWT_WM_NONREPARENTING=1
+        export GBM_BACKEND=nvidia-drm
         export GBM_BACKENDS_PATH=/etc/gbm
-	export __GLX_VENDOR_LIBRARY_NAME=nvidia
-	export WLR_NO_HARDWARE_CURSORS=1
+        export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        export WLR_NO_HARDWARE_CURSORS=1
+	#export WLR_RENDERER=vulkan
+        export VDPAU_DRIVER=va_gl
+	export WLR_RENDERER=gles2
+        export WLR_BACKENDS=libinput,drm
       '';
     };
-    programs.waybar.enable = true;
+    #programs.waybar.enable = true;
 
   systemd.user.targets.sway-session = {
     description = "Sway compositor session";
@@ -275,7 +300,7 @@ in
       for_window [app_id="^mpv$"]                         inhibit_idle visible
 
       # Start sway user session to trigger the start of graphical session
-      exec "systemctl --user import-environment; systemctl --user start sway-session.target"
+      exec "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK; dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK; systemctl --user start sway-session.target"
     '';
 
   # This seems to be required by polkit
@@ -285,9 +310,9 @@ in
   systemd.user.services.swayidle = {
     enable = true;
     description = "Screenlock with SwayIdle and SwayLock";
-    requiredBy = [ "graphical-session.target" ];
+    requiredBy = [ "sway-session.target" ];
     unitConfig = {
-      PartOf = [ "graphical-session.target" ];
+      PartOf = [ "sway-session.target" ];
       ConditionGroup = "users";
     };
     serviceConfig = {
