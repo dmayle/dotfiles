@@ -1,63 +1,505 @@
-{ config, pkgs, lib, ... }:
+# Edit this configuration file to define what should be installed on
+# your system.  Help is available in the configuration.nix(5) man page
+# and in the NixOS manual (accessible by running ‘nixos-help’).
+
+{ config, pkgs, ... }:
 let
+  # Import recent version of unstable for one-off uses
+  #unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/71dc8325680ecfaf145de4f27eed2b9d02477bb5;
+  #unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/bd249526ff5fdfa797673e8f42a99a97c9179c45;
+  unstable = builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/83f6711464e03a856fb554693fe2e0f3af2ab0d5;
+  unstablePkgs = import unstable { config.allowUnfree = true; };
+
+  # Import NUR user package archive
+  nur-no-pkgs = builtins.fetchTarball https://github.com/nix-community/NUR/archive/master.tar.gz;
+  nur = import nur-no-pkgs { inherit pkgs; };
 
   # Download background image
   bgNixSnowflake = builtins.fetchurl {
     url = "https://i.imgur.com/4Xqpx6R.png";
     sha256 = "bf0d77eceef6d85c62c94084f5450e2125afc4c8eed9f6f81298771e286408ac";
   };
-  nvidia-sway = (pkgs.writeShellScriptBin "nvidia-sway" ''
-    env \
-      MOZ_ENABLE_WAYLAND=1 \
-      QT_QPA_PLATFORM=wayland \
-      QT_WAYLAND_DISABLE_WINDOWDECORATION="1" \
-      SDL_VIDEODRIVER=wayland \
-      XDG_CURRENT_DESKTOP="sway" \
-      XDG_SESSION_TYPE="wayland" \
-      _JAVA_AWT_WM_NONREPARENTING=1 \
-      GBM_BACKEND=nvidia-drm \
-      GBM_BACKENDS_PATH=/etc/gbm \
-      __GLX_VENDOR_LIBRARY_NAME=nvidia \
-      WLR_NO_HARDWARE_CURSORS=1 \
-      WLR_BACKENDS=libinput,drm \
-      WLR_RENDERER=gles2 \
-        sway --unsupported-gpu -d &>/tmp/sway.log
-      #WLR_RENDERER=vulkan \
-  '');
-
 in
 {
-  environment.systemPackages = [ nvidia-sway ];
+  imports =
+    [ # Include the results of the hardware scan.
+      ./hardware-configuration.nix
+      # "${unstable}/nixos/modules/config/xdg/portal.nix"
+
+      # Management if i2c group is in unstable
+      #"${unstable}/nixos/modules/hardware/i2c.nix"
+
+      # Working Pipewire is in unstable
+      #"${unstable}/nixos/modules/services/desktops/pipewire/pipewire.nix"
+      #"${unstable}/nixos/modules/services/desktops/pipewire/pipewire-media-session.nix"
+
+      # Controlling neovim tree-sitter parsers is in unstable
+      "${unstable}/nixos/modules/programs/neovim.nix"
+    ];
+  disabledModules = [
+    # "config/xdg/portal.nix"
+    #"services/desktops/pipewire.nix"
+    "programs/neovim.nix"
+  ];
+
+  security.rtkit.enable = true;
+  nixpkgs.config.packageOverrides = pkgs: {
+    nur = import
+      (builtins.fetchTarball https://github.com/nix-community/NUR/archive/master.tar.gz) {
+        inherit pkgs;
+    };
+  };
+  # Use the GRUB 2 boot loader.
+  boot.loader.grub.enable = true;
+  boot.loader.grub.version = 2;
+
+  # Since /boot is a separate partition, copy linux kernels
+  boot.loader.grub.copyKernels = true;
+
+  # Use EFI boot
+  boot.loader.grub.efiSupport = true;
+
+  # Since this is EFI boot, we don't install grub to the partition
+  boot.loader.grub.device = "nodev"; # or "nodev" for efi only
+
+  # I shouldn't need more than this, especially since I'll be versioning this file.
+  boot.loader.grub.configurationLimit = 50;
+
+  # Required for UEFI... not sure why also grub
+  boot.loader.systemd-boot.enable = true;
+
+  # This is true when booting from UEFI
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  # Use 5.10 kernel (latest RTS as of 2/2021) for 2.5Gbe support
+  boot.kernelPackages = pkgs.linuxPackages_5_10;
+  #boot.extraModulePackages = with config.boot.kernelPackages; [ r8169 ];
+  #boot.kernelModules = [ "r8169" ];
+
+  # Add i2c-dev so we can use DDC to talk with the monitor
+  hardware.i2c.enable = true;
+  boot.extraModprobeConfig = ''
+    #options i915 enable_fbc=0 enable_dc=0 enable_psr=0
+    # Still flickering
+    # options i915 enable_fbc=0 enable_psr=0
+    # This wasn't enough to stop screen flickering
+    # options i915 enable_psr=0
+  '';
+
+  # Disable the Gnome3/GDM auto-suspend feature
+  systemd.targets.sleep.enable = false;
+  systemd.targets.suspend.enable = false;
+  systemd.targets.hibernate.enable = false;
+  systemd.targets.hybrid-sleep.enable = false;
+
+  networking.hostName = "nixos"; # Define your hostname.
+  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  # Set your time zone.
+  time.timeZone = "Europe/Monaco";
+
+  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
+  # Per-interface useDHCP will be mandatory in the future, so this generated config
+  # replicates the default behaviour.
+  networking.useDHCP = false;
+
+  # The two detected interfaces on this machine
+  networking.interfaces.enp2s0.useDHCP = true;
+  # networking.interfaces.eno1.useDHCP = true;
+  # networking.interfaces.wlp1s0.useDHCP = true;
+  # networking.interfaces.enp2s0 = {
+  #   useDHCP = false;
+  #   ipv4.addresses = [ {
+  #     address = "192.168.88.2";
+  #     prefixLength = 24;
+  #   } ];
+  # };
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+  console = {
+    font = "Lat2-Terminus16";
+    useXkbConfig = true;
+  };
+
+  fonts = {
+    enableDefaultFonts = true;
+    fonts = with pkgs; [
+      corefonts
+      dejavu_fonts
+      fira-code
+      freefont_ttf
+      fira-code-symbols
+      (nerdfonts.override { fonts = [ "DroidSansMono" ]; })
+    ];
+  };
+
+  # This is a DBUS standard for desktop access, it's used by Flameshot to get
+  # screenshot data from wayland
+  xdg.portal.enable = true;
+  xdg.portal.gtkUsePortal = true;
+  xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
+  #xdg.portal.extraPortals = with unstablePkgs;
+  #  [ xdg-desktop-portal-wlr xdg-desktop-portal-gtk ];
+  #systemd.user.services.xdg-desktop-portal.environment = {
+  #  XDG_DESKTOP_PORTAL_DIR = config.environment.variables.XDG_DESKTOP_PORTAL_DIR;
+  #};
+
+  # Enable the X11 windowing system.
+  services.xserver.enable = true;
+
+
+  # Enable the GNOME 3 Desktop Environment.
+  # services.xserver.displayManager.gdm.enable = true;
+  # services.xserver.desktopManager.gnome3.enable = true;
+
+
+  # Install lorri for better/faster direnv nix integration
+  services.lorri.enable = true;
+
+  # Until I can get Ly or Qingy or TBSM working
+  services.xserver.displayManager.defaultSession = "sway";
+  services.xserver.displayManager.sddm.enable = true;
+
+  # Don't know why this is setup
+  services.xserver.libinput.enable = true;
+
+  # Install useful man pages
+  documentation.enable = true;
+  documentation.man.enable = true;
+  documentation.dev.enable = true;
+
+  # Enable CUPS to print documents.
+  services.printing.enable = true;
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
+  services.printing.drivers = [ pkgs.brgenml1cupswrapper ];
+
+  # Enable sound, but use Pipewire instead of a hardware pulseaudio
+  sound.enable = true;
+  hardware.pulseaudio.enable = false;
+
+  # Enable PipeWire Audio System
+  services.pipewire = {
+    #package = unstablePkgs.pipewire;
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
+    #media-session.package = unstablePkgs.pipewire.mediaSession;
+  };
+
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.douglas = {
+    isNormalUser = true;
+
+    # Group explanations:
+    # wheel: sudo access
+    # audio: playing sound on desktop
+    # sway: Using and controlling SwayWM
+    # i2c: Adjust brightness on external display
+    # video: Might be unnecessary
+    extraGroups = [ "wheel" "audio" "sway" "video" "i2c" ];
+  };
+
+  # Enable unfree (for Google Chrome)
+  nixpkgs.config.allowUnfree = true;
+
+  # Allow Home Manager
+  nix.allowedUsers = [ "@wheel" ];
+
+  # List packages installed in system profile. To search, run:
+  # $ nix search wget
+  environment.systemPackages = with pkgs; [
+    # Best open source diff GUI and the theme it requires, and colored diff CLI
+    meld
+    gnome3.adwaita-icon-theme
+    colordiff
+
+    manpages
+    anki
+
+    # Development tools
+    gnumake
+    git
+    universal-ctags
+    direnv
+    #stdenv.cc.cc.lib
+    #pkgs.cc.cc.lib
+    gdb
+    valgrind
+
+    # Disk management
+    gparted
+
+    # systool for debugging i915 issues
+    libsysfs
+
+    # Terminals
+    alacritty
+
+    # Useful tools
+    binutils-unwrapped
+    wget
+    file
+    fzf # Fuzzy Finder
+    ripgrep # RipGrep
+    pciutils # lspci
+    ethtool
+    doxygen
+    doxygen_gui
+
+    # For nix-du | tred | dot -Tsvg > result.svg
+    nix-du
+    graphviz
+
+    # Brother laser printer driver
+    brgenml1cupswrapper
+
+    # 3D Modelling
+    openscad
+    octave
+
+    # NUR caching
+    cachix
+
+    # Maybe try out directfb
+    directfb
+
+    # Both browsers are useful
+    firefox
+    google-chrome
+    (unstablePkgs.linkFarm "chrome-without-stable" [
+      { name = "bin/google-chrome"; path = google-chrome + /bin/google-chrome-stable; }
+    ])
+
+    # Screen capture utility
+    unstablePkgs.flameshot
+
+    # Occasional graphics needs
+    gimp
+
+    # flutter for development
+    unstablePkgs.flutter
+
+    clang-tools
+
+    gnupg
+
+    # Video recording
+    unstablePkgs.obs-studio
+
+    # Partiioning
+    gparted
+
+    # System/process inspection
+    htop
+    lsof
+
+    mcfly
+
+    # Pipewire audio inspection
+    patchage
+
+    pavucontrol
+    qjackctl
+
+    # File Manager
+    xfce.thunar
+    xfce.thunar-volman
+    xfce.thunar-archive-plugin
+
+    # My terminal toolkit
+    tmux
+    neovim
+
+    # Bazel for building software
+    bazel
+    bazel-buildtools
+    # Utility to allow bazel toolchains to work on NixOS
+    patchelf
+    # Indexing tool to easily find bazel toolchains that need patching
+    nix-index
+    # Find replacement used by one-line
+    fd
+
+    # Video player
+    vlc
+
+    # Handy tools for darting in and out of k8s namespaces
+    kubectx
+
+    # Language servers (always latest)
+    # Missing dart and SQL
+    unstablePkgs.gopls
+    unstablePkgs.terraform-ls
+    unstablePkgs.rnix-lsp
+    unstablePkgs.nodePackages.yaml-language-server
+    unstablePkgs.nodePackages.vim-language-server
+    unstablePkgs.nodePackages.bash-language-server
+    unstablePkgs.nodePackages.dockerfile-language-server-nodejs
+    unstablePkgs.python-language-server
+
+    # Languages
+    go
+    gcc
+    dotnet-sdk
+    #python3Full
+  ];
+
+  # Google Chrome uses the binary google-chrome-stable, but we need google-chrome for flutter to work
+
+  programs.neovim = {
+    enable = true;
+    runtime."parser/bash.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-bash}/parser";
+    runtime."parser/c.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-c}/parser";
+    runtime."parser/cpp.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-cpp}/parser";
+    runtime."parser/go.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-go}/parser";
+    runtime."parser/html.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-html}/parser";
+    runtime."parser/javascript.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-javascript}/parser";
+    runtime."parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-python}/parser";
+  };
+
+  # Overlays are useful for mucking with config generated by other modules
+  nixpkgs.overlays = [
+    # Setup xsel and xclip proxy to wl-clipboard
+    (self: super: {
+      wl-clipboard-x11 = super.stdenv.mkDerivation rec {
+        pname = "wl-clipboard-x11";
+        version = "5";
+
+        src = super.fetchFromGitHub {
+          owner = "brunelli";
+          repo = "wl-clipboard-x11";
+          rev = "v${version}";
+          sha256 = "1y7jv7rps0sdzmm859wn2l8q4pg2x35smcrm7mbfxn5vrga0bslb";
+        };
+
+        dontBuild = true;
+        dontConfigure = true;
+        propagatedBuildInputs = [ super.wl-clipboard ];
+        makeFlags = [ "PREFIX=$(out)" ];
+      };
+
+      xsel = self.wl-clipboard-x11;
+      xclip = self.wl-clipboard-x11;
+    })
+
+    # Use nightly neovim because 0.5 has tree sitter!
+    (import (builtins.fetchTarball {
+          url = https://github.com/nix-community/neovim-nightly-overlay/tarball/5e3737ae3243e2e206360d39131d5eb6f65ecff5;
+    }))
+
+    # For when I need to straight up override package with unstable
+    (self: super: {
+      #xdg-desktop-portal = unstablePkgs.xdg-desktop-portal;
+
+      # Use nightly neovim as the basis for my regular neovim package
+      neovim-unwrapped = self.neovim-nightly;
+    })
+
+    # Use neovim in the place of vi and vim
+    (self: super: {
+      neovim = super.neovim.override {
+        viAlias = true;
+        vimAlias = true;
+      };
+    })
+  ];
+
+  services.upower = {
+    enable = true;
+  };
+
+  # Some programs need SUID wrappers, can be configured further or are
+  # started in user sessions.
+  # programs.mtr.enable = true;
+  # programs.gnupg.agent = {
+  #   enable = true;
+  #   enableSSHSupport = true;
+  # };
+
+  # Create a sway user session in systemd that can be used to trigger the
+  # graphical session
+  systemd.user.targets.sway-session = {
+    description = "Sway compositor session";
+    documentation = [ "man:systemd.special(7)" ];
+    bindsTo = [ "graphical-session.target" ];
+    wants = [ "graphical-session-pre.target" ];
+    after = [ "graphical-session-pre.target" ];
+  };
+
+  environment.variables.EDITOR = "nvim";
+
+  # Setup Sway
   programs.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
     extraPackages = with pkgs; [
+      # Menu popup (I'm using wofi UI with dmenu for command search)
       dmenu
       wofi
+
+      # Waybar bar replace with idle inhibit support
       waybar
+
+      # Screen capture utils (to be replaced with flameshot)
       grim
       slurp
+
+      # Testing tree sitter parsers
       tree-sitter
-      ddcutil
+
+      # Brightness (let me know that lock is coming)
+      unstablePkgs.ddcutil
       i2c-tools
+
+      # Useful for changing monitor config when docking
+      # kanshi
+
+      # Try kitty as terminal
       kitty
+
+      # Wayland notification daemon
       mako
+
+      # Used for controlling volume
       pamixer
+
+      # UI for authorizing root access to apps (e.g. GParted)
       polkit_gnome
-      #pulseaudio
+
+      # Don't know if this is necessary
+      pulseaudio
+
+      # Used to screen saver / lock
       swayidle
       swaylock
+
+      # Handle clipboard
       wl-clipboard
-      wlsunset
+
+      # No blue light after sunset
+      unstablePkgs.wlsunset
+
+      # Event tester (button press, etc.)
       wev
+
+      # Wayland Overlay Bar (volume change)
       wob
+
       xorg.xhost
+
+      # Allow X programs to work
       xwayland
+
+      # Simple notes
       qownnotes
-    ];
-    extraOptions = [
-      "--unsupported-gpu"
-      #"--my-next-gpu-wont-be-nvidia"
+
+      # Gettys
+      nur.repos.dmayle.tbsm
     ];
     extraSessionCommands = ''
       export MOZ_ENABLE_WAYLAND=1
@@ -67,34 +509,14 @@ in
       export XDG_CURRENT_DESKTOP="sway"
       export XDG_SESSION_TYPE="wayland"
       export _JAVA_AWT_WM_NONREPARENTING=1
-      export GBM_BACKEND=nvidia-drm
-      export GBM_BACKENDS_PATH=/etc/gbm
-      export __GLX_VENDOR_LIBRARY_NAME=nvidia
-      export WLR_NO_HARDWARE_CURSORS=1
-      #export WLR_RENDERER=vulkan
-      export WLR_RENDERER=gles2
-      export WLR_BACKENDS=libinput,drm
     '';
   };
 
-  systemd.user.targets.sway-session = {
-    description = "Sway compositor session";
-    documentation = [ "man:systemd.special(7)" ];
-    bindsTo = [ "graphical-session.target" ];
-    wants = [ "graphical-session-pre.target" ];
-    after = [ "graphical-session-pre.target" ];
-  };
+  programs.waybar.enable = true;
 
-  #programs.waybar.enable = true;
-  systemd.user.services.waybar = {
-    description = "Waybar as systemd service";
-    documentation = [ "man:systemd.special(7)" ];
-    wantedBy = [ "sway-session.target" ];
-    partOf = [ "sway-session-pre.target" ];
-    script = "${pkgs.waybar}/bin/waybar";
-  };
-
-
+  # Additional Sway Config
+  # 1. Have sway start this systemd session
+  # 2. Configure keyboard media shortcuts for volume
   environment.etc."sway/keymap_backtick.xkb".source = ./keymap_backtick.xkb;
   environment.etc."sway/config".text = ''
       # Read `man 5 sway` for a complete reference.
@@ -125,11 +547,6 @@ in
           xkb_numlock enabled
           xkb_file "/etc/sway/keymap_backtick.xkb"
       }
-      # output HDMI-A-1 {
-      #     scale 1.5
-      #     pos 0 0
-      #     res 7680x4320@29.970Hz
-      # }
 
       # Read `man 5 sway-input` for more information about this section.
 
@@ -306,7 +723,6 @@ in
 
       # Start sway user session to trigger the start of graphical session
       exec "systemctl --user import-environment; systemctl --user start sway-session.target"
-      #exec "systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK; dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK; systemctl --user start sway-session.target"
     '';
 
   # This seems to be required by polkit
@@ -316,9 +732,9 @@ in
   systemd.user.services.swayidle = {
     enable = true;
     description = "Screenlock with SwayIdle and SwayLock";
-    requiredBy = [ "sway-session.target" ];
+    requiredBy = [ "graphical-session.target" ];
     unitConfig = {
-      PartOf = [ "sway-session.target" ];
+      PartOf = [ "graphical-session.target" ];
       ConditionGroup = "users";
     };
     serviceConfig = {
@@ -326,7 +742,7 @@ in
       RestartSec = 3;
     };
 
-    path = with pkgs; [ bash swayidle swaylock sway ddcutil ];
+    path = with pkgs; [ bash swayidle swaylock sway unstablePkgs.ddcutil ];
     script = ''
       swayidle -w \
         timeout 300 'ddcutil set 10 20' \
@@ -732,5 +1148,92 @@ in
         background: transparent;
     }
   '';
+
+  environment.etc.inputrc.text = (builtins.readFile "${unstable}/nixos/modules/programs/bash/inputrc") + ''
+    set editing-mode vi
+    set keymap vi
+  '';
+
+  # Setup for Ly Getty/Display Manager
+  environment.etc."xdg/tbsm/sway.desktop".source = "${pkgs.sway-unwrapped}/share/wayland-sessions/sway.desktop";
+  environment.etc."xdg/tbsm/whitelist/sway.desktop".source = "${pkgs.sway-unwrapped}/share/wayland-sessions/sway.desktop";
+  environment.etc."xdg/tbsm/tbsm.conf".text = ''
+    verboseLevel="3"  # 0=quiet, 1=silent, 2=info, 3=verbose
+    configDir=/etc/xdg/tbsm
+    defaultSession="${pkgs.sway-unwrapped}/share/wayland-sessions/sway.desktop"
+  '';
+  environment.etc."ly/config.ini".text = ''
+    animate = true
+    tty = 2
+    path = /run/current-system/sw/bin
+    waylandsessions = ${pkgs.sway-unwrapped}/share/wayland-sessions
+    mcookie_cmd = mcookie
+    restart_cmd = reboot
+    save_file = /tmp/ly-save
+    shutdown = shutdown -h now
+    # term_reset_cmd = echo tput
+  '';
+  environment.etc."ly/lang".source = "${pkgs.ly}/etc/ly/lang";
+
+  # programs.ly.enable = true;
+  # services.xserver.displayManager.ly.enable = true;
+  # systemd.services.ly = {
+  #   enable = true;
+  #   description = "TUI display manager";
+  #   documentation = [ "https://github.com/nullgemm/ly" ];
+  #   conflicts = [ "getty@tty2.service" ];
+  #   after = [
+  #     "systemd-user-sessions.service"
+  #     "plymouth-quit-wait.service"
+  #     "getty@tty2.service"
+  #     "user.slice"
+  #   ];
+  #   aliases = [ "display-manager.service" ];
+  #   requires = [ "user.slice" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     Type = "idle";
+  #     ExecStart = "${pkgs.nur.repos.fgaz.ly}/bin/ly";
+  #     StandardInput = "tty";
+  #     TTYPath = "/dev/tty2";
+  #     TTYReset = "yes";
+  #     TTYVHangup = "yes";
+  #   };
+  # };
+  # systemd.services.tbsm = {
+  #   enable = true;
+  #   description = "TUI display manager";
+  #   documentation = [ "https://github.com/loh-tar/tbsm" ];
+  #   conflicts = [ "getty@tty2.service" ];
+  #   after = [
+  #     "systemd-user-sessions.service"
+  #     "plymouth-quit-wait.service"
+  #     "getty@tty2.service"
+  #     "user.slice"
+  #   ];
+  #   aliases = [ "display-manager.service" ];
+  #   requires = [ "user.slice" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     Type = "idle";
+  #     ExecStart = "${pkgs.nur.repos.dmayle.tbsm}/bin/tbsm";
+  #     StandardInput = "tty";
+  #     TTYPath = "/dev/tty2";
+  #     TTYReset = "yes";
+  #     TTYVHangup = "yes";
+  #   };
+  # };
+
+  # Enable the OpenSSH daemon.
+  services.openssh.enable = true;
+
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  system.stateVersion = "20.09"; # Did you read the comment?
+
 }
 

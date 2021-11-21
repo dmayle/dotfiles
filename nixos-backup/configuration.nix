@@ -7,8 +7,8 @@ let
   nvidia-acceleration-overlay = (self: super: {
     linuxPackages = super.linuxPackages.extend (final: prev: {
       nvidia_x11.args = [ "-e" ./nvidia_x11_builder.sh ];
-      nvidia_x11.libPath = super.pkgs.lib.makeLibraryPath [ super.pkgs.libdrm super.pkgs.xorg.libXext super.pkgs.xorg.libX11 super.pkgs.xorg.libXv super.pkgs.xorg.libXrandr super.pkgs.xorg.libxcb super.pkgs.zlib super.pkgs.stdenv.cc.cc super.pkgs.wayland super.pkgs.mesa super.pkgs.libglvnd ];
-      nvidia_x11.libPath32 = super.pkgsi686Linux.lib.makeLibraryPath [ super.pkgsi686Linux.libdrm super.pkgsi686Linux.xorg.libXext super.pkgsi686Linux.xorg.libX11 super.pkgsi686Linux.xorg.libXv super.pkgsi686Linux.xorg.libXrandr super.pkgsi686Linux.xorg.libxcb super.pkgsi686Linux.zlib super.pkgsi686Linux.stdenv.cc.cc super.pkgsi686Linux.wayland super.pkgsi686Linux.mesa super.pkgsi686Linux.libglvnd ];
+      #nvidia_x11.libPath = super.pkgs.lib.makeLibraryPath [ super.pkgs.libdrm super.pkgs.xorg.libXext super.pkgs.xorg.libX11 super.pkgs.xorg.libXv super.pkgs.xorg.libXrandr super.pkgs.xorg.libxcb super.pkgs.zlib super.pkgs.stdenv.cc.cc super.pkgs.wayland super.pkgs.mesa super.pkgs.libglvnd ];
+      #nvidia_x11.libPath32 = super.pkgsi686Linux.lib.makeLibraryPath [ super.pkgsi686Linux.libdrm super.pkgsi686Linux.xorg.libXext super.pkgsi686Linux.xorg.libX11 super.pkgsi686Linux.xorg.libXv super.pkgsi686Linux.xorg.libXrandr super.pkgsi686Linux.xorg.libxcb super.pkgsi686Linux.zlib super.pkgsi686Linux.stdenv.cc.cc super.pkgsi686Linux.wayland super.pkgsi686Linux.mesa super.pkgsi686Linux.libglvnd ];
     });
     glxinfo = super.glxinfo.overrideAttrs ( old: {
       buildInputs = with super.pkgs; [ xorg.libX11 libglvnd ];
@@ -16,9 +16,13 @@ let
     # glmark2 = super.glmark2.overrideAttrs ( old: {
     #   buildInputs = with super.pkgs; [ xorg.libX11 libglvnd ];
     # });
-    mesa = super.mesa.overrideAttrs ( old: {
-      mesonFlags = super.mesa.mesonFlags ++ [ "-Dgbm-backends-path=/run/opengl-driver/lib/gbm:${placeholder "out"}/lib/gbm:${placeholder "out"}/lib" ];
-    });
+    #mesa = super.mesa.overrideAttrs ( old: {
+    #  mesonFlags = super.mesa.mesonFlags ++ [ "-Dgbm-backends-path=/run/opengl-driver/lib/gbm:${placeholder "out"}/lib/gbm:${placeholder "out"}/lib" ];
+    #});
+    # steamPackages = super.steamPackages.overrideAttrs (old1: {
+    #   steam-runtime = old1.steamPackages.steam-runtime.overrideAttrs ( old2: {
+    #   });
+    # });
     xdg-desktop-portal-wlr = super.xdg-desktop-portal-wlr.overrideAttrs ( old: rec {
       pname = "xdg-desktop-portal-wlr";
       version = "0.5.0";
@@ -173,7 +177,24 @@ in
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  nixpkgs.config.packageOverrides = superPkgs: {
+    pkgsi686Linux = superPkgs.pkgsi686Linux.extend (final: prev: {
+      glxinfo = prev.glxinfo.overrideAttrs ( old: {
+        buildInputs = with prev.pkgsi686Linux; [ xorg.libX11 libglvnd ];
+      });
+    });
+    steam-runtime = superPkgs.steam-runtime.overrideAttrs ( old: {
+        buildCommand = ''
+          echo STAGE 1
+          mkdir -p $out
+          echo STAGE 2
+          tar -C $out --strip=1 -x -J -f $src
+          echo STAGE 3
+        '';
+    });
+  };
 
+  #programs.steam.enable = true;
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -189,13 +210,16 @@ in
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
+# Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
     font = "Lat2-Terminus16";
     useXkbConfig = true;
   };
+  # xkbmodel
+  # layout
+  # xkboptions
+  # xkbvariantk
 
   fonts = {
     enableDefaultFonts = true;
@@ -227,7 +251,7 @@ in
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   #services.xserver.displayManager.defaultSession = "sway";
-  services.xserver.desktopManager.gnome.enable = true;
+  #services.xserver.desktopManager.gnome.enable = true;
   services.xserver.libinput.enable = true;
 
   systemd.targets.sleep.enable = false;
@@ -243,7 +267,10 @@ in
 
   # Configure keymap in X11
   services.xserver.layout = "gb";
-  # services.xserver.xkbOptions = "eurosign:e";
+  # Command separated options
+  services.xserver.xkbOptions = "caps:swapescape";
+  services.xserver.xkbVariant = "extd";
+  services.xserver.xkbModel = "pc105";
 
   # Enable CUPS to print documents.
   # services.printing.enable = true;
@@ -275,6 +302,7 @@ in
   #   firefox
   # ];
   environment.systemPackages = with pkgs; [
+    steamPackages.steam-runtime
     glxinfo
     glmark2
     meld
