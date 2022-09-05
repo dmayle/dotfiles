@@ -2,8 +2,10 @@
 
 {
   imports = [
-    ./other-linux.nix
     ./common.nix
+    ./neovim.nix
+    ./other-linux.nix
+    ./tmux.nix
   ];
 }
 

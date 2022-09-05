@@ -1,62 +1,169 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
+let
+  # Custom neovim plugins
+  vim-maximizer = pkgs.vimUtils.buildVimPlugin rec {
+    name = "vim-maximizer";
+    src = pkgs.fetchFromGitHub {
+      owner = "szw";
+      repo = "vim-maximizer";
+      rev = "2e54952fe91e140a2e69f35f22131219fcd9c5f1";
+      sha256 = "031brldzxhcs98xpc3sr0m2yb99xq0z5yrwdlp8i5fqdgqrdqlzr";
+    };
+    meta = {
+      homepage = https://github.com/szw/vim-maximizer;
+      maintainers = [ "szw" ];
+    };
+  };
 
+  nvim-colorizer = pkgs.vimUtils.buildVimPlugin rec {
+    name = "nvim-colorizer";
+    src = pkgs.fetchFromGitHub {
+      owner = "norcalli";
+      repo = "nvim-colorizer.lua";
+      rev = "36c610a9717cc9ec426a07c8e6bf3b3abcb139d6";
+      sha256 = "0gvqdfkqf6k9q46r0vcc3nqa6w45gsvp8j4kya1bvi24vhifg2p9";
+    };
+    meta = {
+      homepage = https://github.com/norcalli/nvim-colorizer.lua;
+      maintainers = [ "norcalli" ];
+    };
+  };
+
+  indent-blankline = pkgs.vimUtils.buildVimPlugin rec {
+    name = "indent-blankline";
+    src = pkgs.fetchFromGitHub {
+      owner = "lukas-reineke";
+      repo = "indent-blankline.nvim";
+      rev = "d925b80b3f57c8e2bf913a36b37aa63b6ed75205";
+      sha256 = "1h1jsjn6ldpx0qv7vk3isqs7hrfz1srv5q6vrf44lv2r5di1gr65";
+    };
+    meta = {
+      homepage = https://github.com/lukas-reineke/indent-blankline.nvim;
+      maintainers = [ "lukas-reineke" ];
+    };
+  };
+
+  vim-glaive = pkgs.vimUtils.buildVimPlugin rec {
+    name = "vim-glaive";
+    src = pkgs.fetchFromGitHub {
+      owner = "google";
+      repo = "vim-glaive";
+      rev = "c17bd478c1bc358dddf271a13a4a025efb30514d";
+      sha256 = "0py6wqqnblr4n1xz1nwlxp0l65qmd76448gz0bf5q9a1sf0mkh5g";
+    };
+    meta = {
+      homepage = https://github.com/google/vim-glaive;
+      maintainers = [ "google" ];
+    };
+  };
+
+  vim-syncopate = pkgs.vimUtils.buildVimPlugin rec {
+    name = "vim-syncopate";
+    src = pkgs.fetchFromGitHub {
+      owner = "google";
+      repo = "vim-syncopate";
+      rev = "cc68632a72c269e8d75f1f22a6fa588fd5b46e02";
+      sha256 = "0vb68h07wkqlwfr24s4nsxyclla60sii7lbg6wlgwhdn837hiqyx";
+    };
+    meta = {
+      homepage = https://github.com/google/vim-syncopate;
+      maintainers = [ "google" ];
+    };
+  };
+
+  vim-fakeclip = pkgs.vimUtils.buildVimPlugin rec {
+    name = "vim-fakeclip";
+    src = pkgs.fetchFromGitHub {
+      owner = "kana";
+      repo = "vim-fakeclip";
+      rev = "59858dabdb55787d7f047c4ab26b45f11ebb533b";
+      sha256 = "1jrfi1vc7svhypvg2gizx40vracr91m9d912b61j0c7z8swix908";
+    };
+    meta = {
+      homepage = https://github.com/kana/vim-fakeclip;
+      maintainers = [ "kana" ];
+    };
+  };
+
+  conflict-marker = pkgs.vimUtils.buildVimPlugin rec {
+    name = "conflict-marker";
+    src = pkgs.fetchFromGitHub {
+      owner = "rhysd";
+      repo = "conflict-marker.vim";
+      rev = "6a9b8f92a57ea8a90cbf62c960db9e5894be2d7a";
+      sha256 = "0vw5kvnmwwia65gni97vk42b9s47r3p5bglrhpcxsvs3f4s250vq";
+    };
+    meta = {
+      homepage = https://github.com/rhysd/conflict-marker.vim;
+      maintainers = [ "rhysd" ];
+    };
+  };
+
+  nvim-spell-en-utf8-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.utf-8.spl";
+    sha256 = "fecabdc949b6a39d32c0899fa2545eab25e63f2ed0a33c4ad1511426384d3070";
+  };
+
+  nvim-spell-en-utf8-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.utf-8.sug";
+    sha256 = "5b6e5e6165582d2fd7a1bfa41fbce8242c72476222c55d17c2aa2ba933c932ec";
+  };
+
+  nvim-spell-en-ascii-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.ascii.spl";
+    sha256 = "cebcba489d45da3355940f340582e20ce35ecdcd44f9cc168be873f08e782449";
+  };
+
+  nvim-spell-en-ascii-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.ascii.sug";
+    sha256 = "b0d5d0ed19735f837248ef97bccb444ad730340b1785c8f6a8e4458f6872216c";
+  };
+
+  nvim-spell-en-latin1-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.latin1.spl";
+    sha256 = "620d9efcd79cfc9d639818fb52807e3dae61a37c800d694a010cd525a2161845";
+  };
+
+  nvim-spell-en-latin1-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/en.latin1.sug";
+    sha256 = "e6de97e4bcb3f9b4aaf7e1eb54a81b9390d5c231f427fa4be3798a25e4622b02";
+  };
+
+  nvim-spell-fr-utf8-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/fr.utf-8.spl";
+    sha256 = "abfb9702b98d887c175ace58f1ab39733dc08d03b674d914f56344ef86e63b61";
+  };
+
+  nvim-spell-fr-utf8-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/fr.utf-8.sug";
+    sha256 = "0294bc32b42c90bbb286a89e23ca3773b7ef50eff1ab523b1513d6a25c6b3f58";
+  };
+
+  nvim-spell-fr-latin1-dictionary = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/fr.latin1.spl";
+    sha256 = "086ccda0891594c93eab143aa83ffbbd25d013c1b82866bbb48bb1cb788cc2ff";
+  };
+
+  nvim-spell-fr-latin1-suggestions = builtins.fetchurl {
+    url = "http://ftp.vim.org/vim/runtime/spell/fr.latin1.sug";
+    sha256 = "5cb2c97901b9ca81bf765532099c0329e2223c139baa764058822debd2e0d22a";
+  };
+in
 {
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  # nixpkgs.overlays = [
+  #   (import (builtins.fetchTarball {
+  #     url = https://github.com/nix-community/neovim-nightly-overlay/tarball/0f13d55e4634ca7fcf956df0c76d1c1ffefb62a3;
+  #     #url = https://github.com/nix-community/neovim-nightly-overlay/tarball/5e3737ae3243e2e206360d39131d5eb6f65ecff5;
+  #   }))
 
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  home.username = "douglas";
-  home.homeDirectory = "/home/douglas";
+  #   # For when I need to straight up override packages
+  #   (self: super: {
+  #     # Use nightly neovim as the basis for my regular neovim package
+  #     neovim-unwrapped = self.neovim-nightly;
+  #   })
+  # ];
 
-  # Setup vi keybinding with readline
-  programs.readline = {
-    enable = true;
-    extraConfig = ''
-      set editing-mode vi
-      set keymap vi
-    '';
-  };
-
-  home.sessionVariables = {
-    EDITOR = "vi";
-  };
-
-  home.packages = with pkgs; [
-    # List of packages that may need to be inherited from a non-nixos OS
-    # git # Has custom protocol
-
-    # Easier to read diffs
-    colordiff
-
-    # Source code indexing for non-google3 code
-    universal-ctags
-
-    # Per-directory setup (handles pyenv)
-    direnv
-
-    # Linux tools to learn
-    fzf
-    ripgrep
-    mcfly
-    fd
-
-    # Better process inspection than top
-    htop
-
-    # Terminal session management
-    tmux
-
-    # Fantastic interface for breaking up commits into better units
-    git-crecord
-
-    # Volume control used when clicking waybar
-    pavucontrol
-
-  ];
-
-/*
   home.file."${config.xdg.configHome}/nvim/spell/en.utf-8.spl".source = nvim-spell-en-utf8-dictionary;
   home.file."${config.xdg.configHome}/nvim/spell/en.utf-8.sug".source = nvim-spell-en-utf8-suggestions;
   home.file."${config.xdg.configHome}/nvim/spell/en.ascii.spl".source = nvim-spell-en-ascii-dictionary;
@@ -67,321 +174,6 @@
   home.file."${config.xdg.configHome}/nvim/spell/fr.utf-8.sug".source = nvim-spell-fr-utf8-suggestions;
   home.file."${config.xdg.configHome}/nvim/spell/fr.latin1.spl".source = nvim-spell-fr-latin1-dictionary;
   home.file."${config.xdg.configHome}/nvim/spell/fr.latin1.sug".source = nvim-spell-fr-latin1-suggestions;
-*/
-
-  programs.dircolors = {
-    enable = true;
-    enableBashIntegration = true;
-  };
-
-  programs.direnv = {
-    enable = true;
-    enableBashIntegration = true;
-    nix-direnv.enable = true;
-  };
-
-  programs.git = {
-    enable = true;
-    package = pkgs.writeTextDir "/git" "";
-    userName = "Douglas Mayle";
-    userEmail = "douglas@mayle.org";
-  };
-
-  programs.bash = {
-    enable = true;
-    historyControl = [ "ignoredups" "ignorespace" "erasedups" ];
-    historyFileSize = 20000;
-    # Still need to setup prompt.rc
-    initExtra = ''
-      # Prep GPG Agent for this terminal
-      [[ -n "$(which gpg)" ]] && export GPG_TTY=$(tty)
-
-      [ -f ~/.nix-profile/etc/profile.d/nix.sh ] && source ~/.nix-profile/etc/profile.d/nix.sh;
-      # Command hashing is used by various shell scripts, so enable it
-      set -h
-
-      # A number of support functions to make tmux work the way I want it to
-      function _inside_local_tmux() {
-        if [ -n "$TMUX" ]; then
-          return 0 # TRUE
-        fi;
-        return 1 # FALSE
-      }
-
-      function _inside_any_tmux() {
-        case "$TERM" in
-        screen*|tmux*)
-          return 0 # TRUE
-        esac
-        return 1 # FALSE
-      }
-
-      function _get_tmux_socket() {
-        if [ -z "$TMUX" ]; then
-          return
-        fi;
-        echo $(basename $(command tmux display-message -p '#{socket_path}'))
-      }
-
-      function _ensure_tmux_socket() {
-        command tmux -L "$1" -f ${config.xdg.configHome}/tmux/tmux-''${1}.conf list-sessions &> /dev/null && return
-        tmux -L "$1" -f ${config.xdg.configHome}/tmux/tmux-''${1}.conf new -d -t group -s 0
-      }
-
-      function _ensure_tmux_free_session() {
-        if [ -z "$1" ]; then
-          _TMUX_SOCKET=$(_get_tmux_socket)
-        else
-          _TMUX_SOCKET="$1"
-        fi;
-
-        # Let's get a bash array variable containing all of the sessions on this tmux socket
-        unset _SESSIONS
-        while IFS= read -r _line; do _SESSIONS+=("$_line"); done <<< "$(command tmux -L $_TMUX_SOCKET list-sessions -F '#S#{?session_attached,(attached),}' 2>/dev/null)"
-
-        # If there is an unattached session, we're done, otherwise create a new
-        # session with MAX_VALUE+1
-        _MAX_SESSION_NUM=-1
-        for _SESSION in "''${_SESSIONS[@]}"; do
-          if [[ "''${_SESSION}" == "''${_SESSION%(attached)}" ]]; then
-            # The existing sessions isn't attached so our job is done
-            return
-          fi;
-
-          if [[ ''${_SESSION%(attached)} -gt ''${_MAX_SESSION_NUM} ]]; then
-            _MAX_SESSION_NUM="''${_SESSION%(attached)}"
-          fi
-        done
-
-        # All sessions already attached, so add a new one
-        command tmux -L "$_TMUX_SOCKET" new -d -t group -s $((_MAX_SESSION_NUM + 1))
-      }
-
-      function _join_tmux_socket() {
-        if [ -z "$1" ]; then
-          _TMUX_SOCKET=$(_get_tmux_socket)
-        else
-          _TMUX_SOCKET="$1"
-        fi;
-
-        # Let's get a bash array variable containing all of the sessions on this tmux socket
-        unset _SESSIONS
-        while IFS= read -r _line; do _SESSIONS+=("$_line"); done <<< "$(command tmux -L $_TMUX_SOCKET list-sessions -F '#S#{?session_attached, (attached),}' 2>/dev/null)"
-
-        # Find the first unattached sessions and join it
-        for _SESSION in "''${_SESSIONS[@]}"; do
-          if [[ "''${_SESSION}" == "''${_SESSION%(attached)}" ]]; then
-            # The existing sessions isn't attached so join it
-            command tmux -L "$_TMUX_SOCKET" attach -t "$_SESSION"
-            return
-          fi;
-        done
-      }
-
-      function tmux() {
-        # This function doesn't take arguments, so instead call the underlying tmux
-        if [ $# != 0 ]; then
-          command tmux "$@"
-          return;
-        fi;
-
-        if _inside_any_tmux; then
-          if _inside_local_tmux; then
-            TMUX_SOCKET=$(_get_tmux_socket)
-            if [ "$TMUX_SOCKET" = "inner" ]; then
-              echo Already inside of TMUX
-              return;
-            fi;
-          fi;
-          _ensure_tmux_socket inner
-          _ensure_tmux_free_session inner
-          _join_tmux_socket inner
-          return;
-        fi;
-
-        _ensure_tmux_socket outer
-        _ensure_tmux_free_session outer
-        _join_tmux_socket outer
-      }
-
-      function ensure() {
-        gcertstatus || gcert && ssh -t atuin.c.googlers.com bash -c 'gcertstatus || gcert'
-      }
-
-      # SSH works best with an agent, so first attempt to find and connect to
-      # an existing agent, and if needed, start one up. `gnome-keyring-daemon`
-      # can handle ssh agent duties, but it can't handle the key types we use
-      # on corp, so we don't use it.
-      function _ssh_socket_works() {
-        if env SSH_AUTH_SOCK=$1 ssh-add -l &>/dev/null; then
-          return 0 # TRUE
-        fi;
-        return 1 # FALSE
-      }
-
-      function _found_working_ssh_agent() {
-        # Check existing environment
-        if [ -n "$SSH_AUTH_SOCK" ] && _ssh_socket_works "$SSH_AUTH_SOCK"; then
-          return 0 # TRUE
-        fi
-
-        # Check systemd user service ssh-agent
-        if _ssh_socket_works ''${XDG_RUNTIME_DIR}/ssh-agent.socket; then
-          export SSH_AUTH_SOCK=''${XDG_RUNTIME_DIR}/ssh-agent.socket
-          return 0 # TRUE
-        fi
-
-        # SSH Agent socket locations/patterns:
-        # ~/.cache/agent-tty (console agent, no GUI)
-        # $DIR/ssh-agent.XXXXXXXXXX/agent
-        for agent in $(ls {{/tmp,/var/run/ssh-agent}/ssh-*,''${XDG_CACHE_DIR:-$HOME/.cache},$XDG_RUNTIME_DIR}/{ssh-,}agent{,.*,-tty}{,.socket} 2>/dev/null); do
-          if _ssh_socket_works $agent; then
-            export SSH_AUTH_SOCK="$agent"
-            return 0 # TRUE
-          fi
-        done
-
-        return 1 # FALSE
-      }
-
-      function _start_ssh_agent() {
-        if systemctl --user list-unit-files ssh-agent.service &>/dev/null; then
-          systemctl --user restart ssh-agent.service
-          if _ssh_socket_works ''${XDG_RUNTIME_DIR}/ssh-agent.socket; then
-            export SSH_AUTH_SOCK=''${XDG_RUNTIME_DIR}/ssh-agent.socket
-            return
-          fi
-        fi
-
-        echo Starting manual ssh-agent session
-        eval $(ssh-agent)
-        ssh-add
-      }
-
-      ssh-reagent () {
-        if _found_working_ssh_agent; then
-          return
-        fi
-
-        echo Cannot find ssh agent - restarting...
-
-        _start_ssh_agent
-      }
-      ssh-reagent
-
-      [[ -f ~/src/dotfiles/bash/prompt.rc ]] && source ~/src/dotfiles/bash/prompt.rc
-    '';
-  };
-
-  # Add a systemd service for ssh-agent
-  systemd.user.services.ssh-agent = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      Description = "SSH key agent";
-    };
-    Install = {
-      WantedBy = [ "sway-session.target" ];
-    };
-    Service = {
-      type = "Simple";
-      Environment = [ "SSH_AUTH_SOCK=%t/ssh-agent.socket" ];
-      ExecStart = "ssh-agent -D -a $SSH_AUTH_SOCK";
-      Restart = "always";
-      RestartSec = 3;
-    };
-  };
-
-  # Configure solarized light color scheme for kitty
-  programs.kitty = {
-    enable = true;
-    extraConfig = ''
-      enable_audio_bell no
-      # Solarized Light Colorscheme
-
-      background              #fdf6e3
-      foreground              #657b83
-      cursor                  #586e75
-
-      selection_background    #475b62
-      selection_foreground    #eae3cb
-
-      color0                #073642
-      color8                #002b36
-
-      color1                #dc322f
-      color9                #cb4b16
-
-      color2                #859900
-      color10               #586e75
-
-      color3                #b58900
-      color11               #657b83
-
-      color4                #268bd2
-      color12               #839496
-
-      color5                #d33682
-      color13               #6c71c4
-
-      color6                #2aa198
-      color14               #93a1a1
-
-      color7                #eee8d5
-      color15               #fdf6e3
-
-      # Choose Powerline Symbols
-      symbol_map U+E0A0-U+E0A2,U+E0B0-U+E0B3,U+1F512 PowerlineSymbols
-
-      # Setup font size controls
-      font_size 10.0
-      map kitty_mod+0 set_font_size 10.0
-      map kitty_mod+equal change_font_size all +2.0
-      map kitty_mod+minus change_font_size all -2.0
-    '';
-  };
-/*
-  programs.tmux = {
-    enable = true;
-    aggressiveResize = true;
-    clock24 = true;
-    keyMode = "vi";
-    shortcut = "a";
-    extraConfig = ''
-      # Use tmux TERM for more features, and 256color for true color
-      set -g default-terminal "tmux-256color"
-
-      # Enable italic support
-      #set -as terminal-overrides ',*:sitm=\E[3m'
-
-      # Enable undercurl support
-      set -as terminal-overrides ',*:Smulx=\E[4::%p1%dm'
-
-      # Enable colored underline support
-      set -as terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
-
-      # This tmux statusbar config was created by tmuxline.vim
-      # on Fri, 14 Feb 2020
-
-      set -g status-justify "left"
-      set -g status "on"
-      set -g status-left-style "none"
-      set -g message-command-style "fg=#eee8d5,bg=#93a1a1"
-      set -g status-right-style "none"
-      set -g pane-active-border-style "fg=#657b83"
-      set -g status-style "none,bg=#eee8d5"
-      set -g message-style "fg=#eee8d5,bg=#93a1a1"
-      set -g pane-border-style "fg=#93a1a1"
-      set -g status-right-length "100"
-      set -g status-left-length "100"
-      setw -g window-status-activity-style "none"
-      setw -g window-status-separator ""
-      setw -g window-status-style "none,fg=#93a1a1,bg=#eee8d5"
-      set -g status-left "#[fg=#eee8d5,bg=#657b83,bold] #S #[fg=#657b83,bg=#eee8d5,nobold,nounderscore,noitalics]"
-      set -g status-right "#[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] %Y-%m-%d  %H:%M #[fg=#657b83,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#657b83] #h "
-      setw -g window-status-format "#[fg=#93a1a1,bg=#eee8d5] #I #[fg=#93a1a1,bg=#eee8d5] #W "
-      setw -g window-status-current-format "#[fg=#eee8d5,bg=#93a1a1,nobold,nounderscore,noitalics]#[fg=#eee8d5,bg=#93a1a1] #I #[fg=#eee8d5,bg=#93a1a1] #W #[fg=#93a1a1,bg=#eee8d5,nobold,nounderscore,noitalics]"
-    '';
-  };
 
   programs.neovim = {
     enable = true;
@@ -483,7 +275,7 @@
 
       # File explorer
       # NvimTree (faster NerdTree replacement)
-      unstablePkgs.vimPlugins.nvim-tree-lua
+      nvim-tree-lua
 
       # Simple buf list/navigate
       bufexplorer
@@ -516,7 +308,7 @@
       vim-nix
 
       # Vim browser markdown preview
-      unstablePkgs.vimPlugins.vim-markdown-composer
+      vim-markdown-composer
 
       # Better YAML support
       vim-yaml
@@ -540,10 +332,10 @@
       vim-codefmt
 
       # Builtin Nvim LSP support
-      unstablePkgs.vimPlugins.nvim-lspconfig
+      nvim-lspconfig
 
       # Lightweight autocompletion
-      unstablePkgs.vimPlugins.completion-nvim
+      completion-nvim
     ];
 
     extraConfig = ''
@@ -729,9 +521,6 @@
       " %%%%%%%%%% Indent Blankline %%%%%%%%%%
       " Enable treesitter support
       let g:indent_blankline_use_treesitter = v:true
-
-      " %%%%%%%%%% NvimTree %%%%%%%%%%
-      let g:nvim_tree_ignore = [ '.git', '^bazel-.*$' ]
 
       " %%%%% GutenTags %%%%%
       " Explanaiton of all this at https://www.reddit.com/r/vim/comments/d77t6j
@@ -971,6 +760,15 @@
         endif
       endfunction
 
+      function! s:InitNvimTree()
+        lua require'nvim-tree'.setup{ filters = { custom = { '.git', '^bazel-.*$' } } }
+      endfunction
+
+      augroup MyNvimTree
+        au!
+        autocmd VimEnter * call <SID>InitNvimTree()
+      augroup END
+
       " #######################################################################
       " ****** COLORING CONTENT ******
       " #######################################################################
@@ -1097,19 +895,11 @@
         end
 
         -- Use a loop to simply setup all language servers
-        local servers = { 'bashls', 'dockerls', 'gopls', 'terraformls', 'vimls', 'yamlls' }
+        local servers = { 'bashls', 'vimls' }
         -- Also: { 'sqls', 'rnix', 'efm', 'dartls' }
         for _, lsp in ipairs(servers) do
           nvim_lsp[lsp].setup { on_attach = on_attach }
         end
-
-        -- MS Python language server needs customized config
-        nvim_lsp['pyls_ms'].setup {
-          on_attach = on_attach,
-          InterpreterPah = "${pkgs.python3Full}/bin/python",
-          Version = "3.8",
-          cmd = { "${pkgs.dotnet-sdk}/bin/dotnet", "exec", "${pkgs.python-language-server}/lib/Microsoft.Python.LanguageServer.dll" }
-        }
       EOLUA
 
         " Re-trigger filetype detection so LSP works on first file
@@ -1123,25 +913,4 @@
       augroup END
     '';
   };
-*/
-  home.activation = {
-    gitCheckoutAction = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD mkdir -p ~/src
-      $DRY_RUN_CMD sh -c 'test -d ~/src/rules_docker || git clone git@github.com:dmayle/rules_docker.git ~/src/rules_docker'
-      $DRY_RUN_CMD sh -c 'test -d ~/src/dotfiles || git clone git@github.com:dmayle/dotfiles.git ~/src/dotfiles'
-      $DRY_RUN_CMD sh -c 'test -d ~/src/chrometiler || git clone git@github.com:dmayle/chrometiler.git ~/src/chrometiler'
-    '';
-  };
-
-  #services.lorri.enable = true;
-
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "20.09";
 }
